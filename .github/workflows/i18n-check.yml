@@ -1,0 +1,90 @@
+name: i18n Translation Check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  i18n-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Scan for hardcoded Dutch texts
+        run: npm run i18n:scan
+        continue-on-error: true
+      
+      - name: Validate translations
+        run: npm run i18n:validate
+      
+      - name: Upload scan report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: i18n-scan-report
+          path: |
+            i18n-scan-report.json
+            i18n-validation-report.json
+      
+      - name: Comment PR with missing translations
+        if: github.event_name == 'pull_request' && failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## ⚠️ Translation Check Failed\n\n';
+            
+            try {
+              const report = JSON.parse(fs.readFileSync('i18n-validation-report.json', 'utf8'));
+              
+              if (report.missing.en.length > 0) {
+                comment += `### Missing EN translations (${report.missing.en.length})\n`;
+                comment += report.missing.en.slice(0, 10).map(k => `- \`${k}\``).join('\n');
+                if (report.missing.en.length > 10) {
+                  comment += `\n... and ${report.missing.en.length - 10} more`;
+                }
+                comment += '\n\n';
+              }
+              
+              if (report.missing.tr.length > 0) {
+                comment += `### Missing TR translations (${report.missing.tr.length})\n`;
+                comment += report.missing.tr.slice(0, 10).map(k => `- \`${k}\``).join('\n');
+                if (report.missing.tr.length > 10) {
+                  comment += `\n... and ${report.missing.tr.length - 10} more`;
+                }
+                comment += '\n\n';
+              }
+              
+              if (report.missing.ro.length > 0) {
+                comment += `### Missing RO translations (${report.missing.ro.length})\n`;
+                comment += report.missing.ro.slice(0, 10).map(k => `- \`${k}\``).join('\n');
+                if (report.missing.ro.length > 10) {
+                  comment += `\n... and ${report.missing.ro.length - 10} more`;
+                }
+                comment += '\n\n';
+              }
+              
+              comment += 'Run `npm run i18n:translate` to generate translation suggestions.';
+            } catch (e) {
+              comment += 'Could not parse validation report.';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
