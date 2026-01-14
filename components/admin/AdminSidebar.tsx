@@ -138,7 +138,7 @@ export default function AdminSidebar() {
       <div className="flex flex-col h-full">
         {/* Logo/Brand */}
         <div className="p-6 border-b border-primary-500">
-          <Link href="/" className="block mb-4">
+          <Link href="/" className="block mb-4 no-underline">
             <Image
               src="/images/logo.svg"
               alt="Bloemen van De Gier"
@@ -181,7 +181,7 @@ export default function AdminSidebar() {
                           })
                         }}
                         className={cn(
-                          "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",
+                          "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors no-underline",
                           isMarketingActive
                             ? "bg-primary-500 text-white shadow-md"
                             : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
@@ -211,7 +211,7 @@ export default function AdminSidebar() {
                                   <Link
                                     href={child.href || '#'}
                                     className={cn(
-                                      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm",
+                                      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm no-underline",
                                       isChildActive
                                         ? "bg-primary-500 text-white shadow-md"
                                         : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
@@ -246,7 +246,7 @@ export default function AdminSidebar() {
                         <Link
                           href={item.href || '#'}
                           className={cn(
-                            "flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",
+                            "flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors no-underline",
                             isActive
                               ? "bg-primary-500 text-white shadow-md"
                               : "text-primary-100 hover:bg-primary-500/50 hover:text-white"

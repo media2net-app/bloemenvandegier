@@ -6,6 +6,10 @@
   body {
     @apply bg-white text-gray-900;
   }
+  
+  a {
+    @apply no-underline;
+  }
 }
 
 @layer utilities {
