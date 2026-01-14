@@ -8,28 +8,24 @@ const categories = [
     name: 'Rozen',
     href: '/rozen',
     description: 'Rechtstreeks vanaf de kweker',
-    image: 'https://images.unsplash.com/photo-1518621012428-6d6d0c0e0e0e?w=800&h=600&fit=crop&q=80',
     color: 'from-red-100 to-red-200',
   },
   {
     name: 'Boeketten',
     href: '/boeketten',
     description: 'Speciaal voor jou geselecteerd',
-    image: 'https://images.unsplash.com/photo-1563241521-5b91b7b85942?w=800&h=600&fit=crop&q=80',
     color: 'from-pink-100 to-pink-200',
   },
   {
     name: 'Voorjaarsbloemen',
     href: '/categorie/voorjaarsbloemen',
     description: 'Verse lente bloemen',
-    image: 'https://images.unsplash.com/photo-1520763185298-1b434c919102?w=800&h=600&fit=crop&q=80',
     color: 'from-yellow-100 to-yellow-200',
   },
   {
     name: 'Groen & Decoratief',
     href: '/groen-decoratief',
     description: 'Verse takken en decoratie',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80',
     color: 'from-green-100 to-green-200',
   },
 ]
@@ -51,16 +47,18 @@ export default function CategoryGrid() {
           {categories.map((category) => (
             <Link key={category.name} href={category.href}>
               <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 h-full">
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                <div className={`relative h-48 bg-gradient-to-br ${category.color} overflow-hidden`}>
                   <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Image
+                      src="/images/placeholder-flower.svg"
+                      alt={category.name}
+                      width={64}
+                      height={64}
+                      className="opacity-50"
+                    />
+                    <p className="text-xs text-gray-500 mt-3 font-medium">Geen afbeelding</p>
+                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">

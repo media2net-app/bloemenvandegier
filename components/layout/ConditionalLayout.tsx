@@ -21,6 +21,7 @@ export default function ConditionalLayout({
 
   if (isAdminLogin) {
     // Admin login page - no header, footer, trustbar, or help widget
+    // Return children directly without wrapper to avoid CSS conflicts
     return <>{children}</>
   }
 

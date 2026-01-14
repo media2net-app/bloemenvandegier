@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 flex items-center justify-center py-12 px-4" style={{ minHeight: '100vh' }}>
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
