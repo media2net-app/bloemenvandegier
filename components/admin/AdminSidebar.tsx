@@ -17,7 +17,8 @@ import {
   Truck,
   Mail,
   Bell,
-  Repeat
+  Repeat,
+  Megaphone
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -40,6 +41,11 @@ const implementedPages = [
   '/admin/verzending',
   '/admin/statistieken',
   '/admin/instellingen',
+  '/admin/marketing',
+  '/admin/marketing/google-adwords',
+  '/admin/marketing/organisch',
+  '/admin/marketing/meta',
+  '/admin/marketing/tiktok',
 ]
 
 const menuItems: MenuItem[] = [
@@ -52,6 +58,7 @@ const menuItems: MenuItem[] = [
   { name: 'Afbeeldingen', href: '/admin/afbeeldingen', icon: ImageIcon },
   { name: 'Verzending', href: '/admin/verzending', icon: Truck },
   { name: 'Statistieken', href: '/admin/statistieken', icon: BarChart3 },
+  { name: 'Marketing', href: '/admin/marketing', icon: Megaphone },
   { name: 'Berichten', href: '/admin/berichten', icon: Mail },
   { name: 'Notificaties', href: '/admin/notificaties', icon: Bell },
   { name: 'Rapporten', href: '/admin/rapporten', icon: FileText },
