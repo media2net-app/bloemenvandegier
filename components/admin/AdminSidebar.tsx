@@ -16,7 +16,8 @@ import {
   Tag,
   Truck,
   Mail,
-  Bell
+  Bell,
+  Repeat
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -32,7 +33,13 @@ const implementedPages = [
   '/admin/producten',
   '/admin/bestellingen',
   '/admin/klanten',
+  '/admin/abonnementen',
   '/admin/berichten',
+  '/admin/categorieen',
+  '/admin/afbeeldingen',
+  '/admin/verzending',
+  '/admin/statistieken',
+  '/admin/instellingen',
 ]
 
 const menuItems: MenuItem[] = [
@@ -40,6 +47,7 @@ const menuItems: MenuItem[] = [
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Klanten', href: '/admin/klanten', icon: Users },
+  { name: 'Abonnementen', href: '/admin/abonnementen', icon: Repeat },
   { name: 'Categorieën', href: '/admin/categorieen', icon: Tag },
   { name: 'Afbeeldingen', href: '/admin/afbeeldingen', icon: ImageIcon },
   { name: 'Verzending', href: '/admin/verzending', icon: Truck },

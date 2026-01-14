@@ -1,0 +1,20 @@
+{
+  "scanDate": "2026-01-14T16:13:38.953Z",
+  "statistics": {
+    "nl": 235,
+    "en": 235,
+    "tr": 235,
+    "ro": 235
+  },
+  "missing": {
+    "en": [],
+    "tr": [],
+    "ro": []
+  },
+  "extra": {
+    "en": [],
+    "tr": [],
+    "ro": []
+  },
+  "isValid": true
+}

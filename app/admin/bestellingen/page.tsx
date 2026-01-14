@@ -16,7 +16,8 @@ import {
   Clock,
   XCircle,
   Truck,
-  Package
+  Package,
+  PackageSearch
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import Button from '@/components/ui/Button'
@@ -491,6 +492,14 @@ export default function AdminBestellingenPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex items-center justify-end gap-2">
+                            <Link href={`/admin/order-picker?order=${order.id}`} target="_blank">
+                              <button
+                                className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                title="Order Picker"
+                              >
+                                <PackageSearch className="h-4 w-4" />
+                              </button>
+                            </Link>
                             <Link href={`/admin/bestellingen/${order.id}`}>
                               <button
                                 className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
