@@ -19,14 +19,22 @@ import {
   Bell,
   Repeat,
   Megaphone,
-  CheckSquare
+  CheckSquare,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  TrendingUp,
+  Facebook,
+  Music,
+  Calendar
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
 interface MenuItem {
   name: string
-  href: string
+  href?: string
   icon: React.ComponentType<{ className?: string }>
+  children?: MenuItem[]
 }
 
 // Define which pages are implemented
@@ -61,7 +69,19 @@ const menuItems: MenuItem[] = [
   { name: 'Afbeeldingen', href: '/admin/afbeeldingen', icon: ImageIcon },
   { name: 'Verzending', href: '/admin/verzending', icon: Truck },
   { name: 'Statistieken', href: '/admin/statistieken', icon: BarChart3 },
-  { name: 'Marketing', href: '/admin/marketing', icon: Megaphone },
+  { 
+    name: 'Marketing', 
+    href: '/admin/marketing', 
+    icon: Megaphone,
+    children: [
+      { name: 'Overzicht', href: '/admin/marketing', icon: BarChart3 },
+      { name: 'Google Adwords', href: '/admin/marketing/google-adwords', icon: Search },
+      { name: 'Organisch', href: '/admin/marketing/organisch', icon: TrendingUp },
+      { name: 'META', href: '/admin/marketing/meta', icon: Facebook },
+      { name: 'TikTok', href: '/admin/marketing/tiktok', icon: Music },
+      { name: 'Content Kalender', href: '/admin/marketing/content-kalender', icon: Calendar },
+    ]
+  },
   { name: 'Taken', href: '/admin/taken', icon: CheckSquare },
   { name: 'Berichten', href: '/admin/berichten', icon: Mail },
   { name: 'Notificaties', href: '/admin/notificaties', icon: Bell },
@@ -72,8 +92,16 @@ const menuItems: MenuItem[] = [
 export default function AdminSidebar() {
   const pathname = usePathname()
   const [unreadCount, setUnreadCount] = useState(0)
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([])
 
   useEffect(() => {
+    // Auto-expand Marketing menu if on a marketing page
+    if (pathname?.startsWith('/admin/marketing')) {
+      if (!expandedMenus.includes('Marketing')) {
+        setExpandedMenus([...expandedMenus, 'Marketing'])
+      }
+    }
+
     // Calculate unread messages count
     // In a real app, this would be an API call or from a store
     const calculateUnreadCount = () => {
@@ -100,7 +128,7 @@ export default function AdminSidebar() {
     }, 30000) // Check every 30 seconds
 
     return () => clearInterval(interval)
-  }, [])
+  }, [pathname])
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-primary-600 text-white shadow-xl z-40">
@@ -126,46 +154,124 @@ export default function AdminSidebar() {
           <ul className="space-y-1 px-3">
             {menuItems.map((item) => {
               const Icon = item.icon
+              const hasChildren = item.children && item.children.length > 0
+              const isMarketingActive = item.name === 'Marketing' && pathname?.startsWith('/admin/marketing')
               const isActive = pathname === item.href || 
-                (item.href !== '/admin' && pathname?.startsWith(item.href))
-              const isImplemented = implementedPages.includes(item.href)
+                (item.href !== '/admin' && item.href && pathname?.startsWith(item.href)) ||
+                isMarketingActive
+              const isExpanded = expandedMenus.includes(item.name)
+              const isImplemented = item.href ? implementedPages.includes(item.href) : true
               const showUnreadBadge = item.href === '/admin/berichten' && unreadCount > 0
               
               return (
                 <li key={item.name}>
-                  {isImplemented ? (
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",
-                        isActive
-                          ? "bg-primary-500 text-white shadow-md"
-                          : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
+                  {hasChildren ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          if (isExpanded) {
+                            setExpandedMenus(expandedMenus.filter(m => m !== item.name))
+                          } else {
+                            setExpandedMenus([...expandedMenus, item.name])
+                          }
+                        }}
+                        className={cn(
+                          "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",
+                          isMarketingActive
+                            ? "bg-primary-500 text-white shadow-md"
+                            : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
+                        )}
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                          <span className="font-medium">{item.name}</span>
+                        </div>
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                        )}
+                      </button>
+                      {isExpanded && item.children && (
+                        <ul className="ml-4 mt-1 space-y-1 border-l-2 border-primary-400/30 pl-2">
+                          {item.children.map((child) => {
+                            const ChildIcon = child.icon
+                            const isChildActive = child.href && (pathname === child.href ||
+                              (child.href !== '/admin/marketing' && pathname?.startsWith(child.href)))
+                            const isChildImplemented = child.href ? implementedPages.includes(child.href) : true
+                            
+                            return (
+                              <li key={child.name}>
+                                {isChildImplemented ? (
+                                  <Link
+                                    href={child.href || '#'}
+                                    className={cn(
+                                      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm",
+                                      isChildActive
+                                        ? "bg-primary-500 text-white shadow-md"
+                                        : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
+                                    )}
+                                  >
+                                    <ChildIcon className="h-4 w-4 flex-shrink-0" />
+                                    <span>{child.name}</span>
+                                  </Link>
+                                ) : (
+                                  <div
+                                    className={cn(
+                                      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors cursor-not-allowed opacity-40 text-sm",
+                                      isChildActive
+                                        ? "bg-primary-500/30 text-white/50"
+                                        : "text-primary-100/50"
+                                    )}
+                                    title="Binnenkort beschikbaar"
+                                  >
+                                    <ChildIcon className="h-4 w-4 flex-shrink-0" />
+                                    <span>{child.name}</span>
+                                  </div>
+                                )}
+                              </li>
+                            )
+                          })}
+                        </ul>
                       )}
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <Icon className="h-5 w-5 flex-shrink-0" />
-                        <span className="font-medium">{item.name}</span>
-                      </div>
-                      {showUnreadBadge && (
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                          {unreadCount > 9 ? '9+' : unreadCount}
-                        </span>
-                      )}
-                    </Link>
+                    </>
                   ) : (
-                    <div
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-not-allowed opacity-40",
-                        isActive
-                          ? "bg-primary-500/30 text-white/50"
-                          : "text-primary-100/50"
+                    <>
+                      {isImplemented ? (
+                        <Link
+                          href={item.href || '#'}
+                          className={cn(
+                            "flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",
+                            isActive
+                              ? "bg-primary-500 text-white shadow-md"
+                              : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
+                          )}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <Icon className="h-5 w-5 flex-shrink-0" />
+                            <span className="font-medium">{item.name}</span>
+                          </div>
+                          {showUnreadBadge && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                              {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                          )}
+                        </Link>
+                      ) : (
+                        <div
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-not-allowed opacity-40",
+                            isActive
+                              ? "bg-primary-500/30 text-white/50"
+                              : "text-primary-100/50"
+                          )}
+                          title="Binnenkort beschikbaar"
+                        >
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                          <span className="font-medium">{item.name}</span>
+                        </div>
                       )}
-                      title="Binnenkort beschikbaar"
-                    >
-                      <Icon className="h-5 w-5 flex-shrink-0" />
-                      <span className="font-medium">{item.name}</span>
-                    </div>
+                    </>
                   )}
                 </li>
               )
