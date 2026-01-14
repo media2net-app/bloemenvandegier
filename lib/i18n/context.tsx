@@ -41,8 +41,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const t = (key: string): string => {
-    return getTranslation(language, key)
+  const t = (key: string, placeholders?: Record<string, string | number>): string => {
+    return getTranslation(language, key, placeholders)
   }
 
   return (

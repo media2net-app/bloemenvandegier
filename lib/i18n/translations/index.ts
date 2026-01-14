@@ -14,10 +14,11 @@ export const translations = {
 
 export type TranslationKey = keyof typeof nl
 
-// Helper to get nested translation
+// Helper to get nested translation with placeholder support
 export function getTranslation(
   lang: Language,
-  key: string
+  key: string,
+  placeholders?: Record<string, string | number>
 ): string {
   const keys = key.split('.')
   let value: any = translations[lang]
@@ -30,5 +31,14 @@ export function getTranslation(
     }
   }
 
-  return typeof value === 'string' ? value : key
+  let result = typeof value === 'string' ? value : key
+  
+  // Replace placeholders
+  if (placeholders) {
+    Object.entries(placeholders).forEach(([placeholder, replacement]) => {
+      result = result.replace(new RegExp(`\\{${placeholder}\\}`, 'g'), String(replacement))
+    })
+  }
+
+  return result
 }
