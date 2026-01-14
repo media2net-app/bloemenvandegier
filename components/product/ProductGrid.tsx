@@ -19,6 +19,7 @@ interface Product {
 interface ProductGridProps {
   products: Product[]
   columns?: 2 | 3 | 4
+  showUSPBanners?: boolean // Only show USP banners on category pages, not homepage
 }
 
 type ProductLabel = 'meest-verkocht' | 'nieuw' | 'dagtopper' | null
@@ -98,22 +99,21 @@ function USPBanner({ columns }: { columns: 2 | 3 | 4 }) {
   )
 }
 
-export default function ProductGrid({ products, columns = 4 }: ProductGridProps) {
+export default function ProductGrid({ products, columns = 4, showUSPBanners = false }: ProductGridProps) {
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
   }
 
-  // Insert USP banner every 6 products (only on desktop)
+  // Insert USP banner every 6 products (only on category pages, not homepage)
   const itemsWithUSP: Array<{ type: 'product' | 'usp'; product?: Product; index?: number }> = []
   
   products.forEach((product, index) => {
     itemsWithUSP.push({ type: 'product', product, index })
     
-    // Insert USP banner after every 6th product (on desktop only)
-    // We'll handle the display logic in the render
-    if ((index + 1) % 6 === 0 && index < products.length - 1) {
+    // Insert USP banner after every 6th product (only on category pages)
+    if (showUSPBanners && (index + 1) % 6 === 0 && index < products.length - 1) {
       itemsWithUSP.push({ type: 'usp' })
     }
   })

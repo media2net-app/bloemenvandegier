@@ -97,9 +97,12 @@ export default function AdminSidebar() {
   useEffect(() => {
     // Auto-expand Marketing menu if on a marketing page
     if (pathname?.startsWith('/admin/marketing')) {
-      if (!expandedMenus.includes('Marketing')) {
-        setExpandedMenus([...expandedMenus, 'Marketing'])
-      }
+      setExpandedMenus(prev => {
+        if (!prev.includes('Marketing')) {
+          return [...prev, 'Marketing']
+        }
+        return prev
+      })
     }
 
     // Calculate unread messages count
@@ -169,11 +172,13 @@ export default function AdminSidebar() {
                     <>
                       <button
                         onClick={() => {
-                          if (isExpanded) {
-                            setExpandedMenus(expandedMenus.filter(m => m !== item.name))
-                          } else {
-                            setExpandedMenus([...expandedMenus, item.name])
-                          }
+                          setExpandedMenus(prev => {
+                            if (isExpanded) {
+                              return prev.filter(m => m !== item.name)
+                            } else {
+                              return [...prev, item.name]
+                            }
+                          })
                         }}
                         className={cn(
                           "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg transition-colors",

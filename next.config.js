@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.flowerchimp.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     unoptimized: false,

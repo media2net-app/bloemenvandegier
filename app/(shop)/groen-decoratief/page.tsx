@@ -136,7 +136,7 @@ export default function GroenDecoratiefPage() {
             />
 
             {filteredAndSortedProducts.length > 0 ? (
-              <ProductGrid products={filteredAndSortedProducts} columns={3} />
+              <ProductGrid products={filteredAndSortedProducts} columns={3} showUSPBanners={true} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-lg text-gray-600 mb-4">
