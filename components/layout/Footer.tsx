@@ -1,29 +1,48 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { NAVIGATION, SITE_NAME } from '@/lib/utils/constants'
+import { SITE_NAME } from '@/lib/utils/constants'
+import { useI18n } from '@/lib/i18n/context'
 
 export default function Footer() {
+  const { t } = useI18n()
   const currentYear = new Date().getFullYear()
+
+  const navigationItems = [
+    { name: t('nav.roses'), href: '/rozen' },
+    { name: t('nav.springFlowers'), href: '/categorie/voorjaarsbloemen' },
+    { name: t('nav.bouquets'), href: '/boeketten' },
+    { name: t('nav.greenDecorative'), href: '/groen-decoratief' },
+    { name: t('nav.flowersByType'), href: '/categorie/bloemen-per-soort' },
+    { name: t('nav.flowerPackages'), href: '/categorie/bloemenpakketten' },
+    { name: t('nav.peonies'), href: '/categorie/pioenrozen' },
+    { name: t('nav.oliveTrees'), href: '/categorie/olijfbomen' },
+    { name: t('nav.weddingBundles'), href: '/categorie/bruiloft-bundels' },
+    { name: t('nav.wreathMaking'), href: '/categorie/krans-maken' },
+    { name: t('nav.subscriptions'), href: '/abonnementen' },
+    { name: t('nav.business'), href: '/zakelijk' },
+  ]
 
   const footerLinks = {
     service: [
-      { name: 'Veelgestelde vragen', href: '/veelgestelde-vragen' },
-      { name: 'Zakelijk bloemen bestellen', href: '/zakelijk' },
-      { name: 'Verzendkosten & Levertijden', href: '/verzendkosten' },
-      { name: 'Retour beleid', href: '/retour' },
-      { name: 'Algemene voorwaarden', href: '/algemene-voorwaarden' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Privacy verklaring', href: '/privacy' },
-      { name: 'Klachtenregeling', href: '/klachtenregeling' },
+      { name: t('footer.faq'), href: '/veelgestelde-vragen' },
+      { name: t('footer.businessOrder'), href: '/zakelijk' },
+      { name: t('footer.shippingCosts'), href: '/verzendkosten' },
+      { name: t('footer.returnPolicy'), href: '/retour' },
+      { name: t('footer.terms'), href: '/algemene-voorwaarden' },
+      { name: t('footer.contact'), href: '/contact' },
+      { name: t('footer.privacy'), href: '/privacy' },
+      { name: t('footer.complaints'), href: '/klachtenregeling' },
     ],
-    categories: NAVIGATION,
+    categories: navigationItems,
     occasions: [
-      { name: 'Pasen', href: '/categorie/pasen' },
-      { name: 'Koningsdag', href: '/categorie/koningsdag' },
-      { name: 'Moederdag', href: '/categorie/moederdag' },
-      { name: 'Vaderdag', href: '/categorie/vaderdag' },
-      { name: 'Sinterklaas', href: '/categorie/sinterklaas' },
-      { name: 'Kerst', href: '/categorie/kerst' },
+      { name: t('footer.easter'), href: '/categorie/pasen' },
+      { name: t('footer.kingsDay'), href: '/categorie/koningsdag' },
+      { name: t('footer.mothersDay'), href: '/categorie/moederdag' },
+      { name: t('footer.fathersDay'), href: '/categorie/vaderdag' },
+      { name: t('footer.sinterklaas'), href: '/categorie/sinterklaas' },
+      { name: t('footer.christmas'), href: '/categorie/kerst' },
     ],
   }
 
@@ -43,19 +62,18 @@ export default function Footer() {
                 priority
               />
             </Link>
-            <h3 className="text-white text-lg font-bold mb-4">{SITE_NAME}</h3>
+            <h3 className="text-white text-lg font-bold mb-4">{t('footer.companyName')}</h3>
             <p className="text-sm mb-4 text-white/90">
-              Industrieweg 8<br />
-              7921 JP Zuidwolde
+              {t('footer.address')}
             </p>
             <p className="text-sm text-white/80">
-              Prachtige bloemen van topkwaliteit. Gegarandeerd meer bloemen voor je geld.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Service & Contact */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Service & Contact</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.serviceContact')}</h4>
             <ul className="space-y-2 text-sm">
               {footerLinks.service.map((link) => (
                 <li key={link.name}>
@@ -72,7 +90,7 @@ export default function Footer() {
 
           {/* Categorieën */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Categorieën</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.categories')}</h4>
             <ul className="space-y-2 text-sm">
               {footerLinks.categories.slice(0, 6).map((link) => (
                 <li key={link.name}>
@@ -89,7 +107,7 @@ export default function Footer() {
 
           {/* Gelegenheden */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Seizoenen & Feestdagen</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.seasonsHolidays')}</h4>
             <ul className="space-y-2 text-sm">
               {footerLinks.occasions.map((link) => (
                 <li key={link.name}>
@@ -107,7 +125,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-primary-400/50 mt-8 pt-8 text-center text-sm text-white/80">
-          <p>&copy; {currentYear} {SITE_NAME}. Alle rechten voorbehouden.</p>
+          <p>&copy; {currentYear} {t('footer.companyName')}. {t('footer.allRightsReserved')}.</p>
         </div>
       </div>
     </footer>

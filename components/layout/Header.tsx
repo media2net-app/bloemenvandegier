@@ -8,9 +8,11 @@ import { NAVIGATION } from '@/lib/utils/constants'
 import { useCartStore } from '@/lib/cart/store'
 import { useCart } from '@/components/cart/CartProvider'
 import { useAuthStore } from '@/lib/auth/store'
+import { useI18n } from '@/lib/i18n/context'
 import Button from '@/components/ui/Button'
 import MobileMenu from './MobileMenu'
 import SearchModal from './SearchModal'
+import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -18,6 +20,23 @@ export default function Header() {
   const itemCount = useCartStore((state) => state.getItemCount())
   const { openCart } = useCart()
   const { isAuthenticated } = useAuthStore()
+  const { t } = useI18n()
+
+  // Map navigation items with translations
+  const navigationItems = [
+    { name: t('nav.roses'), href: '/rozen' },
+    { name: t('nav.springFlowers'), href: '/categorie/voorjaarsbloemen' },
+    { name: t('nav.bouquets'), href: '/boeketten' },
+    { name: t('nav.greenDecorative'), href: '/groen-decoratief' },
+    { name: t('nav.flowersByType'), href: '/categorie/bloemen-per-soort' },
+    { name: t('nav.flowerPackages'), href: '/categorie/bloemenpakketten' },
+    { name: t('nav.peonies'), href: '/categorie/pioenrozen' },
+    { name: t('nav.oliveTrees'), href: '/categorie/olijfbomen' },
+    { name: t('nav.weddingBundles'), href: '/categorie/bruiloft-bundels' },
+    { name: t('nav.wreathMaking'), href: '/categorie/krans-maken' },
+    { name: t('nav.subscriptions'), href: '/abonnementen' },
+    { name: t('nav.business'), href: '/zakelijk' },
+  ]
 
   return (
     <>
@@ -39,9 +58,9 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6">
-              {NAVIGATION.slice(0, 4).map((item) => (
+              {navigationItems.slice(0, 4).map((item, index) => (
                 <Link
-                  key={item.name}
+                  key={index}
                   href={item.href}
                   className="text-white hover:text-primary-100 transition-colors font-medium"
                 >
@@ -49,9 +68,9 @@ export default function Header() {
                 </Link>
               ))}
               {/* Abonnementen en Zakelijk achteraan als buttons */}
-              {NAVIGATION.slice(-2).map((item) => (
+              {navigationItems.slice(-2).map((item, index) => (
                 <Button
-                  key={item.name}
+                  key={index}
                   asChild
                   variant="outline"
                   size="sm"
@@ -64,6 +83,8 @@ export default function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+              
               <button
                 onClick={() => setIsSearchOpen(true)}
                 aria-label="Zoeken"
@@ -74,17 +95,17 @@ export default function Header() {
               
               <Link
                 href="/track"
-                aria-label="Volg mijn bestelling"
+                aria-label={t('header.trackOrder')}
                 className="hidden md:flex items-center gap-2 px-3 py-2 text-white hover:text-primary-100 transition-colors text-sm font-medium"
-                title="Volg mijn bestelling"
+                title={t('header.trackOrder')}
               >
                 <Truck className="h-5 w-5" />
-                <span className="hidden lg:inline">Volg mijn bestelling</span>
+                <span className="hidden lg:inline">{t('header.trackOrder')}</span>
               </Link>
               
               <Link
                 href={isAuthenticated ? '/account' : '/login'}
-                aria-label="Account"
+                aria-label={t('header.account')}
                 className="p-2 text-white hover:text-primary-100 transition-colors"
               >
                 <User className="h-5 w-5" />
@@ -93,7 +114,7 @@ export default function Header() {
                     <button
                       onClick={openCart}
                       className="relative p-2 text-white hover:text-primary-100 transition-colors"
-                      aria-label="Bloemenmand"
+                      aria-label={t('header.cart')}
                     >
                       <ShoppingCart className="h-5 w-5" />
                       {itemCount > 0 && (
@@ -107,7 +128,7 @@ export default function Header() {
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="lg:hidden p-2 text-white hover:text-primary-100 transition-colors"
-                aria-label="Menu"
+                aria-label={t('header.menu')}
               >
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>

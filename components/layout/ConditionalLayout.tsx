@@ -5,6 +5,8 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import TrustBar from '@/components/layout/TrustBar'
 import HelpWidget from '@/components/shared/HelpWidget'
+import LanguageWrapper from '@/components/layout/LanguageWrapper'
+import ExitIntentDiscount from '@/components/shared/ExitIntentDiscount'
 
 export default function ConditionalLayout({
   children,
@@ -30,6 +32,7 @@ export default function ConditionalLayout({
   // Regular pages - show everything
   return (
     <>
+      <LanguageWrapper />
       <TrustBar />
       <Header />
       <main className="min-h-screen">
@@ -37,6 +40,7 @@ export default function ConditionalLayout({
       </main>
       <Footer />
       <HelpWidget />
+      <ExitIntentDiscount />
     </>
   )
 }

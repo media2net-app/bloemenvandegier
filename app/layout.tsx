@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import TrustBar from '@/components/layout/TrustBar'
 import HelpWidget from '@/components/shared/HelpWidget'
 import { CartProvider } from '@/components/cart/CartProvider'
+import { I18nProvider } from '@/lib/i18n/context'
 import ConditionalLayout from '@/components/layout/ConditionalLayout'
 
 const inter = Inter({ 
@@ -43,11 +44,13 @@ export default function RootLayout({
   return (
     <html lang="nl" className={`${inter.variable} ${playfair.variable}`}>
       <body className="antialiased font-sans">
-        <CartProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
-        </CartProvider>
+        <I18nProvider>
+          <CartProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </CartProvider>
+        </I18nProvider>
       </body>
     </html>
   )

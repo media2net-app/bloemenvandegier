@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { NAVIGATION } from '@/lib/utils/constants'
 import { X, Truck } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -10,7 +10,25 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const { t } = useI18n()
+  
   if (!isOpen) return null
+
+  // Map navigation items with translations
+  const navigationItems = [
+    { name: t('nav.roses'), href: '/rozen' },
+    { name: t('nav.springFlowers'), href: '/categorie/voorjaarsbloemen' },
+    { name: t('nav.bouquets'), href: '/boeketten' },
+    { name: t('nav.greenDecorative'), href: '/groen-decoratief' },
+    { name: t('nav.flowersByType'), href: '/categorie/bloemen-per-soort' },
+    { name: t('nav.flowerPackages'), href: '/categorie/bloemenpakketten' },
+    { name: t('nav.peonies'), href: '/categorie/pioenrozen' },
+    { name: t('nav.oliveTrees'), href: '/categorie/olijfbomen' },
+    { name: t('nav.weddingBundles'), href: '/categorie/bruiloft-bundels' },
+    { name: t('nav.wreathMaking'), href: '/categorie/krans-maken' },
+    { name: t('nav.subscriptions'), href: '/abonnementen' },
+    { name: t('nav.business'), href: '/zakelijk' },
+  ]
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -25,11 +43,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <span className="text-lg font-bold text-primary-600">Menu</span>
+            <span className="text-lg font-bold text-primary-600">{t('header.menu')}</span>
             <button
               onClick={onClose}
               className="p-2 text-gray-700 hover:text-primary-600"
-              aria-label="Sluit menu"
+              aria-label={t('common.close')}
             >
               <X className="h-6 w-6" />
             </button>
@@ -38,8 +56,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-2">
-              {NAVIGATION.map((item) => (
-                <li key={item.name}>
+              {navigationItems.map((item, index) => (
+                <li key={index}>
                   <Link
                     href={item.href}
                     onClick={onClose}
@@ -56,7 +74,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition-colors font-medium"
                 >
                   <Truck className="h-5 w-5" />
-                  Volg mijn bestelling
+                  {t('nav.trackOrder')}
                 </Link>
               </li>
             </ul>

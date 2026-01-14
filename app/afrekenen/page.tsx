@@ -65,6 +65,9 @@ export default function CheckoutPage() {
     notes: '',
     newsletter: false,
   })
+  
+  const [isLookingUpAddress, setIsLookingUpAddress] = useState(false)
+  const [addressLookupError, setAddressLookupError] = useState('')
 
   // Get minimum delivery date (tomorrow)
   const getMinDate = () => {
@@ -111,6 +114,58 @@ export default function CheckoutPage() {
   const insuredDeliveryCost = formData.insuredDelivery ? 7.50 : 0
   const total = subtotal + deliveryCost + insuredDeliveryCost
 
+  // Postcode lookup function
+  const lookupAddress = async (postalCode: string, houseNumber: string) => {
+    if (!postalCode || !houseNumber) return
+    
+    // Format postcode (remove spaces, uppercase)
+    const formattedPostcode = postalCode.replace(/\s/g, '').toUpperCase()
+    
+    // Validate Dutch postcode format (1234AB)
+    if (!/^\d{4}[A-Z]{2}$/.test(formattedPostcode)) {
+      return
+    }
+    
+    setIsLookingUpAddress(true)
+    setAddressLookupError('')
+    
+    try {
+      // Use PostcodeAPI.nu (free tier available)
+      // In production, you would use your own API key
+      const response = await fetch(
+        `https://api.postcodeapi.nu/v3/lookup/${formattedPostcode}/${houseNumber}`,
+        {
+          headers: {
+            'Accept': 'application/json',
+          }
+        }
+      )
+      
+      if (response.ok) {
+        const data = await response.json()
+        if (data.results && data.results.length > 0) {
+          const result = data.results[0]
+          setFormData(prev => ({
+            ...prev,
+            street: result.street || prev.street,
+            city: result.city || prev.city,
+            postalCode: formattedPostcode.slice(0, 4) + ' ' + formattedPostcode.slice(4), // Format as 1234 AB
+          }))
+        }
+      } else if (response.status === 404) {
+        setAddressLookupError('Postcode en huisnummer niet gevonden')
+      } else {
+        setAddressLookupError('Kon adres niet ophalen. Controleer de gegevens.')
+      }
+    } catch (error) {
+      console.error('Address lookup error:', error)
+      // Fallback: try alternative API or show error
+      setAddressLookupError('Kon adres niet ophalen. Vul handmatig in.')
+    } finally {
+      setIsLookingUpAddress(false)
+    }
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     const checked = (e.target as HTMLInputElement).checked
@@ -120,6 +175,18 @@ export default function CheckoutPage() {
       [name]: type === 'checkbox' ? checked : value,
     }))
   }
+
+  // Auto-fill address when postcode and house number are entered
+  useEffect(() => {
+    if (!formData.postalCode || !formData.houseNumber) return
+    
+    // Debounce the lookup
+    const timeoutId = setTimeout(() => {
+      lookupAddress(formData.postalCode, formData.houseNumber)
+    }, 500)
+    
+    return () => clearTimeout(timeoutId)
+  }, [formData.postalCode, formData.houseNumber])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -335,18 +402,21 @@ export default function CheckoutPage() {
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="md:col-span-2">
-                      <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-2">
-                        Straatnaam *
+                    <div>
+                      <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
+                        Postcode *
                       </label>
                       <input
                         type="text"
-                        id="street"
-                        name="street"
+                        id="postalCode"
+                        name="postalCode"
                         required
-                        value={formData.street}
+                        value={formData.postalCode}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                        placeholder="1234AB"
+                        maxLength={7}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none uppercase"
+                        style={{ textTransform: 'uppercase' }}
                       />
                     </div>
                     <div>
@@ -363,26 +433,39 @@ export default function CheckoutPage() {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                       />
                     </div>
+                    <div className="flex items-end">
+                      {isLookingUpAddress && (
+                        <div className="flex items-center gap-2 text-sm text-primary-600">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                          <span>Adres ophalen...</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {addressLookupError && (
+                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                      {addressLookupError}
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
-                        Postcode *
+                      <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-2">
+                        Straatnaam *
                       </label>
                       <input
                         type="text"
-                        id="postalCode"
-                        name="postalCode"
+                        id="street"
+                        name="street"
                         required
-                        value={formData.postalCode}
+                        value={formData.street}
                         onChange={handleInputChange}
-                        placeholder="1234 AB"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                        readOnly={isLookingUpAddress}
                       />
                     </div>
                     <div>
                       <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                        Plaats *
+                        Woonplaats *
                       </label>
                       <input
                         type="text"
@@ -392,8 +475,11 @@ export default function CheckoutPage() {
                         value={formData.city}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                        readOnly={isLookingUpAddress}
                       />
                     </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
                         Land *
