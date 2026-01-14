@@ -2,7 +2,6 @@ export const SITE_NAME = 'Bloemen van De Gier'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
 export const NAVIGATION = [
-  { name: 'Valentijnsdag', href: '/categorie/valentijnsdag' },
   { name: 'Rozen', href: '/rozen' },
   { name: 'Voorjaarsbloemen', href: '/categorie/voorjaarsbloemen' },
   { name: 'Boeketten', href: '/boeketten' },

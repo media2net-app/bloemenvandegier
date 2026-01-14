@@ -2,82 +2,13 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import ProductGrid from '@/components/product/ProductGrid'
 import Button from '@/components/ui/Button'
+import { getProductsByCategorySlug } from '@/lib/data/products'
 
-// Mock data - will be replaced with real WooCommerce data
-const boeketten = [
-  {
-    id: 1,
-    name: 'Kort Boeket Lekker Zacht',
-    slug: 'kort-boeket-lekker-zacht',
-    price: '17.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Kort Boeket' }],
-    stock_status: 'instock',
-    average_rating: '4.7',
-  },
-  {
-    id: 2,
-    name: 'De Gier Boeket',
-    slug: 'de-gier-boeket',
-    price: '20.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'De Gier Boeket' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 3,
-    name: 'Plukboeket XL',
-    slug: 'plukboeket-xl',
-    price: '25.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Plukboeket XL' }],
-    stock_status: 'instock',
-    average_rating: '4.9',
-  },
-  {
-    id: 4,
-    name: 'Grote De Gier',
-    slug: 'grote-de-gier',
-    price: '25.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Grote De Gier' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 5,
-    name: 'Klassiek Wit Boeket',
-    slug: 'klassiek-wit-boeket',
-    price: '27.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Klassiek Wit' }],
-    stock_status: 'instock',
-    average_rating: '4.7',
-  },
-  {
-    id: 6,
-    name: 'Groot Gekleurd Boeket',
-    slug: 'groot-gekleurd-boeket',
-    price: '35.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Groot Gekleurd' }],
-    stock_status: 'instock',
-    average_rating: '4.9',
-  },
-  {
-    id: 7,
-    name: 'Veldboeket XXL',
-    slug: 'veldboeket-xxl',
-    price: '35.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Veldboeket XXL' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 8,
-    name: 'Mamma Mia',
-    slug: 'mamma-mia',
-    price: '50.00',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Mamma Mia' }],
-    stock_status: 'instock',
-    average_rating: '5.0',
-  },
-]
+// Get real boeketten products (only with images)
+const boeketCategories = ['alle-boeketten', 'klassieke-boeketten', 'rozen-boeketten', 'plukboeketten', 'plukboeket']
+const allBoeketten = boeketCategories.flatMap(slug => getProductsByCategorySlug(slug))
+// Remove duplicates by ID and take first 8
+const boeketten = Array.from(new Map(allBoeketten.map(p => [p.id, p])).values()).slice(0, 8)
 
 export default function FeaturedBoeketten() {
   return (

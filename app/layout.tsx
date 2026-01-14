@@ -4,7 +4,9 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import TrustBar from '@/components/layout/TrustBar'
+import HelpWidget from '@/components/shared/HelpWidget'
 import { CartProvider } from '@/components/cart/CartProvider'
+import ConditionalLayout from '@/components/layout/ConditionalLayout'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -42,12 +44,9 @@ export default function RootLayout({
     <html lang="nl" className={`${inter.variable} ${playfair.variable}`}>
       <body className="antialiased font-sans">
         <CartProvider>
-          <TrustBar />
-          <Header />
-          <main className="min-h-screen">
+          <ConditionalLayout>
             {children}
-          </main>
-          <Footer />
+          </ConditionalLayout>
         </CartProvider>
       </body>
     </html>

@@ -114,6 +114,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 ratingCount={product.rating_count}
                 sku={product.sku}
                 permalink={product.permalink}
+                slug={product.slug}
                 image={product.images[0]?.src || ''}
                 onAddToCartDataChange={setCartData}
               />

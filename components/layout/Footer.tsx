@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { NAVIGATION, SITE_NAME } from '@/lib/utils/constants'
 
 export default function Footer() {
@@ -17,7 +18,6 @@ export default function Footer() {
     ],
     categories: NAVIGATION,
     occasions: [
-      { name: 'Valentijnsdag', href: '/categorie/valentijnsdag' },
       { name: 'Pasen', href: '/categorie/pasen' },
       { name: 'Koningsdag', href: '/categorie/koningsdag' },
       { name: 'Moederdag', href: '/categorie/moederdag' },
@@ -28,17 +28,27 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-primary-500 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
+            <Link href="/" className="block mb-4">
+              <Image
+                src="/images/logo.svg"
+                alt="Bloemen van De Gier"
+                width={200}
+                height={50}
+                className="h-10 w-auto brightness-0 invert"
+                priority
+              />
+            </Link>
             <h3 className="text-white text-lg font-bold mb-4">{SITE_NAME}</h3>
-            <p className="text-sm mb-4">
+            <p className="text-sm mb-4 text-white/90">
               Industrieweg 8<br />
               7921 JP Zuidwolde
             </p>
-            <p className="text-sm">
+            <p className="text-sm text-white/80">
               Prachtige bloemen van topkwaliteit. Gegarandeerd meer bloemen voor je geld.
             </p>
           </div>
@@ -51,7 +61,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="hover:text-white transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -68,7 +78,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="hover:text-white transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -85,7 +95,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="hover:text-white transition-colors"
+                    className="text-white/80 hover:text-white transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -96,7 +106,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+        <div className="border-t border-primary-400/50 mt-8 pt-8 text-center text-sm text-white/80">
           <p>&copy; {currentYear} {SITE_NAME}. Alle rechten voorbehouden.</p>
         </div>
       </div>

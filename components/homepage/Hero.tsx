@@ -34,7 +34,7 @@ export default function Hero() {
               </Button>
             </Link>
             <Link href="/rozen">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white text-white hover:bg-white/10 hover:border-white">
                 Ontdek rozen
               </Button>
             </Link>

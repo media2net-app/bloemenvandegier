@@ -2,82 +2,10 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import ProductGrid from '@/components/product/ProductGrid'
 import Button from '@/components/ui/Button'
+import { getProductsByCategorySlug } from '@/lib/data/products'
 
-// Mock data - will be replaced with real WooCommerce data
-const rozen = [
-  {
-    id: 1,
-    name: 'Gele Rozen – 30 of meer',
-    slug: 'gele-rozen-30-of-meer',
-    price: '29.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Gele Rozen' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 2,
-    name: 'Witte Rozen – 30 of meer',
-    slug: 'witte-rozen-30-of-meer',
-    price: '29.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Witte Rozen' }],
-    stock_status: 'instock',
-    average_rating: '4.9',
-  },
-  {
-    id: 3,
-    name: 'Regenboog Rozen – 10 t/m 100 stuks',
-    slug: 'regenboog-rozen',
-    price: '29.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Regenboog Rozen' }],
-    stock_status: 'instock',
-    average_rating: '4.7',
-  },
-  {
-    id: 4,
-    name: 'Roze Rozen – 30 of meer',
-    slug: 'roze-rozen-30-of-meer',
-    price: '29.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Roze Rozen' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 5,
-    name: 'Rode Rozen – 30 of meer',
-    slug: 'rode-rozen-30-of-meer',
-    price: '29.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Rode Rozen' }],
-    stock_status: 'instock',
-    average_rating: '4.9',
-  },
-  {
-    id: 6,
-    name: 'Rode Rozen XXL – Red Naomi | 10 of meer',
-    slug: 'rode-rozen-xxl-red-naomi',
-    price: '22.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Rode Rozen XXL' }],
-    stock_status: 'instock',
-    average_rating: '4.9',
-  },
-  {
-    id: 7,
-    name: 'Rozen Boeket Kort – 50 Stelen',
-    slug: 'rozen-boeket-kort',
-    price: '22.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Rozen Boeket' }],
-    stock_status: 'instock',
-    average_rating: '4.8',
-  },
-  {
-    id: 8,
-    name: 'Roze Rozen XXL – Sweet Pink | 10 of meer',
-    slug: 'roze-rozen-xxl-sweet-pink',
-    price: '19.50',
-    images: [{ src: '/placeholder-flower.jpg', alt: 'Roze Rozen XXL' }],
-    stock_status: 'instock',
-    average_rating: '4.7',
-  },
-]
+// Get real rozen products (only with images)
+const rozen = getProductsByCategorySlug('rozen').slice(0, 8)
 
 export default function RozenSection() {
   return (

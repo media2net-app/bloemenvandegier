@@ -67,13 +67,13 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             <div className="flex items-center gap-3">
               <ShoppingCart className="h-6 w-6 text-primary-600" />
               <h2 className="text-xl font-bold text-gray-900">
-                Winkelwagen ({itemCount})
+                Bloemenmand ({itemCount})
               </h2>
             </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Sluit winkelwagen"
+              aria-label="Sluit bloemenmand"
             >
               <X className="h-6 w-6 text-gray-600" />
             </button>
@@ -85,10 +85,10 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
                 <p className="text-lg font-medium text-gray-900 mb-2">
-                  Je winkelwagen is leeg
+                  Je bloemenmand is leeg
                 </p>
                 <p className="text-sm text-gray-600 mb-6">
-                  Voeg producten toe aan je winkelwagen om verder te gaan
+                  Voeg producten toe aan je bloemenmand om verder te gaan
                 </p>
                 <Button onClick={onClose} variant="outline">
                   Verder winkelen

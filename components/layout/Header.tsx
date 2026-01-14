@@ -3,17 +3,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Menu, X, Search, ShoppingCart, User } from 'lucide-react'
+import { Menu, X, Search, ShoppingCart, User, Truck } from 'lucide-react'
 import { NAVIGATION } from '@/lib/utils/constants'
 import { useCartStore } from '@/lib/cart/store'
 import { useCart } from '@/components/cart/CartProvider'
+import { useAuthStore } from '@/lib/auth/store'
 import Button from '@/components/ui/Button'
 import MobileMenu from './MobileMenu'
+import SearchModal from './SearchModal'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const itemCount = useCartStore((state) => state.getItemCount())
   const { openCart } = useCart()
+  const { isAuthenticated } = useAuthStore()
 
   return (
     <>
@@ -61,23 +65,35 @@ export default function Header() {
             {/* Actions */}
             <div className="flex items-center gap-4">
               <button
+                onClick={() => setIsSearchOpen(true)}
                 aria-label="Zoeken"
                 className="p-2 text-white hover:text-primary-100 transition-colors"
               >
                 <Search className="h-5 w-5" />
               </button>
               
-              <button
+              <Link
+                href="/track"
+                aria-label="Volg mijn bestelling"
+                className="hidden md:flex items-center gap-2 px-3 py-2 text-white hover:text-primary-100 transition-colors text-sm font-medium"
+                title="Volg mijn bestelling"
+              >
+                <Truck className="h-5 w-5" />
+                <span className="hidden lg:inline">Volg mijn bestelling</span>
+              </Link>
+              
+              <Link
+                href={isAuthenticated ? '/account' : '/login'}
                 aria-label="Account"
                 className="p-2 text-white hover:text-primary-100 transition-colors"
               >
                 <User className="h-5 w-5" />
-              </button>
+              </Link>
 
                     <button
                       onClick={openCart}
                       className="relative p-2 text-white hover:text-primary-100 transition-colors"
-                      aria-label="Winkelwagen"
+                      aria-label="Bloemenmand"
                     >
                       <ShoppingCart className="h-5 w-5" />
                       {itemCount > 0 && (
@@ -101,6 +117,7 @@ export default function Header() {
       </header>
 
       <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   )
 }

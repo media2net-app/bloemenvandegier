@@ -58,9 +58,22 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find(p => p.slug === slug)
 }
 
-// Get products by category
+// Helper function to check if product has valid images
+function hasValidImage(product: Product): boolean {
+  return !!(
+    product.images && 
+    product.images.length > 0 && 
+    product.images[0].src && 
+    product.images[0].src.trim() !== '' &&
+    !product.images[0].src.includes('placeholder') &&
+    !product.images[0].src.includes('data:image')
+  )
+}
+
+// Get products by category (only with valid images)
 export function getProductsByCategory(categoryName: string): Product[] {
-  return productsByCategory[categoryName] || []
+  const categoryProducts = productsByCategory[categoryName] || []
+  return categoryProducts.filter(p => hasValidImage(p))
 }
 
 // Get products by category slug
@@ -70,21 +83,24 @@ export function getProductsByCategorySlug(categorySlug: string): Product[] {
   return getProductsByCategory(category.name)
 }
 
-// Get featured products
+// Get featured products (only with valid images)
 export function getFeaturedProducts(limit: number = 8): Product[] {
   return products
-    .filter(p => p.featured || p.images.length > 0)
+    .filter(p => hasValidImage(p))
+    .filter(p => p.featured || p.average_rating)
     .slice(0, limit)
 }
 
-// Get products by search term
+// Get products by search term (only with valid images)
 export function searchProducts(query: string): Product[] {
   const lowerQuery = query.toLowerCase()
-  return products.filter(p =>
-    p.name.toLowerCase().includes(lowerQuery) ||
-    p.short_description.toLowerCase().includes(lowerQuery) ||
-    p.description.toLowerCase().includes(lowerQuery)
-  )
+  return products
+    .filter(p => hasValidImage(p))
+    .filter(p =>
+      p.name.toLowerCase().includes(lowerQuery) ||
+      p.short_description.toLowerCase().includes(lowerQuery) ||
+      p.description.toLowerCase().includes(lowerQuery)
+    )
 }
 
 // Get all categories
@@ -97,7 +113,7 @@ export function getCategoryBySlug(slug: string): Category | undefined {
   return categories.find(c => c.slug === slug)
 }
 
-// Get related products (same category, different product)
+// Get related products (same category, different product, only with valid images)
 export function getRelatedProducts(product: Product, limit: number = 4): Product[] {
   if (!product.categories || product.categories.length === 0) {
     return getFeaturedProducts(limit)
@@ -108,10 +124,11 @@ export function getRelatedProducts(product: Product, limit: number = 4): Product
   
   return categoryProducts
     .filter(p => p.id !== product.id)
+    .filter(p => hasValidImage(p))
     .slice(0, limit)
 }
 
-// Get product variants (same product with different quantities)
+// Get product variants (same product with different quantities, only with valid images)
 export function getProductVariants(product: Product | { id: number; name: string; slug: string }): Product[] {
   // Extract base product name (remove quantity info)
   const baseName = product.name
@@ -122,18 +139,20 @@ export function getProductVariants(product: Product | { id: number; name: string
     .trim()
   
   // Find all products with similar base name
-  const variants = products.filter(p => {
-    if (p.id === product.id) return true
-    
-    const pBaseName = p.name
-      .replace(/\d+\s*(rozen|roos|stuks|stelen)/gi, '')
-      .replace(/\|\s*\d+.*$/i, '')
-      .replace(/\s*-\s*\d+.*$/i, '')
-      .replace(/\s*–\s*\d+.*$/i, '')
-      .trim()
-    
-    return pBaseName === baseName
-  })
+  const variants = products
+    .filter(p => hasValidImage(p))
+    .filter(p => {
+      if (p.id === product.id) return true
+      
+      const pBaseName = p.name
+        .replace(/\d+\s*(rozen|roos|stuks|stelen)/gi, '')
+        .replace(/\|\s*\d+.*$/i, '')
+        .replace(/\s*-\s*\d+.*$/i, '')
+        .replace(/\s*–\s*\d+.*$/i, '')
+        .trim()
+      
+      return pBaseName === baseName
+    })
   
   // Sort by quantity (extract number from name)
   return variants.sort((a, b) => {

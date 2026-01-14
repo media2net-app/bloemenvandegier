@@ -119,12 +119,14 @@ export default function CategoryClient({ category, products: allProducts }: Cate
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar with filters */}
           <aside className="lg:w-64 flex-shrink-0">
-            <ProductFilters
-              filters={mockFilters}
-              activeFilters={activeFilters}
-              onFilterChange={handleFilterChange}
-              onClearFilters={handleClearFilters}
-            />
+            <div className="lg:sticky lg:top-24">
+              <ProductFilters
+                filters={mockFilters}
+                activeFilters={activeFilters}
+                onFilterChange={handleFilterChange}
+                onClearFilters={handleClearFilters}
+              />
+            </div>
           </aside>
 
           {/* Main content */}

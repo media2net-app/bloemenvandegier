@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import { Star, Truck, Shield, Heart, Minus, Plus, MessageSquare, ChevronDown, ChevronUp, Gift, X } from 'lucide-react'
+import { Star, Truck, Shield, Heart, Minus, Plus, MessageSquare, ChevronDown, ChevronUp, Gift, X, Clock } from 'lucide-react'
 import Price from '@/components/shared/Price'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -30,6 +30,7 @@ interface ProductInfoProps {
   ratingCount?: number
   sku?: string
   permalink: string
+  slug?: string
   image: string
   onAddToCartDataChange?: (data: {
     quantity: number
@@ -53,14 +54,21 @@ export default function ProductInfo({
   ratingCount,
   sku,
   permalink,
+  slug,
   image,
   onAddToCartDataChange,
 }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1)
+  const [totalRoses, setTotalRoses] = useState(10) // Standaard 10 rozen voor roze-rozen-xxl
   const [cardMessage, setCardMessage] = useState('')
   const [ribbonText, setRibbonText] = useState('')
   const [ribbonColor, setRibbonColor] = useState('rood')
   const [selectedAddons, setSelectedAddons] = useState<string[]>([])
+  
+  // Check if this is the roze-rozen-xxl product
+  const isRozeRozenXXL = slug === 'roze-rozen-xxl'
+  // Check if this is the plukboeket-xl product (Thursday Deal)
+  const isPlukboeketXL = slug === 'plukboeket-xl'
   const [showFullDescription, setShowFullDescription] = useState(false)
   const [activeOption, setActiveOption] = useState<'card' | 'ribbon' | 'addons' | null>(null)
   const [selectedVariant, setSelectedVariant] = useState<{ id: number; name: string; price: string; quantity: number } | null>(null)
@@ -98,11 +106,21 @@ export default function ProductInfo({
   }
 
   // Initialize selected variant
-  const displayPrice = selectedVariant ? selectedVariant.price : price
+  const baseDisplayPrice = selectedVariant ? selectedVariant.price : price
   // For variants (rozen), use variant quantity; for normal products (boeketten), use quantity state
   const displayQuantity = selectedVariant 
     ? selectedVariant.quantity 
     : (hasVariants ? getQuantityFromName(name) : quantity)
+  
+  // Calculate price for roze-rozen-xxl: base price (10 rozen) + extra rozen (€1 per roos)
+  const baseRoses = 10
+  const basePrice = isRozeRozenXXL ? parseFloat(price) : 0 // €19,50 voor 10 rozen
+  const extraRoses = isRozeRozenXXL ? Math.max(0, totalRoses - baseRoses) : 0
+  const extraRosesPrice = isRozeRozenXXL ? extraRoses * 1.00 : 0
+  const finalPrice = isRozeRozenXXL ? (basePrice + extraRosesPrice).toFixed(2) : baseDisplayPrice
+  
+  // For roze-rozen-xxl, use calculated final price, otherwise use base price
+  const displayPrice = isRozeRozenXXL ? finalPrice : baseDisplayPrice
 
   // Available addons (can be made dynamic later)
   // Images loaded directly from live website
@@ -147,6 +165,15 @@ export default function ProductInfo({
         price: addon.price,
       } : null
     }).filter((addon): addon is { id: string; name: string; price: number } => addon !== null)
+    
+    // Add extra rozen as addon if selected (only for roze-rozen-xxl)
+    if (isRozeRozenXXL && extraRoses > 0) {
+      addonsData.push({
+        id: 'extra-rozen',
+        name: `${extraRoses} extra roos${extraRoses > 1 ? 'en' : ''}`,
+        price: extraRosesPrice,
+      })
+    }
 
     // Use selected variant if available, otherwise use current product
     const productToAdd = selectedVariant 
@@ -165,7 +192,7 @@ export default function ProductInfo({
         }
       : {
           id,
-          name,
+          name: isRozeRozenXXL ? `${name} (${totalRoses} rozen)` : name,
           price: parseFloat(displayPrice),
           quantity,
           image,
@@ -180,7 +207,7 @@ export default function ProductInfo({
     addItem(productToAdd)
     // Open cart sidebar after adding item
     openCart()
-  }, [selectedVariant, id, name, displayPrice, quantity, image, permalink, sku, addItem, openCart, selectedAddons, availableAddons, cardMessage, ribbonText, ribbonColor])
+  }, [selectedVariant, id, name, displayPrice, quantity, image, permalink, sku, addItem, openCart, selectedAddons, availableAddons, cardMessage, ribbonText, ribbonColor, isRozeRozenXXL, extraRoses, extraRosesPrice, totalRoses])
 
   // Clean description
   const cleanedDescription = cleanDesc(description)
@@ -199,6 +226,8 @@ export default function ProductInfo({
     const addon = availableAddons.find(a => a.id === addonId)
     return total + (addon?.price || 0)
   }, 0)
+  
+  const totalExtraPrice = totalAddonPrice + extraRosesPrice
 
   // Notify parent of cart data changes for sticky button
   useEffect(() => {
@@ -208,14 +237,14 @@ export default function ProductInfo({
         onAddToCartDataChange({
           quantity,
           price: displayPrice,
-          totalAddonPrice,
+          totalAddonPrice: totalExtraPrice,
           selectedVariant,
           onAddToCart: handleAddToCart,
         })
       }, 0)
       return () => clearTimeout(timeoutId)
     }
-  }, [quantity, displayPrice, totalAddonPrice, selectedVariant, onAddToCartDataChange, handleAddToCart])
+  }, [quantity, displayPrice, totalExtraPrice, selectedVariant, onAddToCartDataChange, handleAddToCart, extraRoses, totalRoses, isRozeRozenXXL])
 
   const isInStock = stockStatus === 'instock'
   const isOnSale = regularPrice && parseFloat(regularPrice) > parseFloat(price)
@@ -252,13 +281,70 @@ export default function ProductInfo({
 
       {/* Price */}
       <div>
-        <Price price={displayPrice} regularPrice={regularPrice} size="lg" />
-        {isOnSale && (
-          <Badge variant="error" className="ml-3">
-            Aanbieding
-          </Badge>
+        {isRozeRozenXXL ? (
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-2">
+              <Price price={displayPrice} size="lg" />
+              {isOnSale && (
+                <Badge variant="error" className="ml-3">
+                  Aanbieding
+                </Badge>
+              )}
+            </div>
+            <p className="text-sm text-gray-600">
+              {totalRoses} rozen {extraRoses > 0 && `(${baseRoses} standaard + ${extraRoses} extra)`}
+            </p>
+          </div>
+        ) : (
+          <>
+            <Price price={displayPrice} regularPrice={regularPrice} size="lg" />
+            {isOnSale && (
+              <Badge variant="error" className="ml-3">
+                Aanbieding
+              </Badge>
+            )}
+          </>
         )}
       </div>
+
+      {/* Thursday Deal Availability - only for plukboeket-xl */}
+      {isPlukboeketXL && (
+        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg p-6 text-white">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="h-5 w-5" />
+            <span className="text-sm font-medium uppercase tracking-wide">
+              Donderdag Deal - Beperkte voorraad
+            </span>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-primary-100">
+                Nog beschikbaar
+              </span>
+              <span className="text-2xl font-bold">
+                10 / 40
+              </span>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full bg-white/20 rounded-full h-3 mb-3">
+              <div
+                className="bg-white rounded-full h-3 transition-all duration-500"
+                style={{ width: '75%' }}
+              />
+            </div>
+            
+            <p className="text-sm text-primary-100">
+              30 van de 40 boeketten al verkocht
+            </p>
+          </div>
+          
+          <p className="text-sm text-primary-100 mt-4">
+            ⚡ Wees er snel bij! Deze deal is alleen beschikbaar op donderdag en heeft beperkte voorraad.
+          </p>
+        </div>
+      )}
 
       {/* Stock status */}
       <div>
@@ -554,26 +640,58 @@ export default function ProductInfo({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">Aantal boeketten:</label>
-          <div className="flex items-center border border-gray-300 rounded-lg">
-            <button
-              onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-              className="p-2 hover:bg-gray-100 transition-colors"
-              aria-label="Verminder aantal"
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-            <span className="px-4 py-2 min-w-[3rem] text-center font-medium">
-              {quantity}
-            </span>
-            <button
-              onClick={() => setQuantity((prev) => prev + 1)}
-              className="p-2 hover:bg-gray-100 transition-colors"
-              aria-label="Verhoog aantal"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
+        <div className="space-y-4">
+          {/* Aantal rozen - alleen voor roze-rozen-xxl */}
+          {isRozeRozenXXL && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-gray-700">Aantal rozen:</label>
+                <select
+                  value={totalRoses}
+                  onChange={(e) => setTotalRoses(parseInt(e.target.value))}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                >
+                  {Array.from({ length: 21 }, (_, i) => i + 10).map((num) => {
+                    const extra = num - 10
+                    const extraPrice = extra * 1.00
+                    const totalPrice = basePrice + extraPrice
+                    return (
+                      <option key={num} value={num}>
+                        {num} rozen {num === 10 ? '(standaard)' : `(+${formatPrice(extraPrice.toFixed(2))})`} - {formatPrice(totalPrice.toFixed(2))}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+              <p className="text-xs text-gray-600">
+                Standaard: 10 rozen voor {formatPrice(basePrice.toFixed(2))}. 
+                {extraRoses > 0 && ` Je hebt ${extraRoses} extra roos${extraRoses > 1 ? 'en' : ''} geselecteerd (+${formatPrice(extraRosesPrice.toFixed(2))}).`}
+              </p>
+            </div>
+          )}
+          
+          {/* Aantal boeketten */}
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium text-gray-700">Aantal boeketten:</label>
+            <div className="flex items-center border border-gray-300 rounded-lg">
+              <button
+                onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                className="p-2 hover:bg-gray-100 transition-colors"
+                aria-label="Verminder aantal"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <span className="px-4 py-2 min-w-[3rem] text-center font-medium">
+                {quantity}
+              </span>
+              <button
+                onClick={() => setQuantity((prev) => prev + 1)}
+                className="p-2 hover:bg-gray-100 transition-colors"
+                aria-label="Verhoog aantal"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -586,7 +704,7 @@ export default function ProductInfo({
           onClick={handleAddToCart}
           disabled={!isInStock}
         >
-          {isInStock ? 'In winkelwagen' : 'Niet op voorraad'}
+          {isInStock ? 'In bloemenmand' : 'Niet op voorraad'}
         </Button>
 
         <div className="flex gap-2">

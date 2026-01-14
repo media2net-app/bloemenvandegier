@@ -73,7 +73,7 @@ export default function StickyAddToCart({
             className="flex-shrink-0"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
-            {isInStock ? 'In winkelwagen' : 'Niet op voorraad'}
+            {isInStock ? 'In bloemenmand' : 'Niet op voorraad'}
           </Button>
         </div>
       </div>

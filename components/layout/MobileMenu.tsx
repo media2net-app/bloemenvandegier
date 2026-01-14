@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { NAVIGATION } from '@/lib/utils/constants'
-import { X } from 'lucide-react'
+import { X, Truck } from 'lucide-react'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -49,6 +49,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/track"
+                  onClick={onClose}
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-lg transition-colors font-medium"
+                >
+                  <Truck className="h-5 w-5" />
+                  Volg mijn bestelling
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

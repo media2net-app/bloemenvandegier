@@ -14,10 +14,43 @@ export default function CardPreview({ message, onChange, className }: CardPrevie
 
   // Sync contentEditable with message prop
   useEffect(() => {
-    if (editableRef.current && editableRef.current.textContent !== message) {
-      editableRef.current.textContent = message
+    if (editableRef.current && editableRef.current.innerText !== message) {
+      editableRef.current.innerText = message
     }
   }, [message])
+
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    const text = e.currentTarget.innerText || ''
+    if (text.length <= 150) {
+      onChange(text)
+    } else {
+      // Truncate to 150 characters
+      const truncated = text.slice(0, 150)
+      e.currentTarget.innerText = truncated
+      onChange(truncated)
+      // Move cursor to end
+      const range = document.createRange()
+      const selection = window.getSelection()
+      range.selectNodeContents(e.currentTarget)
+      range.collapse(false)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    }
+  }
+
+  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    // If empty, ensure cursor is positioned correctly
+    if (!e.currentTarget.innerText.trim() && !e.currentTarget.innerHTML.trim()) {
+      // Add a zero-width space to ensure the div is not empty, which helps with centering
+      e.currentTarget.innerHTML = '<br>'
+      const range = document.createRange()
+      const selection = window.getSelection()
+      range.setStart(e.currentTarget, 0)
+      range.collapse(true)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    }
+  }
 
   return (
     <div className={cn('relative', className)}>
@@ -39,23 +72,14 @@ export default function CardPreview({ message, onChange, className }: CardPrevie
             ref={editableRef}
             contentEditable
             suppressContentEditableWarning
-            onInput={(e) => {
-              const text = e.currentTarget.textContent || ''
-              if (text.length <= 150) {
-                onChange(text)
-              } else {
-                e.currentTarget.textContent = text.slice(0, 150)
-                onChange(text.slice(0, 150))
-              }
-            }}
-            className="w-full h-full text-center px-3 py-4 text-gray-800 text-base md:text-lg leading-relaxed font-serif bg-transparent border-none focus:outline-none overflow-auto"
+            onInput={handleInput}
+            onFocus={handleFocus}
+            className="w-full text-center px-3 py-4 text-gray-800 text-base md:text-lg leading-relaxed font-serif bg-transparent border-none focus:outline-none"
             style={{
               textAlign: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               wordBreak: 'break-word',
               overflowWrap: 'break-word',
+              whiteSpace: 'pre-wrap',
             }}
             data-placeholder="Schrijf hier je persoonlijke boodschap..."
           />
