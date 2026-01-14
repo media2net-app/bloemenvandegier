@@ -1,0 +1,512 @@
+[
+  {
+    "id": 1,
+    "name": "BloemenBundels",
+    "slug": "bloemenbundels",
+    "productCount": 7
+  },
+  {
+    "id": 2,
+    "name": "Emmer Bloemen",
+    "slug": "emmer-bloemen",
+    "productCount": 7
+  },
+  {
+    "id": 3,
+    "name": "Alle boeketten",
+    "slug": "alle-boeketten",
+    "productCount": 41
+  },
+  {
+    "id": 4,
+    "name": "Bedankje",
+    "slug": "bedankje",
+    "productCount": 19
+  },
+  {
+    "id": 5,
+    "name": "Beterschap",
+    "slug": "beterschap",
+    "productCount": 17
+  },
+  {
+    "id": 6,
+    "name": "Bloemen bezorgen",
+    "slug": "bloemen-bezorgen",
+    "productCount": 51
+  },
+  {
+    "id": 7,
+    "name": "Geboorte",
+    "slug": "geboorte",
+    "productCount": 16
+  },
+  {
+    "id": 8,
+    "name": "Geliefde",
+    "slug": "geliefde",
+    "productCount": 25
+  },
+  {
+    "id": 9,
+    "name": "Ik zoek een boeket voor: > Bedankje",
+    "slug": "ik-zoek-een-boeket-voor-bedankje",
+    "productCount": 19
+  },
+  {
+    "id": 10,
+    "name": "Plukboeket",
+    "slug": "plukboeket",
+    "productCount": 8
+  },
+  {
+    "id": 11,
+    "name": "Plukboeketten",
+    "slug": "plukboeketten",
+    "productCount": 9
+  },
+  {
+    "id": 12,
+    "name": "Verjaardag",
+    "slug": "verjaardag",
+    "productCount": 19
+  },
+  {
+    "id": 13,
+    "name": "Extra",
+    "slug": "extra",
+    "productCount": 1
+  },
+  {
+    "id": 14,
+    "name": "Klassieke boeketten",
+    "slug": "klassieke-boeketten",
+    "productCount": 23
+  },
+  {
+    "id": 15,
+    "name": "Rozen",
+    "slug": "rozen",
+    "productCount": 79
+  },
+  {
+    "id": 16,
+    "name": "Rozen boeketten",
+    "slug": "rozen-boeketten",
+    "productCount": 30
+  },
+  {
+    "id": 17,
+    "name": "Secretaressedag",
+    "slug": "secretaressedag",
+    "productCount": 11
+  },
+  {
+    "id": 18,
+    "name": "Geen categorie",
+    "slug": "geen-categorie",
+    "productCount": 3
+  },
+  {
+    "id": 19,
+    "name": "Moederdag Cadeau",
+    "slug": "moederdag-cadeau",
+    "productCount": 16
+  },
+  {
+    "id": 20,
+    "name": "Bossen Bloemen per soort",
+    "slug": "bossen-bloemen-per-soort",
+    "productCount": 14
+  },
+  {
+    "id": 21,
+    "name": "Pioenrozen",
+    "slug": "pioenrozen",
+    "productCount": 5
+  },
+  {
+    "id": 22,
+    "name": "Zonnebloemen",
+    "slug": "zonnebloemen",
+    "productCount": 2
+  },
+  {
+    "id": 23,
+    "name": "Alle Groen & Decoratief",
+    "slug": "alle-groen-decoratief",
+    "productCount": 84
+  },
+  {
+    "id": 24,
+    "name": "Takken",
+    "slug": "takken",
+    "productCount": 36
+  },
+  {
+    "id": 25,
+    "name": "Bloemenbon",
+    "slug": "bloemenbon",
+    "productCount": 12
+  },
+  {
+    "id": 26,
+    "name": "Chrysanten",
+    "slug": "chrysanten",
+    "productCount": 7
+  },
+  {
+    "id": 27,
+    "name": "Herfstbloemen",
+    "slug": "herfstbloemen",
+    "productCount": 33
+  },
+  {
+    "id": 28,
+    "name": "Weekdeals",
+    "slug": "weekdeals",
+    "productCount": 8
+  },
+  {
+    "id": 29,
+    "name": "Dadeltakken",
+    "slug": "dadeltakken",
+    "productCount": 3
+  },
+  {
+    "id": 30,
+    "name": "Groen & Decoratief",
+    "slug": "groen-decoratief",
+    "productCount": 45
+  },
+  {
+    "id": 31,
+    "name": "Pasen",
+    "slug": "pasen",
+    "productCount": 5
+  },
+  {
+    "id": 32,
+    "name": "Kerst",
+    "slug": "kerst",
+    "productCount": 6
+  },
+  {
+    "id": 33,
+    "name": "Kersttakken",
+    "slug": "kersttakken",
+    "productCount": 27
+  },
+  {
+    "id": 34,
+    "name": "Rozenbottels",
+    "slug": "rozenbottels",
+    "productCount": 4
+  },
+  {
+    "id": 35,
+    "name": "Asparagus takken",
+    "slug": "asparagus-takken",
+    "productCount": 1
+  },
+  {
+    "id": 36,
+    "name": "Kerstgroen",
+    "slug": "kerstgroen",
+    "productCount": 39
+  },
+  {
+    "id": 37,
+    "name": "Droogbloemen",
+    "slug": "droogbloemen",
+    "productCount": 16
+  },
+  {
+    "id": 38,
+    "name": "Eucalyptus",
+    "slug": "eucalyptus",
+    "productCount": 9
+  },
+  {
+    "id": 39,
+    "name": "Kerst Knallers",
+    "slug": "kerst-knallers",
+    "productCount": 19
+  },
+  {
+    "id": 40,
+    "name": "Wilde tijm",
+    "slug": "wilde-tijm",
+    "productCount": 1
+  },
+  {
+    "id": 41,
+    "name": "Mossen",
+    "slug": "mossen",
+    "productCount": 6
+  },
+  {
+    "id": 42,
+    "name": "Guirlandes",
+    "slug": "guirlandes",
+    "productCount": 3
+  },
+  {
+    "id": 43,
+    "name": "Mega Kerst Deals",
+    "slug": "mega-kerst-deals",
+    "productCount": 9
+  },
+  {
+    "id": 44,
+    "name": "Kerstkransen",
+    "slug": "kerstkransen",
+    "productCount": 23
+  },
+  {
+    "id": 45,
+    "name": "Kransen",
+    "slug": "kransen",
+    "productCount": 16
+  },
+  {
+    "id": 46,
+    "name": "Kleine kerstbomen",
+    "slug": "kleine-kerstbomen",
+    "productCount": 8
+  },
+  {
+    "id": 47,
+    "name": "Pepperberries",
+    "slug": "pepperberries",
+    "productCount": 6
+  },
+  {
+    "id": 48,
+    "name": "Kerststukjes",
+    "slug": "kerststukjes",
+    "productCount": 6
+  },
+  {
+    "id": 49,
+    "name": "Kerstboeketten",
+    "slug": "kerstboeketten",
+    "productCount": 17
+  },
+  {
+    "id": 50,
+    "name": "Amaryllis",
+    "slug": "amaryllis",
+    "productCount": 6
+  },
+  {
+    "id": 51,
+    "name": "Fijn bladgroen",
+    "slug": "fijn-bladgroen",
+    "productCount": 7
+  },
+  {
+    "id": 52,
+    "name": "Enkele tulpen",
+    "slug": "enkele-tulpen",
+    "productCount": 8
+  },
+  {
+    "id": 53,
+    "name": "Tulpen boeketten",
+    "slug": "tulpen-boeketten",
+    "productCount": 15
+  },
+  {
+    "id": 54,
+    "name": "Voorjaarsbloemen",
+    "slug": "voorjaarsbloemen",
+    "productCount": 23
+  },
+  {
+    "id": 55,
+    "name": "Hollandse Klassiekers",
+    "slug": "hollandse-klassiekers",
+    "productCount": 8
+  },
+  {
+    "id": 56,
+    "name": "Dubbele tulpen",
+    "slug": "dubbele-tulpen",
+    "productCount": 6
+  },
+  {
+    "id": 57,
+    "name": "Ranonkels",
+    "slug": "ranonkels",
+    "productCount": 7
+  },
+  {
+    "id": 58,
+    "name": "Hyacinten",
+    "slug": "hyacinten",
+    "productCount": 3
+  },
+  {
+    "id": 59,
+    "name": "Seizoensboeketten",
+    "slug": "seizoensboeketten",
+    "productCount": 1
+  },
+  {
+    "id": 60,
+    "name": "Grof bladgroen",
+    "slug": "grof-bladgroen",
+    "productCount": 3
+  },
+  {
+    "id": 61,
+    "name": "Voorjaarstakken",
+    "slug": "voorjaarstakken",
+    "productCount": 4
+  },
+  {
+    "id": 62,
+    "name": "Kerst > Kerstboeketten",
+    "slug": "kerst-kerstboeketten",
+    "productCount": 4
+  },
+  {
+    "id": 63,
+    "name": "Gipskruid",
+    "slug": "gipskruid",
+    "productCount": 1
+  },
+  {
+    "id": 64,
+    "name": "Pampasgras Pluimen",
+    "slug": "pampasgras-pluimen",
+    "productCount": 13
+  },
+  {
+    "id": 65,
+    "name": "Freesia's",
+    "slug": "freesia-s",
+    "productCount": 2
+  },
+  {
+    "id": 66,
+    "name": "Alliums",
+    "slug": "alliums",
+    "productCount": 2
+  },
+  {
+    "id": 67,
+    "name": "Lelies",
+    "slug": "lelies",
+    "productCount": 1
+  },
+  {
+    "id": 68,
+    "name": "Lisianthus",
+    "slug": "lisianthus",
+    "productCount": 3
+  },
+  {
+    "id": 69,
+    "name": "Campanula's",
+    "slug": "campanula-s",
+    "productCount": 3
+  },
+  {
+    "id": 70,
+    "name": "Gerbera's",
+    "slug": "gerbera-s",
+    "productCount": 2
+  },
+  {
+    "id": 71,
+    "name": "Alstroemeria's",
+    "slug": "alstroemeria-s",
+    "productCount": 2
+  },
+  {
+    "id": 72,
+    "name": "Hortensia's",
+    "slug": "hortensia-s",
+    "productCount": 3
+  },
+  {
+    "id": 73,
+    "name": "Schors",
+    "slug": "schors",
+    "productCount": 1
+  },
+  {
+    "id": 74,
+    "name": "Diplocyclos",
+    "slug": "diplocyclos",
+    "productCount": 1
+  },
+  {
+    "id": 75,
+    "name": "Vazen",
+    "slug": "vazen",
+    "productCount": 3
+  },
+  {
+    "id": 76,
+    "name": "Bruiloft bundels",
+    "slug": "bruiloft-bundels",
+    "productCount": 12
+  },
+  {
+    "id": 77,
+    "name": "Gekleurde kerstbomen",
+    "slug": "gekleurde-kerstbomen",
+    "productCount": 8
+  },
+  {
+    "id": 78,
+    "name": "Krans maken",
+    "slug": "krans-maken",
+    "productCount": 6
+  },
+  {
+    "id": 79,
+    "name": "Uncategorized",
+    "slug": "uncategorized",
+    "productCount": 11
+  },
+  {
+    "id": 80,
+    "name": "Wax amaryllis",
+    "slug": "wax-amaryllis",
+    "productCount": 12
+  },
+  {
+    "id": 81,
+    "name": "Brievenbus tulpen",
+    "slug": "brievenbus-tulpen",
+    "productCount": 10
+  },
+  {
+    "id": 82,
+    "name": "Categorie Chiel",
+    "slug": "categorie-chiel",
+    "productCount": 1
+  },
+  {
+    "id": 83,
+    "name": "Olijfbomen",
+    "slug": "olijfbomen",
+    "productCount": 5
+  },
+  {
+    "id": 84,
+    "name": "Bloemenpakketten",
+    "slug": "bloemenpakketten",
+    "productCount": 3
+  },
+  {
+    "id": 85,
+    "name": "Kerst > Kerstgroen",
+    "slug": "kerst-kerstgroen",
+    "productCount": 1
+  }
+]
