@@ -16,7 +16,8 @@ import {
   Search,
   Facebook,
   Instagram,
-  Music
+  Music,
+  Calendar as CalendarIcon
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import Card from '@/components/ui/Card'
@@ -134,20 +135,33 @@ export default function AdminMarketingPage() {
       color: 'text-blue-500',
       href: '/admin/marketing/meta',
     },
-    {
-      name: 'TikTok',
-      spend: 1500,
-      clicks: 3000,
-      impressions: 50000,
-      conversions: 120,
-      ctr: 6.0,
-      cpc: 0.50,
-      roas: 3.2,
-      icon: Music,
-      color: 'text-black',
-      href: '/admin/marketing/tiktok',
-    },
-  ]
+  {
+    name: 'TikTok',
+    spend: 1500,
+    clicks: 3000,
+    impressions: 50000,
+    conversions: 120,
+    ctr: 6.0,
+    cpc: 0.50,
+    roas: 3.2,
+    icon: Music,
+    color: 'text-black',
+    href: '/admin/marketing/tiktok',
+  },
+  {
+    name: 'Content Kalender',
+    spend: 0,
+    clicks: 0,
+    impressions: 0,
+    conversions: 0,
+    ctr: 0,
+    cpc: 0,
+    roas: 0,
+    icon: CalendarIcon,
+    color: 'text-purple-600',
+    href: '/admin/marketing/content-kalender',
+  },
+]
 
   if (isLoading) {
     return (

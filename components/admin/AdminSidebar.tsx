@@ -47,6 +47,7 @@ const implementedPages = [
   '/admin/marketing/organisch',
   '/admin/marketing/meta',
   '/admin/marketing/tiktok',
+  '/admin/marketing/content-kalender',
   '/admin/taken',
 ]
 
