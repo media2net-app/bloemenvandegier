@@ -26,7 +26,8 @@ import {
   TrendingUp,
   Facebook,
   Music,
-  Calendar
+  Calendar,
+  ClipboardList
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -35,6 +36,7 @@ interface MenuItem {
   href?: string
   icon: React.ComponentType<{ className?: string }>
   children?: MenuItem[]
+  isNew?: boolean
 }
 
 // Define which pages are implemented
@@ -42,6 +44,7 @@ const implementedPages = [
   '/admin',
   '/admin/producten',
   '/admin/bestellingen',
+  '/admin/order-picker',
   '/admin/klanten',
   '/admin/abonnementen',
   '/admin/berichten',
@@ -63,6 +66,7 @@ const menuItems: MenuItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
+  { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },
   { name: 'Klanten', href: '/admin/klanten', icon: Users },
   { name: 'Abonnementen', href: '/admin/abonnementen', icon: Repeat },
   { name: 'Categorieën', href: '/admin/categorieen', icon: Tag },
@@ -165,6 +169,7 @@ export default function AdminSidebar() {
               const isExpanded = expandedMenus.includes(item.name)
               const isImplemented = item.href ? implementedPages.includes(item.href) : true
               const showUnreadBadge = item.href === '/admin/berichten' && unreadCount > 0
+              const showNewBadge = item.isNew
               
               return (
                 <li key={item.name}>
@@ -190,6 +195,11 @@ export default function AdminSidebar() {
                         <div className="flex items-center gap-3 flex-1">
                           <Icon className="h-5 w-5 flex-shrink-0" />
                           <span className="font-medium">{item.name}</span>
+                          {showNewBadge && (
+                            <span className="px-1.5 py-0.5 bg-red-500 text-white text-xs font-bold rounded">
+                              NIEUW
+                            </span>
+                          )}
                         </div>
                         {isExpanded ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -255,6 +265,11 @@ export default function AdminSidebar() {
                           <div className="flex items-center gap-3 flex-1">
                             <Icon className="h-5 w-5 flex-shrink-0" />
                             <span className="font-medium">{item.name}</span>
+                            {showNewBadge && (
+                              <span className="px-1.5 py-0.5 bg-red-500 text-white text-xs font-bold rounded">
+                                NIEUW
+                              </span>
+                            )}
                           </div>
                           {showUnreadBadge && (
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">

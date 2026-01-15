@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { 
   CheckCircle,
   Circle,
@@ -24,6 +25,8 @@ import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import { formatPrice } from '@/lib/utils/format'
+import { getAllProducts } from '@/lib/data/products'
+import { getProductImage } from '@/lib/utils/getProductImage'
 
 interface OrderItem {
   id: string
@@ -55,50 +58,55 @@ interface Order {
   notes?: string
 }
 
-const mockOrder: Order = {
-  id: 'ORD1001',
-  orderNumber: '#1001',
-  customer: {
-    name: 'Jan Jansen',
-    email: 'jan.jansen@example.com',
-    phone: '+31 6 12345678',
-  },
-  deliveryDate: new Date().toISOString().split('T')[0],
-  deliveryTime: 'day',
-  address: {
-    street: 'Hoofdstraat',
-    houseNumber: '123',
-    postalCode: '1234 AB',
-    city: 'Amsterdam',
-  },
-  items: [
-    {
-      id: '1',
-      name: 'Boeket Rode Rozen',
-      quantity: 1,
-      sku: 'ROS-001',
-      location: 'A-12-3',
-      picked: false,
-    },
-    {
-      id: '2',
-      name: 'Glazen Vaas',
-      quantity: 1,
-      sku: 'VAAS-001',
-      location: 'B-5-2',
-      picked: false,
-    },
-    {
-      id: '3',
-      name: 'Persoonlijk Kaartje',
-      quantity: 1,
-      sku: 'CARD-001',
-      location: 'C-1-1',
-      picked: false,
-    },
-  ],
-  notes: 'Graag voor de deur plaatsen',
+// Get products with images for demo
+function getDemoProducts() {
+  const allProducts = getAllProducts()
+  const productsWithImages = allProducts.filter(
+    p => p.images && 
+    p.images.length > 0 && 
+    p.images[0].src && 
+    !p.images[0].src.includes('placeholder') &&
+    !p.images[0].src.includes('data:image')
+  )
+  
+  // Return first 3 products with images
+  return productsWithImages.slice(0, 3)
 }
+
+// Create mock order with real products
+function createMockOrder(): Order {
+  const demoProducts = getDemoProducts()
+  
+  return {
+    id: 'ORD1001',
+    orderNumber: '#1001',
+    customer: {
+      name: 'Jan Jansen',
+      email: 'jan.jansen@example.com',
+      phone: '+31 6 12345678',
+    },
+    deliveryDate: new Date().toISOString().split('T')[0],
+    deliveryTime: 'day',
+    address: {
+      street: 'Hoofdstraat',
+      houseNumber: '123',
+      postalCode: '1234 AB',
+      city: 'Amsterdam',
+    },
+    items: demoProducts.map((product, index) => ({
+      id: String(product.id),
+      name: product.name,
+      quantity: 1,
+      sku: product.sku || `PROD-${product.id}`,
+      location: `A-${Math.floor(index / 3) + 1}-${(index % 3) + 1}`,
+      image: getProductImage(product.images),
+      picked: false,
+    })),
+    notes: 'Graag voor de deur plaatsen',
+  }
+}
+
+const mockOrder = createMockOrder()
 
 export default function OrderPickerPage() {
   const router = useRouter()
@@ -118,9 +126,13 @@ export default function OrderPickerPage() {
   const loadOrder = async () => {
     setIsLoading(true)
     try {
-      // In a real app, this would be an API call
+      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500))
-      setOrder(mockOrder)
+      // Always use fresh mock order for simulation mode
+      const freshOrder = createMockOrder()
+      setOrder(freshOrder)
+      setCurrentStep(0)
+      setIsComplete(false)
       setIsLoading(false)
     } catch (error) {
       console.error('Error loading order:', error)
@@ -138,13 +150,12 @@ export default function OrderPickerPage() {
   }
 
   const handleNextStep = () => {
-    if (currentStep < order.items.length - 1) {
-      setCurrentStep(currentStep + 1)
+    // If on last step, show completion (in simulation mode, allow even if not all picked)
+    if (currentStep === order.items.length - 1) {
+      setIsComplete(true)
     } else {
-      // All items picked, show completion
-      if (order.items.every(item => item.picked)) {
-        setIsComplete(true)
-      }
+      // Move to next step
+      setCurrentStep(currentStep + 1)
     }
   }
 
@@ -278,9 +289,22 @@ export default function OrderPickerPage() {
                       <div className="flex items-start gap-6">
                         {/* Item Icon/Image */}
                         <div className="flex-shrink-0">
-                          <div className="w-24 h-24 bg-primary-100 rounded-xl flex items-center justify-center">
-                            <Package className="h-12 w-12 text-primary-600" />
-                          </div>
+                          {currentItem.image ? (
+                            <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 border-2 border-primary-200">
+                              <Image
+                                src={currentItem.image}
+                                alt={currentItem.name}
+                                width={96}
+                                height={96}
+                                className="w-full h-full object-cover"
+                                unoptimized
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-24 h-24 bg-primary-100 rounded-xl flex items-center justify-center">
+                              <Package className="h-12 w-12 text-primary-600" />
+                            </div>
+                          )}
                         </div>
 
                         {/* Item Info */}
@@ -424,13 +448,13 @@ export default function OrderPickerPage() {
                     </Button>
                     <Button
                       onClick={handleNextStep}
-                      disabled={currentStep === order.items.length - 1 && !allPicked}
+                      disabled={false}
                       className="flex-1 bg-primary-600 hover:bg-primary-700 text-white"
                     >
                       {currentStep === order.items.length - 1 ? (
                         <>
                           <Check className="h-5 w-5 mr-2" />
-                          Voltooien
+                          {allPicked ? 'Voltooien' : 'Volgende (test modus)'}
                         </>
                       ) : (
                         <>
