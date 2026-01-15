@@ -5,6 +5,8 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductFilters from '@/components/product/ProductFilters'
 import ProductSort from '@/components/product/ProductSort'
+import CategorySEOText from '@/components/category/CategorySEOText'
+import CategoryIntroText from '@/components/category/CategoryIntroText'
 import { getProductsByCategorySlug, getAllProducts } from '@/lib/data/products'
 
 // Get all boeketten products - combine multiple boeket categories
@@ -104,12 +106,23 @@ export default function BoekettenPage() {
               { label: 'Boeketten', href: '#' },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             Boeketten
           </h1>
-          <p className="text-lg text-gray-600">
-            Speciaal voor jou geselecteerd en samengesteld
-          </p>
+          <div className="space-y-3">
+            <CategoryIntroText 
+              category={{
+                id: 3,
+                name: 'Boeketten',
+                slug: 'boeketten',
+                productCount: uniqueProducts.length
+              }} 
+              products={uniqueProducts} 
+            />
+            <p className="text-sm text-gray-600">
+              {uniqueProducts.length} {uniqueProducts.length === 1 ? 'product' : 'producten'} beschikbaar
+            </p>
+          </div>
         </div>
       </div>
 
@@ -153,6 +166,17 @@ export default function BoekettenPage() {
           </main>
         </div>
       </div>
+
+      {/* SEO Text Section */}
+      <CategorySEOText 
+        category={{
+          id: 3,
+          name: 'Boeketten',
+          slug: 'boeketten',
+          productCount: uniqueProducts.length
+        }} 
+        products={uniqueProducts} 
+      />
     </div>
   )
 }

@@ -22,7 +22,7 @@ export default function ProductReviews({
 }: ProductReviewsProps) {
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="border-t border-gray-200 pt-8">
+      <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Reviews</h2>
         <p className="text-gray-600">Nog geen reviews beschikbaar.</p>
       </div>
@@ -30,7 +30,7 @@ export default function ProductReviews({
   }
 
   return (
-    <div className="border-t border-gray-200 pt-8">
+    <div>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Reviews</h2>
         {averageRating && (

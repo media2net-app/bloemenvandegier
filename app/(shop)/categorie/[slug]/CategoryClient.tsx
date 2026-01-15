@@ -5,7 +5,12 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductFilters from '@/components/product/ProductFilters'
 import ProductSort from '@/components/product/ProductSort'
+import ProductComparison from '@/components/product/ProductComparison'
+import CategorySEOText from '@/components/category/CategorySEOText'
+import CategoryIntroText from '@/components/category/CategoryIntroText'
 import { Product, Category } from '@/lib/data/products'
+import { getColorFilterOptions, extractProductColor } from '@/lib/utils/extractColors'
+import { useComparisonStore } from '@/lib/comparison/store'
 
 // Re-export types for use in client component
 export type { Product, Category }
@@ -18,13 +23,19 @@ interface CategoryClientProps {
 export default function CategoryClient({ category, products: allProducts }: CategoryClientProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({})
   const [sortBy, setSortBy] = useState('popularity')
+  const comparisonProducts = useComparisonStore((state) => state.products)
+  const removeFromComparison = useComparisonStore((state) => state.removeProduct)
+  const clearComparison = useComparisonStore((state) => state.clearComparison)
 
+  const colorFilters = useMemo(() => getColorFilterOptions(allProducts), [allProducts])
+  
   const mockFilters = {
     price: [
       { value: '0-20', label: '€0 - €20', count: allProducts.filter(p => parseFloat(p.price) >= 0 && parseFloat(p.price) <= 20).length },
       { value: '20-30', label: '€20 - €30', count: allProducts.filter(p => parseFloat(p.price) > 20 && parseFloat(p.price) <= 30).length },
       { value: '30+', label: '€30+', count: allProducts.filter(p => parseFloat(p.price) > 30).length },
     ],
+    color: colorFilters,
     availability: [
       { value: 'instock', label: 'Op voorraad', count: allProducts.filter(p => p.stock_status === 'instock').length },
       { value: 'outofstock', label: 'Uitverkocht', count: allProducts.filter(p => p.stock_status === 'outofstock').length },
@@ -76,6 +87,13 @@ export default function CategoryClient({ category, products: allProducts }: Cate
       )
     }
 
+    if (activeFilters.color && activeFilters.color.length > 0) {
+      filtered = filtered.filter((product) => {
+        const productColors = extractProductColor(product.name, product.description)
+        return activeFilters.color.some(color => productColors.includes(color))
+      })
+    }
+
     // Apply sorting
     const sorted = [...filtered].sort((a, b) => {
       switch (sortBy) {
@@ -106,12 +124,15 @@ export default function CategoryClient({ category, products: allProducts }: Cate
               { label: category.name, href: `#` },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             {category.name}
           </h1>
-          <p className="text-lg text-gray-600">
-            {allProducts.length} {allProducts.length === 1 ? 'product' : 'producten'} beschikbaar
-          </p>
+          <div className="space-y-3">
+            <CategoryIntroText category={category} products={allProducts} />
+            <p className="text-sm text-gray-600">
+              {allProducts.length} {allProducts.length === 1 ? 'product' : 'producten'} beschikbaar
+            </p>
+          </div>
         </div>
       </div>
 
@@ -155,6 +176,20 @@ export default function CategoryClient({ category, products: allProducts }: Cate
           </main>
         </div>
       </div>
+
+      {/* Product Comparison */}
+      {comparisonProducts.length > 0 && (
+        <div id="comparison" className="container mx-auto px-4 scroll-mt-20">
+          <ProductComparison
+            products={comparisonProducts}
+            onRemove={removeFromComparison}
+            onClear={clearComparison}
+          />
+        </div>
+      )}
+
+      {/* SEO Text Section */}
+      <CategorySEOText category={category} products={allProducts} />
     </div>
   )
 }

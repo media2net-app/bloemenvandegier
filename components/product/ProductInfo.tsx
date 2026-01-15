@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import { Star, Truck, Shield, Heart, Minus, Plus, MessageSquare, ChevronDown, ChevronUp, Gift, X, Clock } from 'lucide-react'
+import { Star, Truck, Shield, Heart, Minus, Plus, MessageSquare, ChevronDown, ChevronUp, Gift, X, Clock, AlertCircle, CheckCircle } from 'lucide-react'
 import Price from '@/components/shared/Price'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -10,6 +10,7 @@ import Card from '@/components/ui/Card'
 import CardPreview from '@/components/product/CardPreview'
 import RibbonSelector from '@/components/product/RibbonSelector'
 import DeliveryDate from '@/components/product/DeliveryDate'
+import DeliveryDateSelector from '@/components/product/DeliveryDateSelector'
 import { useCartStore } from '@/lib/cart/store'
 import { useCart } from '@/components/cart/CartProvider'
 import { formatPrice } from '@/lib/utils/format'
@@ -346,27 +347,78 @@ export default function ProductInfo({
         </div>
       )}
 
-      {/* Stock status */}
+      {/* Live Stock Indicator */}
       <div>
         {isInStock ? (
-          <div className="flex items-center gap-2 text-secondary-600">
-            <div className="h-2 w-2 rounded-full bg-secondary-500" />
-            <span className="font-medium">
-              {stockQuantity !== null && stockQuantity !== undefined
-                ? `${stockQuantity} op voorraad`
-                : 'Op voorraad'}
-            </span>
-          </div>
+          stockQuantity !== null && stockQuantity !== undefined ? (
+            <div className={cn(
+              "rounded-lg p-4 border-2 transition-all",
+              stockQuantity <= 5
+                ? "bg-red-50 border-red-200"
+                : stockQuantity <= 15
+                ? "bg-yellow-50 border-yellow-200"
+                : "bg-green-50 border-green-200"
+            )}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "h-3 w-3 rounded-full animate-pulse",
+                    stockQuantity <= 5
+                      ? "bg-red-500"
+                      : stockQuantity <= 15
+                      ? "bg-yellow-500"
+                      : "bg-green-500"
+                  )} />
+                  <span className={cn(
+                    "font-bold text-lg",
+                    stockQuantity <= 5
+                      ? "text-red-700"
+                      : stockQuantity <= 15
+                      ? "text-yellow-700"
+                      : "text-green-700"
+                  )}>
+                    {stockQuantity} {stockQuantity === 1 ? 'stuk' : 'stuks'} op voorraad
+                  </span>
+                </div>
+              </div>
+              
+              {stockQuantity <= 5 && (
+                <div className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Laatste {stockQuantity} {stockQuantity === 1 ? 'stuk' : 'stuks'}! Wees er snel bij</span>
+                </div>
+              )}
+              
+              {stockQuantity > 5 && stockQuantity <= 15 && (
+                <div className="flex items-center gap-2 text-yellow-700 text-sm font-medium">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Beperkte voorraad - Nog {stockQuantity} beschikbaar</span>
+                </div>
+              )}
+              
+              {stockQuantity > 15 && (
+                <div className="flex items-center gap-2 text-green-700 text-sm">
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Ruime voorraad beschikbaar</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-secondary-600 bg-green-50 border border-green-200 rounded-lg p-3">
+              <div className="h-2 w-2 rounded-full bg-secondary-500 animate-pulse" />
+              <span className="font-medium">Op voorraad</span>
+            </div>
+          )
         ) : (
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-red-600 bg-red-50 border-2 border-red-200 rounded-lg p-3">
             <div className="h-2 w-2 rounded-full bg-red-500" />
             <span className="font-medium">Niet op voorraad</span>
           </div>
         )}
       </div>
 
-      {/* Delivery date */}
-      <DeliveryDate />
+      {/* Delivery date selector */}
+      <DeliveryDateSelector />
 
       {/* Option Cards - 3 cards naast elkaar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

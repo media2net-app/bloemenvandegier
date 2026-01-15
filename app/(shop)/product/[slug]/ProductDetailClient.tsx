@@ -6,6 +6,9 @@ import ProductGallery from '@/components/product/ProductGallery'
 import ProductInfo from '@/components/product/ProductInfo'
 import ProductReviews from '@/components/product/ProductReviews'
 import ProductRecommendations from '@/components/product/ProductRecommendations'
+import ProductBundles from '@/components/product/ProductBundles'
+import ProductVideo from '@/components/product/ProductVideo'
+import ProductQA from '@/components/product/ProductQA'
 import StickyAddToCart from '@/components/product/StickyAddToCart'
 import { Product } from '@/lib/data/products'
 import { getRelatedProducts } from '@/lib/data/products'
@@ -85,60 +88,93 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumbs items={breadcrumbItems} />
+      {/* Section 1: Product Header & Info - White background */}
+      <section className="bg-white">
+        <div className="container mx-auto px-4 py-8">
+          <Breadcrumbs items={breadcrumbItems} />
 
-        {/* Product section - Gallery sticky until reviews */}
-        <div className="relative">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-16">
-            {/* Product Gallery - Sticky until reviews section (40%) */}
-            <div className="lg:col-span-2 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
-              <ProductGallery
-                images={product.images}
-                productName={product.name}
-              />
-            </div>
+          {/* Product section - Gallery sticky until reviews */}
+          <div className="relative">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+              {/* Product Gallery - Sticky until reviews section (40%) */}
+              <div className="lg:col-span-2 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+                <ProductGallery
+                  images={product.images}
+                  productName={product.name}
+                />
+              </div>
 
-            {/* Product Info (60%) */}
-            <div className="lg:col-span-3">
-              <ProductInfo
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                regularPrice={product.regular_price}
-                description={product.description}
-                shortDescription={product.short_description}
-                stockStatus={product.stock_status}
-                stockQuantity={product.stock_quantity}
-                averageRating={product.average_rating}
-                ratingCount={product.rating_count}
-                sku={product.sku}
-                permalink={product.permalink}
-                slug={product.slug}
-                image={product.images[0]?.src || ''}
-                onAddToCartDataChange={setCartData}
-              />
+              {/* Product Info (60%) */}
+              <div className="lg:col-span-3">
+                <ProductInfo
+                  id={product.id}
+                  name={product.name}
+                  price={product.price}
+                  regularPrice={product.regular_price}
+                  description={product.description}
+                  shortDescription={product.short_description}
+                  stockStatus={product.stock_status}
+                  stockQuantity={product.stock_quantity}
+                  averageRating={product.average_rating}
+                  ratingCount={product.rating_count}
+                  sku={product.sku}
+                  permalink={product.permalink}
+                  slug={product.slug}
+                  image={product.images[0]?.src || ''}
+                  onAddToCartDataChange={setCartData}
+                />
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Reviews - Stops sticky behavior */}
-        <div ref={reviewsRef} className="scroll-mt-20">
+      {/* Section 2: Reviews - Gray background */}
+      <section ref={reviewsRef} className="bg-gray-50 py-16 scroll-mt-20">
+        <div className="container mx-auto px-4">
           <ProductReviews
             reviews={mockReviews}
             averageRating={product.average_rating}
             ratingCount={product.rating_count}
           />
         </div>
+      </section>
 
-        {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <ProductRecommendations
-            products={relatedProducts}
-            title="Gerelateerde producten"
+      {/* Section 3: Product Bundles - White background */}
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <ProductBundles
+            currentProduct={product}
+            relatedProducts={relatedProducts}
           />
-        )}
-      </div>
+        </div>
+      </section>
+
+      {/* Section 4: Video & Verzorging - Gray background */}
+      <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <ProductVideo productName={product.name} />
+        </div>
+      </section>
+
+      {/* Section 5: Q&A - White background */}
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <ProductQA productId={product.id} productName={product.name} />
+        </div>
+      </section>
+
+      {/* Section 6: Related Products - Gray background */}
+      {relatedProducts.length > 0 && (
+        <section className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <ProductRecommendations
+              products={relatedProducts}
+              title="Gerelateerde producten"
+            />
+          </div>
+        </section>
+      )}
 
       {/* Sticky Add to Cart */}
       <StickyAddToCart

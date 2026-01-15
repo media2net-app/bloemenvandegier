@@ -1,20 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import ProductCard from './ProductCard'
+import ProductQuickView from './ProductQuickView'
 import { Star, Truck, Shield, Heart } from 'lucide-react'
-
-interface Product {
-  id: number
-  name: string
-  slug: string
-  price: string
-  regular_price?: string
-  sale_price?: string
-  images: Array<{ src: string; alt: string }>
-  stock_status?: string
-  average_rating?: string
-  rating_count?: number
-}
+import { Product } from '@/lib/data/products'
 
 interface ProductGridProps {
   products: Product[]
@@ -100,6 +90,8 @@ function USPBanner({ columns }: { columns: 2 | 3 | 4 }) {
 }
 
 export default function ProductGrid({ products, columns = 4, showUSPBanners = false }: ProductGridProps) {
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
+  
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -119,32 +111,34 @@ export default function ProductGrid({ products, columns = 4, showUSPBanners = fa
   })
 
   return (
-    <div className={`grid ${gridCols[columns]} gap-6`}>
-      {itemsWithUSP.map((item, idx) => {
-        if (item.type === 'usp') {
-          return <USPBanner key={`usp-${idx}`} columns={columns} />
-        }
-        
-        const product = item.product!
-        const label = getProductLabel(product.id)
-        return (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            slug={product.slug}
-            price={product.sale_price || product.price}
-            regularPrice={product.regular_price}
-            image={product.images[0]?.src || ''}
-            images={product.images}
-            onSale={!!product.sale_price}
-            stockStatus={product.stock_status}
-            averageRating={product.average_rating}
-            ratingCount={product.rating_count}
-            label={label}
-          />
-        )
-      })}
-    </div>
+    <>
+      <div className={`grid ${gridCols[columns]} gap-6`}>
+        {itemsWithUSP.map((item, idx) => {
+          if (item.type === 'usp') {
+            return <USPBanner key={`usp-${idx}`} columns={columns} />
+          }
+          
+          const product = item.product!
+          const label = getProductLabel(product.id)
+          return (
+            <ProductCard
+              key={product.id}
+              product={product}
+              label={label}
+              onQuickView={() => setQuickViewProduct(product)}
+            />
+          )
+        })}
+      </div>
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <ProductQuickView
+          product={quickViewProduct}
+          isOpen={!!quickViewProduct}
+          onClose={() => setQuickViewProduct(null)}
+        />
+      )}
+    </>
   )
 }

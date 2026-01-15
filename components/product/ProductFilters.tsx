@@ -110,27 +110,53 @@ export default function ProductFilters({
           {filters.color && filters.color.length > 0 && (
             <div>
               <h4 className="font-semibold text-gray-900 mb-3">Kleur</h4>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {filters.color.map((option) => {
                   const isActive = activeFilters.color?.includes(option.value)
+                  const colorMap: Record<string, string> = {
+                    rood: 'bg-red-500',
+                    roze: 'bg-pink-500',
+                    wit: 'bg-white border border-gray-300',
+                    geel: 'bg-yellow-400',
+                    blauw: 'bg-blue-500',
+                    paars: 'bg-purple-500',
+                    oranje: 'bg-orange-500',
+                    groen: 'bg-green-500',
+                    gemengd: 'bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400',
+                    multicolor: 'bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400',
+                  }
+                  const bgColor = colorMap[option.value.toLowerCase()] || 'bg-gray-400'
+                  
                   return (
-                    <label
+                    <button
                       key={option.value}
-                      className="flex items-center gap-2 cursor-pointer hover:text-primary-600"
+                      onClick={() => onFilterChange('color', option.value)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2 rounded-md transition-all text-left",
+                        isActive
+                          ? "bg-primary-50 border border-primary-300"
+                          : "hover:bg-gray-50 border border-transparent"
+                      )}
                     >
-                      <input
-                        type="checkbox"
-                        checked={isActive}
-                        onChange={() => onFilterChange('color', option.value)}
-                        className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      />
-                      <span className="text-sm text-gray-700">
+                      <div className={cn(
+                        "w-5 h-5 rounded-full flex-shrink-0 shadow-sm",
+                        bgColor,
+                        isActive && "ring-2 ring-primary-600 ring-offset-1"
+                      )} />
+                      <span className="text-sm text-gray-700 flex-1">
                         {option.label}
-                        {option.count !== undefined && (
-                          <span className="text-gray-400 ml-1">({option.count})</span>
-                        )}
                       </span>
-                    </label>
+                      {option.count !== undefined && (
+                        <span className={cn(
+                          "text-xs font-medium px-1.5 py-0.5 rounded",
+                          isActive 
+                            ? "bg-primary-600 text-white" 
+                            : "bg-gray-200 text-gray-600"
+                        )}>
+                          {option.count}
+                        </span>
+                      )}
+                    </button>
                   )
                 })}
               </div>

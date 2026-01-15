@@ -5,6 +5,8 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductFilters from '@/components/product/ProductFilters'
 import ProductSort from '@/components/product/ProductSort'
+import CategorySEOText from '@/components/category/CategorySEOText'
+import CategoryIntroText from '@/components/category/CategoryIntroText'
 import { getProductsByCategorySlug } from '@/lib/data/products'
 
 // Get real products from data
@@ -121,12 +123,23 @@ export default function RozenPage() {
               { label: 'Rozen', href: '/rozen' },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             Rozen
           </h1>
-          <p className="text-lg text-gray-600">
-            Rechtstreeks vanaf de kweker, geleverd bij jou thuis!
-          </p>
+          <div className="space-y-3">
+            <CategoryIntroText 
+              category={{
+                id: 15,
+                name: 'Rozen',
+                slug: 'rozen',
+                productCount: allProducts.length
+              }} 
+              products={allProducts} 
+            />
+            <p className="text-sm text-gray-600">
+              {allProducts.length} {allProducts.length === 1 ? 'product' : 'producten'} beschikbaar
+            </p>
+          </div>
         </div>
       </div>
 
@@ -170,6 +183,17 @@ export default function RozenPage() {
           </main>
         </div>
       </div>
+
+      {/* SEO Text Section */}
+      <CategorySEOText 
+        category={{
+          id: 15,
+          name: 'Rozen',
+          slug: 'rozen',
+          productCount: allProducts.length
+        }} 
+        products={allProducts} 
+      />
     </div>
   )
 }

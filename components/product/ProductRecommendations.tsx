@@ -1,16 +1,5 @@
 import ProductGrid from './ProductGrid'
-
-interface Product {
-  id: number
-  name: string
-  slug: string
-  price: string
-  regular_price?: string
-  sale_price?: string
-  images: Array<{ src: string; alt: string }>
-  stock_status?: string
-  average_rating?: string
-}
+import { Product } from '@/lib/data/products'
 
 interface ProductRecommendationsProps {
   products: Product[]
@@ -26,11 +15,11 @@ export default function ProductRecommendations({
   }
 
   return (
-    <section className="border-t border-gray-200 pt-12 mt-12">
+    <div>
       <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-8">
         {title}
       </h2>
       <ProductGrid products={products} columns={4} />
-    </section>
+    </div>
   )
 }

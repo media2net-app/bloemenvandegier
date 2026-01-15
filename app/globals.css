@@ -16,4 +16,37 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  /* Custom scrollbar for admin sidebar - Modern green style */
+  .sidebar-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    background: rgba(31, 60, 41, 0.4); /* primary-700 #1f3c29 with opacity */
+    border-radius: 4px;
+    margin: 4px 0;
+  }
+  
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #356443 0%, #2a5036 100%); /* primary-500 to primary-600 gradient */
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(31, 60, 41, 0.3);
+  }
+  
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #3d7151 0%, #2f5a3f 100%); /* lighter green on hover */
+    box-shadow: 0 0 4px rgba(53, 100, 67, 0.5);
+  }
+  
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #2a5036 0%, #1f3c29 100%); /* darker on active */
+  }
+  
+  /* Firefox scrollbar */
+  .sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #356443 rgba(31, 60, 41, 0.4);
+  }
 }

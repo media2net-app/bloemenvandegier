@@ -5,6 +5,8 @@ import FeaturedBoeketten from '@/components/homepage/FeaturedBoeketten'
 import ThursdayDeal from '@/components/homepage/ThursdayDeal'
 import RozenSection from '@/components/homepage/RozenSection'
 import USP from '@/components/homepage/USP'
+import OccasionSelector from '@/components/homepage/OccasionSelector'
+import DeliveryCalculator from '@/components/homepage/DeliveryCalculator'
 import { getProductBySlug } from '@/lib/data/products'
 
 export default function HomePage() {
@@ -14,6 +16,8 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <OccasionSelector />
+      <DeliveryCalculator />
       <FeaturedProducts />
       <CategoryGrid />
       <ThursdayDeal product={dealProduct || null} />

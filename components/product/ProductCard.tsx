@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Heart, Star, ChevronLeft, ChevronRight, Eye, Scale } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Price from '@/components/shared/Price'
 import Badge from '@/components/ui/Badge'
@@ -13,25 +13,32 @@ import { getProductImage } from '@/lib/utils/getProductImage'
 import { cn } from '@/lib/utils/cn'
 import { useCart } from '@/components/cart/CartProvider'
 import { useCartStore } from '@/lib/cart/store'
+import { useWishlistStore } from '@/lib/wishlist/store'
+import { useComparisonStore } from '@/lib/comparison/store'
+import { Product } from '@/lib/data/products'
 
 type ProductLabel = 'meest-verkocht' | 'nieuw' | 'dagtopper' | null
 
 interface ProductCardProps {
-  id: number
-  name: string
-  slug: string
-  price: string
+  product?: Product // Full product object for quick view
+  // Legacy props for backward compatibility
+  id?: number
+  name?: string
+  slug?: string
+  price?: string
   regularPrice?: string
-  image: string
+  image?: string
   images?: Array<{ src: string; alt?: string }>
   onSale?: boolean
   stockStatus?: string
   averageRating?: string
   ratingCount?: number
   label?: ProductLabel
+  onQuickView?: () => void
 }
 
 export default function ProductCard({
+  product,
   id,
   name,
   slug,
@@ -44,18 +51,68 @@ export default function ProductCard({
   averageRating,
   ratingCount,
   label,
+  onQuickView,
 }: ProductCardProps) {
   const { openCart } = useCart()
   const addItem = useCartStore((state) => state.addItem)
+  const { toggleItem, isInWishlist } = useWishlistStore()
+  const { toggleProduct, isInComparison, getProductCount } = useComparisonStore()
+  
+  const isWishlisted = product ? isInWishlist(product.id) : false
+  const isCompared = product ? isInComparison(product.id) : false
+  const comparisonCount = getProductCount()
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (product) {
+      toggleItem(product)
+    }
+  }
+
+  const handleComparisonToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (product) {
+      toggleProduct(product)
+    }
+  }
+  
+  // Use product object if provided, otherwise use individual props
+  const productId = product?.id || id!
+  const productName = product?.name || name!
+  const productSlug = product?.slug || slug || ''
+  const productPrice = product?.sale_price || product?.price || price || '0'
+  const productRegularPrice = product?.regular_price || regularPrice
+  const productImages = product?.images || images || []
+  const productImage = productImages[0]?.src || image || ''
+  const productOnSale = product?.on_sale || onSale || false
+  const productStockStatus = product?.stock_status || stockStatus
+  const productAverageRating = product?.average_rating || averageRating
+  const productRatingCount = product?.rating_count || ratingCount
+
+  // Validate that we have required data
+  if (!productSlug) {
+    console.error('ProductCard: Missing slug for product', { product, id, name, slug })
+    return null
+  }
   
   // Prepare images array - use provided images or fallback to single image
-  const productImages = images && images.length > 0 
-    ? images.map(img => ({ src: img.src, alt: img.alt || name }))
-    : [{ src: image, alt: name }]
+  const cardImages = productImages.length > 0 
+    ? productImages.map(img => ({ src: img.src, alt: img.alt || productName }))
+    : [{ src: productImage, alt: productName }]
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const currentImage = productImages[currentImageIndex] || productImages[0]
-  const hasMultipleImages = productImages.length > 1
+  const currentImage = cardImages[currentImageIndex] || cardImages[0]
+  const hasMultipleImages = cardImages.length > 1
+
+  const handleQuickView = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (onQuickView && product) {
+      onQuickView()
+    }
+  }
   
   const handlePreviousImage = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -71,7 +128,7 @@ export default function ProductCard({
   
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
-      <Link href={`/product/${slug}`} className="block" prefetch>
+      <Link href={`/product/${productSlug}`} className="block" prefetch>
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <Image
             src={getProductImage([currentImage])}
@@ -101,7 +158,7 @@ export default function ProductCard({
               
               {/* Image indicator dots */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-                {productImages.map((_, index) => (
+                {cardImages.map((_, index) => (
                   <button
                     key={index}
                     onClick={(e) => {
@@ -147,27 +204,68 @@ export default function ProductCard({
               Aanbieding
             </Badge>
           )}
-          <button
-            className="absolute top-2 left-2 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
-            aria-label="Toevoegen aan favorieten"
-          >
-            <Heart className="h-4 w-4 text-gray-600" />
-          </button>
+          {/* Quick View Button */}
+          {onQuickView && product && (
+            <button
+              onClick={handleQuickView}
+              className="absolute top-2 left-2 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
+              aria-label="Snel bekijken"
+            >
+              <Eye className="h-4 w-4 text-gray-600" />
+            </button>
+          )}
+          {/* Comparison Button */}
+          {product && (
+            <button
+              onClick={handleComparisonToggle}
+              className={cn(
+                "absolute top-2 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10",
+                onQuickView ? "left-12" : "left-2",
+                isCompared && "opacity-100"
+              )}
+              aria-label={isCompared ? "Verwijderen uit vergelijking" : "Toevoegen aan vergelijking"}
+              title={isCompared ? "Verwijderen uit vergelijking" : "Vergelijken"}
+            >
+              <Scale className={cn(
+                "h-4 w-4 transition-colors",
+                isCompared ? "text-primary-600" : "text-gray-600"
+              )} />
+            </button>
+          )}
+          {/* Wishlist Button */}
+          {product && (
+            <button
+              onClick={handleWishlistToggle}
+              className={cn(
+                "absolute top-2 p-2 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10",
+                onQuickView && product ? "left-12" : "left-2",
+                !product && onQuickView ? "left-12" : "left-2",
+                isWishlisted && "opacity-100"
+              )}
+              style={product && onQuickView ? { left: '3rem' } : undefined}
+              aria-label={isWishlisted ? "Verwijderen uit favorieten" : "Toevoegen aan favorieten"}
+            >
+              <Heart className={cn(
+                "h-4 w-4 transition-colors",
+                isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"
+              )} />
+            </button>
+          )}
         </div>
       </Link>
 
       <div className="p-4">
-        <Link href={`/product/${slug}`} prefetch>
+        <Link href={`/product/${productSlug}`} prefetch>
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
-            {name}
+            {productName}
           </h3>
         </Link>
 
-        {(averageRating || ratingCount) && (
+        {(productAverageRating || productRatingCount) && (
           <div className="flex items-center gap-2 mb-2">
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => {
-                const rating = averageRating ? parseFloat(averageRating) : 0
+                const rating = productAverageRating ? parseFloat(productAverageRating) : 0
                 const filled = i < Math.floor(rating)
                 const halfFilled = i < rating && i >= Math.floor(rating)
                 return (
@@ -186,43 +284,56 @@ export default function ProductCard({
               })}
             </div>
             <div className="flex items-center gap-1 text-xs text-gray-600">
-              {averageRating && parseFloat(averageRating) > 0 && (
-                <span className="font-semibold text-gray-900">{averageRating}</span>
+              {productAverageRating && parseFloat(productAverageRating) > 0 && (
+                <span className="font-semibold text-gray-900">{productAverageRating}</span>
               )}
-              {ratingCount && ratingCount > 0 && (
-                <span>({ratingCount})</span>
+              {productRatingCount && productRatingCount > 0 && (
+                <span>({productRatingCount})</span>
               )}
             </div>
           </div>
         )}
 
         <div className="flex items-center justify-between mb-3">
-          <Price price={price} regularPrice={regularPrice} />
-          {stockStatus === 'instock' && (
+          <Price price={productPrice} regularPrice={productRegularPrice} />
+          {productStockStatus === 'instock' && (
             <Badge variant="success" className="text-xs">
               Op voorraad
             </Badge>
           )}
         </div>
 
-        <Button
-          className="w-full"
-          size="sm"
-          onClick={(e) => {
-            e.preventDefault()
-            addItem({
-              id,
-              name,
-              price: parseFloat(price),
-              quantity: 1,
-              image,
-              permalink: `/product/${slug}`,
-            })
-            openCart()
-          }}
-        >
-          In bloemenmand
-        </Button>
+        <div className="flex gap-2">
+          {onQuickView && product && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={handleQuickView}
+            >
+              <Eye className="h-4 w-4 mr-1" />
+              Snel bekijken
+            </Button>
+          )}
+          <Button
+            className={onQuickView && product ? "flex-1" : "w-full"}
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault()
+              addItem({
+                id: productId,
+                name: productName,
+                price: parseFloat(productPrice),
+                quantity: 1,
+                image: productImage,
+                permalink: `/product/${productSlug}`,
+              })
+              openCart()
+            }}
+          >
+            In bloemenmand
+          </Button>
+        </div>
       </div>
     </Card>
   )

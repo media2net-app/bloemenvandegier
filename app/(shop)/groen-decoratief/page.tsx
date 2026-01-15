@@ -5,6 +5,8 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductFilters from '@/components/product/ProductFilters'
 import ProductSort from '@/components/product/ProductSort'
+import CategorySEOText from '@/components/category/CategorySEOText'
+import CategoryIntroText from '@/components/category/CategoryIntroText'
 import { getProductsByCategorySlug } from '@/lib/data/products'
 
 // Get all groen & decoratief products - combine multiple groen categories
@@ -104,12 +106,23 @@ export default function GroenDecoratiefPage() {
               { label: 'Groen & Decoratief', href: '#' },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             Groen & Decoratief
           </h1>
-          <p className="text-lg text-gray-600">
-            Verse takken en decoratie voor in huis
-          </p>
+          <div className="space-y-3">
+            <CategoryIntroText 
+              category={{
+                id: 4,
+                name: 'Groen & Decoratief',
+                slug: 'groen-decoratief',
+                productCount: uniqueProducts.length
+              }} 
+              products={uniqueProducts} 
+            />
+            <p className="text-sm text-gray-600">
+              {uniqueProducts.length} {uniqueProducts.length === 1 ? 'product' : 'producten'} beschikbaar
+            </p>
+          </div>
         </div>
       </div>
 
@@ -153,6 +166,17 @@ export default function GroenDecoratiefPage() {
           </main>
         </div>
       </div>
+
+      {/* SEO Text Section */}
+      <CategorySEOText 
+        category={{
+          id: 4,
+          name: 'Groen & Decoratief',
+          slug: 'groen-decoratief',
+          productCount: uniqueProducts.length
+        }} 
+        products={uniqueProducts} 
+      />
     </div>
   )
 }
