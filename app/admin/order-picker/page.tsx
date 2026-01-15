@@ -201,6 +201,73 @@ export default function OrderPickerPage() {
                 <span className="font-semibold">Order Picker</span>
               </div>
               <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    const printWindow = window.open('', '_blank')
+                    if (printWindow) {
+                      printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <title>Picking List ${order.orderNumber}</title>
+                            <style>
+                              body { font-family: Arial, sans-serif; padding: 20px; }
+                              .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+                              .order-info { margin-bottom: 20px; }
+                              table { width: 100%; border-collapse: collapse; }
+                              th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+                              th { background-color: #f5f5f5; font-weight: bold; }
+                              .picked { background-color: #d4edda; }
+                              .not-picked { background-color: #fff3cd; }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="header">
+                              <h1>Picking List - ${order.orderNumber}</h1>
+                              <div class="order-info">
+                                <p><strong>Klant:</strong> ${order.customer.name}</p>
+                                <p><strong>Datum:</strong> ${new Date().toLocaleDateString('nl-NL')}</p>
+                              </div>
+                            </div>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Product</th>
+                                  <th>SKU</th>
+                                  <th>Aantal</th>
+                                  <th>Locatie</th>
+                                  <th>Status</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${order.items.map((item, index) => `
+                                  <tr class="${item.picked ? 'picked' : 'not-picked'}">
+                                    <td>${index + 1}</td>
+                                    <td>${item.name}</td>
+                                    <td>${item.sku || '-'}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>${item.location || 'A-${index + 1}'}</td>
+                                    <td>${item.picked ? '✓ Gepickt' : '○ Te picken'}</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                          </body>
+                        </html>
+                      `)
+                      printWindow.document.close()
+                      printWindow.focus()
+                      setTimeout(() => {
+                        printWindow.print()
+                      }, 250)
+                    }
+                  }}
+                  className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-white text-xs font-medium transition-colors"
+                  title="Print picking list"
+                >
+                  Print
+                </button>
                 <span>{new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}</span>
                 <div className="flex items-center gap-1">
                   <div className="w-6 h-3 border border-white rounded-sm">

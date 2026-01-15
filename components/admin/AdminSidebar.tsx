@@ -27,7 +27,8 @@ import {
   Facebook,
   Music,
   Calendar,
-  ClipboardList
+  ClipboardList,
+  FileEdit
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -42,6 +43,8 @@ interface MenuItem {
 // Define which pages are implemented
 const implementedPages = [
   '/admin',
+  '/admin/paginas',
+  '/admin/paginas/nieuw',
   '/admin/producten',
   '/admin/bestellingen',
   '/admin/order-picker',
@@ -60,10 +63,14 @@ const implementedPages = [
   '/admin/marketing/tiktok',
   '/admin/marketing/content-kalender',
   '/admin/taken',
+  '/admin/notificaties',
+  '/admin/rapporten',
+  '/admin/activity-log',
 ]
 
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Pagina\'s', href: '/admin/paginas', icon: FileEdit },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },

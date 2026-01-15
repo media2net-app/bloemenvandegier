@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, Package, Users, TrendingUp, ShoppingCart, Settings, Shield, Truck, Sun, Moon, Printer, FileText, AlertCircle, Bell, Search, ArrowUp, ArrowDown, Minus, AlertTriangle, Target, X, Download, Calendar, Clock, MessageSquare, CheckSquare, Activity, HelpCircle } from 'lucide-react'
+import { LogOut, Package, Users, TrendingUp, ShoppingCart, Settings, Shield, Truck, Sun, Moon, Printer, FileText, AlertCircle, Bell, Search, ArrowUp, ArrowDown, Minus, AlertTriangle, Target, X, Download, Calendar, Clock, MessageSquare, CheckSquare, Activity, HelpCircle, Repeat, ArrowLeft, ArrowRight } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import AdminSidebar from '@/components/admin/AdminSidebar'
+import KeyboardShortcuts from '@/components/admin/KeyboardShortcuts'
+import UndoToast from '@/components/admin/UndoToast'
+import QuickActions from '@/components/admin/QuickActions'
 
 interface TodayOrder {
   id: string
@@ -135,7 +138,7 @@ export default function AdminDashboard() {
         e.preventDefault()
         setShowSearch(true)
       }
-      if (e.key === '?' && !e.metaKey && !e.ctrlKey) {
+      if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
         e.preventDefault()
         setShowShortcuts(true)
       }
@@ -565,6 +568,239 @@ export default function AdminDashboard() {
     { name: 'Instellingen', href: '/admin/instellingen', icon: Settings },
   ]
 
+  // Global Search Results Component
+  const GlobalSearchResults = ({ query, onClose }: { query: string; onClose: () => void }) => {
+    const [results, setResults] = useState<{
+      products: any[]
+      orders: any[]
+      customers: any[]
+      messages: any[]
+      subscriptions: any[]
+    }>({
+      products: [],
+      orders: [],
+      customers: [],
+      messages: [],
+      subscriptions: [],
+    })
+    const [isSearching, setIsSearching] = useState(false)
+
+    useEffect(() => {
+      if (!query.trim()) {
+        setResults({ products: [], orders: [], customers: [], messages: [], subscriptions: [] })
+        return
+      }
+
+      setIsSearching(true)
+      const timeoutId = setTimeout(async () => {
+        try {
+          // Mock search results
+          const { getAllProducts, searchProducts } = await import('@/lib/data/products')
+          
+          // Search products
+          const productResults = searchProducts(query).slice(0, 5)
+          
+          // Mock orders search
+          const orderResults = Array.from({ length: 3 }, (_, i) => ({
+            id: `ORD${1000 + i}`,
+            orderNumber: `#${1000 + i}`,
+            customer: `Klant ${i + 1}`,
+          })).filter(o => 
+            o.orderNumber.toLowerCase().includes(query.toLowerCase()) ||
+            o.customer.toLowerCase().includes(query.toLowerCase())
+          )
+
+          // Mock customers search
+          const customerResults = Array.from({ length: 3 }, (_, i) => ({
+            id: `CUST${1000 + i}`,
+            name: `Klant ${i + 1}`,
+            email: `klant${i + 1}@example.com`,
+          })).filter(c =>
+            c.name.toLowerCase().includes(query.toLowerCase()) ||
+            c.email.toLowerCase().includes(query.toLowerCase())
+          )
+
+          // Mock messages search
+          const messageResults = [
+            { id: '1', ticketNumber: 'TKT-2024-001', subject: 'Vraag over bestelling', customer: 'Jan de Vries' },
+            { id: '2', ticketNumber: 'TKT-2024-002', subject: 'Bezorging vraag', customer: 'Maria Smit' },
+          ].filter(m =>
+            m.ticketNumber.toLowerCase().includes(query.toLowerCase()) ||
+            m.subject.toLowerCase().includes(query.toLowerCase()) ||
+            m.customer.toLowerCase().includes(query.toLowerCase())
+          )
+
+          // Mock subscriptions search
+          const subscriptionResults = Array.from({ length: 2 }, (_, i) => ({
+            id: `SUB${1000 + i}`,
+            subscriptionNumber: `#${1000 + i}`,
+            customer: `Klant ${i + 1}`,
+          })).filter(s =>
+            s.subscriptionNumber.toLowerCase().includes(query.toLowerCase()) ||
+            s.customer.toLowerCase().includes(query.toLowerCase())
+          )
+
+          setResults({
+            products: productResults,
+            orders: orderResults,
+            customers: customerResults,
+            messages: messageResults,
+            subscriptions: subscriptionResults,
+          })
+          setIsSearching(false)
+        } catch (error) {
+          console.error('Search error:', error)
+          setIsSearching(false)
+        }
+      }, 300)
+
+      return () => clearTimeout(timeoutId)
+    }, [query])
+
+    const totalResults = results.products.length + results.orders.length + results.customers.length + results.messages.length + results.subscriptions.length
+
+    if (isSearching) {
+      return (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
+          <p className="text-sm text-gray-500">Zoeken...</p>
+        </div>
+      )
+    }
+
+    if (totalResults === 0) {
+      return (
+        <div className="text-center py-8 text-gray-500">
+          <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+          <p>Geen resultaten gevonden voor "{query}"</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="text-sm text-gray-600 mb-4">
+          {totalResults} resultaat{totalResults !== 1 ? 'en' : ''} gevonden
+        </div>
+
+        {/* Products */}
+        {results.products.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Package className="h-4 w-4 text-gray-400" />
+              <h3 className="text-sm font-semibold text-gray-700">Producten ({results.products.length})</h3>
+            </div>
+            <div className="space-y-1">
+              {results.products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/admin/producten/bewerken/${product.id}`}
+                  onClick={onClose}
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{product.name}</div>
+                  <div className="text-xs text-gray-500">SKU: {product.sku || '-'}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Orders */}
+        {results.orders.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <ShoppingCart className="h-4 w-4 text-gray-400" />
+              <h3 className="text-sm font-semibold text-gray-700">Bestellingen ({results.orders.length})</h3>
+            </div>
+            <div className="space-y-1">
+              {results.orders.map((order: any) => (
+                <Link
+                  key={order.id}
+                  href={`/admin/bestellingen/${order.id}`}
+                  onClick={onClose}
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{order.orderNumber}</div>
+                  <div className="text-xs text-gray-500">Klant: {order.customer}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Customers */}
+        {results.customers.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-gray-400" />
+              <h3 className="text-sm font-semibold text-gray-700">Klanten ({results.customers.length})</h3>
+            </div>
+            <div className="space-y-1">
+              {results.customers.map((customer: any) => (
+                <Link
+                  key={customer.id}
+                  href={`/admin/klanten/${customer.id}`}
+                  onClick={onClose}
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{customer.name}</div>
+                  <div className="text-xs text-gray-500">{customer.email}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Messages */}
+        {results.messages.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <MessageSquare className="h-4 w-4 text-gray-400" />
+              <h3 className="text-sm font-semibold text-gray-700">Berichten ({results.messages.length})</h3>
+            </div>
+            <div className="space-y-1">
+              {results.messages.map((message: any) => (
+                <Link
+                  key={message.id}
+                  href={`/admin/berichten?ticket=${message.id}`}
+                  onClick={onClose}
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{message.ticketNumber}</div>
+                  <div className="text-xs text-gray-500">{message.subject} - {message.customer}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Subscriptions */}
+        {results.subscriptions.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Repeat className="h-4 w-4 text-gray-400" />
+              <h3 className="text-sm font-semibold text-gray-700">Abonnementen ({results.subscriptions.length})</h3>
+            </div>
+            <div className="space-y-1">
+              {results.subscriptions.map((subscription: any) => (
+                <Link
+                  key={subscription.id}
+                  href={`/admin/abonnementen?subscription=${subscription.id}`}
+                  onClick={onClose}
+                  className="block p-2 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="font-medium text-gray-900">{subscription.subscriptionNumber}</div>
+                  <div className="text-xs text-gray-500">Klant: {subscription.customer}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -707,24 +943,30 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        {/* Search Modal */}
+        {/* Global Search Modal */}
         {showSearch && (
           <>
             <div 
               className="fixed inset-0 bg-black/50 z-50" 
               onClick={() => setShowSearch(false)}
             />
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-2xl z-50">
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-white rounded-lg shadow-2xl z-50 max-h-[80vh] flex flex-col">
               <div className="p-4 border-b border-gray-200 flex items-center gap-3">
                 <Search className="h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Zoek in producten, bestellingen, klanten, berichten..."
+                  placeholder="Zoek in producten, bestellingen, klanten, berichten, abonnementen..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 outline-none text-gray-900 placeholder-gray-400"
                   autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setShowSearch(false)
+                    }
+                  }}
                 />
+                <kbd className="hidden md:inline px-2 py-1 bg-gray-100 rounded text-xs text-gray-600">ESC</kbd>
                 <button
                   onClick={() => setShowSearch(false)}
                   className="p-1 hover:bg-gray-100 rounded"
@@ -732,19 +974,35 @@ export default function AdminDashboard() {
                   <X className="h-4 w-4 text-gray-500" />
                 </button>
               </div>
-              <div className="p-4 max-h-96 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto p-4">
                 {searchQuery ? (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-500 mb-2">Zoekresultaten voor "{searchQuery}"</p>
-                    <div className="text-sm text-gray-500">
-                      Zoekfunctionaliteit wordt geladen...
-                    </div>
-                  </div>
+                  <GlobalSearchResults query={searchQuery} onClose={() => setShowSearch(false)} />
                 ) : (
                   <div className="text-center text-gray-500 text-sm py-8">
                     <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
                     <p>Begin met typen om te zoeken...</p>
                     <p className="text-xs mt-2 text-gray-400">Gebruik Cmd/Ctrl + K om snel te zoeken</p>
+                    <div className="mt-6 text-left max-w-md mx-auto">
+                      <p className="text-xs font-semibold text-gray-400 mb-2">Zoek in:</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2">
+                          <Package className="h-3 w-3" />
+                          <span>Producten</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <ShoppingCart className="h-3 w-3" />
+                          <span>Bestellingen</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-3 w-3" />
+                          <span>Klanten</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-3 w-3" />
+                          <span>Berichten</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1272,64 +1530,18 @@ export default function AdminDashboard() {
         </div>
 
         {/* Keyboard Shortcuts Modal */}
-        {showShortcuts && (
-          <>
-            <div 
-              className="fixed inset-0 bg-black/50 z-50" 
-              onClick={() => setShowShortcuts(false)}
-            />
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-lg shadow-2xl z-50">
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <HelpCircle className="h-6 w-6 text-primary-600" />
-                  <h2 className="text-xl font-bold text-gray-900">Keyboard Shortcuts</h2>
-                </div>
-                <button
-                  onClick={() => setShowShortcuts(false)}
-                  className="p-1 hover:bg-gray-100 rounded"
-                >
-                  <X className="h-5 w-5 text-gray-500" />
-                </button>
-              </div>
-              <div className="p-6 max-h-96 overflow-y-auto">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Navigatie</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-700">Zoeken</span>
-                        <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">⌘K</kbd>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-700">Sluiten (modals)</span>
-                        <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">Esc</kbd>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-700">Shortcuts tonen</span>
-                        <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">?</kbd>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Acties</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-700">Nieuwe bestelling</span>
-                        <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">⌘N</kbd>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-sm text-gray-700">Snel opslaan</span>
-                        <kbd className="px-2 py-1 bg-white border border-gray-300 rounded text-xs">⌘S</kbd>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        <KeyboardShortcuts 
+          isOpen={showShortcuts} 
+          onClose={() => setShowShortcuts(false)} 
+        />
         </main>
       </div>
+      
+      {/* Undo Toast */}
+      <UndoToast />
+      
+      {/* Quick Actions FAB */}
+      <QuickActions />
     </div>
   )
 }

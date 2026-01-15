@@ -287,9 +287,95 @@ export default function AdminBestellingDetailPage() {
                 <Button
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-primary-600"
+                  onClick={() => {
+                    // Print order invoice
+                    const printWindow = window.open('', '_blank')
+                    if (printWindow) {
+                      printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <title>Factuur ${order.orderNumber}</title>
+                            <style>
+                              body { font-family: Arial, sans-serif; padding: 40px; }
+                              .header { border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                              .company { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+                              .order-info { margin-top: 20px; }
+                              table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                              th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                              th { background-color: #f5f5f5; font-weight: bold; }
+                              .total { font-size: 18px; font-weight: bold; margin-top: 20px; }
+                              .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="header">
+                              <div class="company">Bloemen van De Gier</div>
+                              <div>Industrieweg 8, 7921 JP Zuidwolde</div>
+                              <div>Tel: +31 528 123456 | Email: info@bloemenvandegier.nl</div>
+                            </div>
+                            <h1>Factuur ${order.orderNumber}</h1>
+                            <div class="order-info">
+                              <p><strong>Datum:</strong> ${new Date(order.date).toLocaleDateString('nl-NL')}</p>
+                              <p><strong>Klant:</strong> ${order.customer.name}</p>
+                              <p><strong>Email:</strong> ${order.customer.email}</p>
+                              <p><strong>Telefoon:</strong> ${order.customer.phone}</p>
+                            </div>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Product</th>
+                                  <th>Aantal</th>
+                                  <th>Prijs</th>
+                                  <th>Totaal</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${order.items.map(item => `
+                                  <tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>€${item.price.toFixed(2)}</td>
+                                    <td>€${(item.price * item.quantity).toFixed(2)}</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                            <div style="text-align: right;">
+                              <p>Subtotaal: €${order.subtotal.toFixed(2)}</p>
+                              <p>Verzending: €${order.shipping.toFixed(2)}</p>
+                              ${order.insurance ? `<p>Verzekerde bezorging: €${order.insurance.toFixed(2)}</p>` : ''}
+                              <p class="total">Totaal: €${order.total.toFixed(2)}</p>
+                            </div>
+                            <div class="footer">
+                              <p>Bedankt voor uw bestelling!</p>
+                            </div>
+                          </body>
+                        </html>
+                      `)
+                      printWindow.document.close()
+                      printWindow.focus()
+                      setTimeout(() => {
+                        printWindow.print()
+                      }, 250)
+                    }
+                  }}
                 >
                   <Printer className="h-4 w-4 mr-2" />
-                  Print
+                  Print Factuur
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-primary-600"
+                  onClick={() => {
+                    // Email to customer
+                    const emailSubject = encodeURIComponent(`Bestelling ${order.orderNumber} - Bloemen van De Gier`)
+                    const emailBody = encodeURIComponent(`Beste ${order.customer.name},\n\nBedankt voor uw bestelling ${order.orderNumber}.\n\nBestelde items:\n${order.items.map(item => `- ${item.name} (${item.quantity}x) - €${item.price.toFixed(2)}`).join('\n')}\n\nSubtotaal: €${order.subtotal.toFixed(2)}\nVerzending: €${order.shipping.toFixed(2)}\n${order.insurance ? `Verzekerde bezorging: €${order.insurance.toFixed(2)}\n` : ''}Totaal: €${order.total.toFixed(2)}\n\nBezorgdatum: ${new Date(order.deliveryDate).toLocaleDateString('nl-NL')}\nBezorgtijd: ${order.deliveryTime === 'day' ? 'Overdag' : 'Avond'}\n\nMet vriendelijke groet,\nBloemen van De Gier`)
+                    window.location.href = `mailto:${order.customer.email}?subject=${emailSubject}&body=${emailBody}`
+                  }}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Email Klant
                 </Button>
                 <Link href="/admin/bestellingen">
                   <Button variant="outline" className="border-white text-white hover:bg-white hover:text-primary-600">

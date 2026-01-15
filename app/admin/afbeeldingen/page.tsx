@@ -49,6 +49,9 @@ export default function AdminAfbeeldingenPage() {
     withoutImages: 0,
     broken: 0,
   })
+  const [uploadingProduct, setUploadingProduct] = useState<number | null>(null)
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     // Check if admin is authenticated
@@ -73,6 +76,62 @@ export default function AdminAfbeeldingenPage() {
     } catch (error) {
       console.error('Error loading products:', error)
       setIsLoading(false)
+    }
+  }
+
+  const handleImageUpload = (productId: number, file: File) => {
+    setUploadingProduct(productId)
+    
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const result = e.target?.result as string
+      setUploadPreview(result)
+      
+      // Simulate upload
+      setTimeout(() => {
+        // In real app, this would upload to server
+        // For demo, we'll update the product locally
+        const updatedProducts = products.map(p => {
+          if (p.id === productId) {
+            return {
+              ...p,
+              images: [{
+                id: Date.now(),
+                src: result, // In real app, this would be the server URL
+                alt: p.name,
+                name: p.name,
+              }]
+            }
+          }
+          return p
+        })
+        setProducts(updatedProducts)
+        calculateStats(updatedProducts)
+        setUploadingProduct(null)
+        setUploadPreview(null)
+        alert('Afbeelding succesvol geüpload!')
+      }, 1500)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleDrop = (e: React.DragEvent, productId: number) => {
+    e.preventDefault()
+    setIsDragging(false)
+    
+    const file = e.dataTransfer.files[0]
+    if (file && file.type.startsWith('image/')) {
+      handleImageUpload(productId, file)
+    } else {
+      alert('Alleen afbeeldingen zijn toegestaan')
+    }
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, productId: number) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleImageUpload(productId, file)
     }
   }
 
@@ -441,14 +500,39 @@ export default function AdminAfbeeldingenPage() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
-                              <Link href={`/product/${product.slug}`} target="_blank">
-                                <button
-                                  className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
-                                  title="Bekijk product"
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </button>
-                              </Link>
+                              {uploadingProduct === product.id ? (
+                                <div className="flex items-center gap-2 text-primary-600">
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                                  <span className="text-xs">Uploaden...</span>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="relative">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={(e) => handleFileSelect(e, product.id)}
+                                      className="hidden"
+                                      id={`upload-${product.id}`}
+                                    />
+                                    <label
+                                      htmlFor={`upload-${product.id}`}
+                                      className="p-2 text-gray-400 hover:text-primary-600 transition-colors cursor-pointer"
+                                      title="Upload afbeelding"
+                                    >
+                                      <Upload className="h-4 w-4" />
+                                    </label>
+                                  </div>
+                                  <Link href={`/product/${product.slug}`} target="_blank">
+                                    <button
+                                      className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                                      title="Bekijk product"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </button>
+                                  </Link>
+                                </>
+                              )}
                               <Link href={`/admin/producten/bewerken/${product.id}`}>
                                 <button
                                   className="p-2 text-gray-400 hover:text-blue-600 transition-colors"

@@ -13,7 +13,13 @@ import {
   Filter,
   ShoppingCart,
   DollarSign,
-  Calendar
+  Calendar,
+  CheckSquare,
+  Square,
+  ChevronDown,
+  Download,
+  Trash2,
+  Tag
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import Button from '@/components/ui/Button'
@@ -63,6 +69,8 @@ export default function AdminKlantenPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set())
+  const [showBulkActions, setShowBulkActions] = useState(false)
 
   useEffect(() => {
     // Check if admin is authenticated
@@ -147,6 +155,91 @@ export default function AdminKlantenPage() {
       setSortBy(field)
       setSortOrder('asc')
     }
+  }
+
+  const handleSelectAll = () => {
+    if (selectedCustomers.size === currentCustomers.length) {
+      setSelectedCustomers(new Set())
+    } else {
+      setSelectedCustomers(new Set(currentCustomers.map(c => c.id)))
+    }
+  }
+
+  const handleSelectCustomer = (customerId: string) => {
+    setSelectedCustomers(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(customerId)) {
+        newSet.delete(customerId)
+      } else {
+        newSet.add(customerId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkAction = async (action: string) => {
+    if (selectedCustomers.size === 0) return
+
+    const selected = Array.from(selectedCustomers)
+    const selectedCustomersData = customers.filter(c => selected.includes(c.id))
+
+    switch (action) {
+      case 'delete':
+        if (confirm(`Weet je zeker dat je ${selectedCustomers.size} klant(en) wilt verwijderen?`)) {
+          setCustomers(customers.filter(c => !selected.includes(c.id)))
+          setFilteredCustomers(filteredCustomers.filter(c => !selected.includes(c.id)))
+          setSelectedCustomers(new Set())
+          alert(`${selectedCustomers.size} klant(en) verwijderd`)
+        }
+        break
+      case 'status_active':
+        setCustomers(customers.map(c => 
+          selected.includes(c.id) ? { ...c, status: 'active' as const } : c
+        ))
+        setFilteredCustomers(filteredCustomers.map(c => 
+          selected.includes(c.id) ? { ...c, status: 'active' as const } : c
+        ))
+        alert(`${selectedCustomers.size} klant(en) op "Actief" gezet`)
+        setSelectedCustomers(new Set())
+        break
+      case 'status_inactive':
+        setCustomers(customers.map(c => 
+          selected.includes(c.id) ? { ...c, status: 'inactive' as const } : c
+        ))
+        setFilteredCustomers(filteredCustomers.map(c => 
+          selected.includes(c.id) ? { ...c, status: 'inactive' as const } : c
+        ))
+        alert(`${selectedCustomers.size} klant(en) op "Inactief" gezet`)
+        setSelectedCustomers(new Set())
+        break
+      case 'export':
+        const csv = [
+          ['Naam', 'Email', 'Telefoon', 'Lid sinds', 'Bestellingen', 'Totale Orderwaarde', 'Status'].join(','),
+          ...selectedCustomersData.map(c => [
+            `"${c.name}"`,
+            c.email,
+            c.phone,
+            new Date(c.registrationDate).toLocaleDateString('nl-NL'),
+            c.totalOrders,
+            c.totalOrderValue.toFixed(2),
+            c.status
+          ].join(','))
+        ].join('\n')
+        const blob = new Blob([csv], { type: 'text/csv' })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `klanten-export-${new Date().toISOString().split('T')[0]}.csv`
+        a.click()
+        window.URL.revokeObjectURL(url)
+        alert(`${selectedCustomers.size} klant(en) geëxporteerd`)
+        break
+      case 'email':
+        alert(`Email wordt verzonden naar ${selectedCustomers.size} klant(en)`)
+        setSelectedCustomers(new Set())
+        break
+    }
+    setShowBulkActions(false)
   }
 
   const SortIcon = ({ field }: { field: 'name' | 'orders' | 'value' | 'date' }) => {
@@ -264,8 +357,107 @@ export default function AdminKlantenPage() {
                 <Filter className="h-4 w-4 mr-2" />
                 Meer Filters
               </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const csv = [
+                    ['Naam', 'Email', 'Telefoon', 'Lid sinds', 'Bestellingen', 'Totale Orderwaarde', 'Status'].join(','),
+                    ...filteredCustomers.map(c => [
+                      `"${c.name}"`,
+                      c.email,
+                      c.phone,
+                      new Date(c.registrationDate).toLocaleDateString('nl-NL'),
+                      c.totalOrders,
+                      c.totalOrderValue.toFixed(2),
+                      c.status
+                    ].join(','))
+                  ].join('\n')
+                  const blob = new Blob([csv], { type: 'text/csv' })
+                  const url = window.URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `alle-klanten-${new Date().toISOString().split('T')[0]}.csv`
+                  a.click()
+                  window.URL.revokeObjectURL(url)
+                }}
+                className="border-gray-300"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Alles
+              </Button>
             </div>
           </Card>
+
+          {/* Bulk Actions Bar */}
+          {selectedCustomers.size > 0 && (
+            <Card className="p-4 mb-6 bg-primary-50 border-primary-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedCustomers.size} klant(en) geselecteerd
+                  </span>
+                  <button
+                    onClick={() => setSelectedCustomers(new Set())}
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Deselecteer alles
+                  </button>
+                </div>
+                <div className="relative">
+                  <Button
+                    variant="primary"
+                    onClick={() => setShowBulkActions(!showBulkActions)}
+                    className="flex items-center gap-2"
+                  >
+                    Bulk Acties
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                  {showBulkActions && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                      <div className="py-1">
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Status Wijzigen</div>
+                        <button
+                          onClick={() => handleBulkAction('status_active')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Actief
+                        </button>
+                        <button
+                          onClick={() => handleBulkAction('status_inactive')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Inactief
+                        </button>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={() => handleBulkAction('export')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Download className="h-4 w-4 inline mr-2" />
+                          Export geselecteerde
+                        </button>
+                        <button
+                          onClick={() => handleBulkAction('email')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Mail className="h-4 w-4 inline mr-2" />
+                          Email naar klanten
+                        </button>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={() => handleBulkAction('delete')}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 inline mr-2" />
+                          Verwijderen
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
 
           {/* Customers Table */}
           {isLoading ? (
@@ -351,6 +543,19 @@ export default function AdminKlantenPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                        <button
+                          onClick={handleSelectAll}
+                          className="flex items-center"
+                          title={selectedCustomers.size === currentCustomers.length ? 'Deselecteer alles' : 'Selecteer alles'}
+                        >
+                          {selectedCustomers.size === currentCustomers.length && currentCustomers.length > 0 ? (
+                            <CheckSquare className="h-5 w-5 text-primary-600" />
+                          ) : (
+                            <Square className="h-5 w-5 text-gray-400" />
+                          )}
+                        </button>
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <button
                           onClick={() => handleSort('name')}

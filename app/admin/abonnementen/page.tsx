@@ -22,7 +22,8 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock
+  Clock,
+  Download
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import Button from '@/components/ui/Button'
@@ -330,10 +331,43 @@ export default function AdminAbonnementenPage() {
                 Beheer alle bloemenabonnementen
               </p>
             </div>
-            <Button className="bg-white text-primary-600 hover:bg-primary-50">
-              <Plus className="h-4 w-4 mr-2" />
-              Nieuw Abonnement
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="bg-white text-primary-600 hover:bg-primary-50 border-white"
+                onClick={() => {
+                  const csv = [
+                    ['Abonnementnummer', 'Klant', 'Email', 'Type', 'Grootte', 'Frequentie', 'Prijs', 'Status', 'Startdatum', 'Volgende Bezorging'].join(','),
+                    ...filteredSubscriptions.map(s => [
+                      `"${s.subscriptionNumber}"`,
+                      `"${s.customer.name}"`,
+                      s.customer.email,
+                      getTypeLabel(s.type),
+                      getSizeLabel(s.size),
+                      s.frequency === 'weekly' ? 'Wekelijks' : '2-wekelijks',
+                      s.price.toFixed(2),
+                      s.status,
+                      formatDate(s.startDate),
+                      formatDate(s.nextDelivery)
+                    ].join(','))
+                  ].join('\n')
+                  const blob = new Blob([csv], { type: 'text/csv' })
+                  const url = window.URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `abonnementen-export-${new Date().toISOString().split('T')[0]}.csv`
+                  a.click()
+                  window.URL.revokeObjectURL(url)
+                }}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Exporteer
+              </Button>
+              <Button className="bg-white text-primary-600 hover:bg-primary-50">
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuw Abonnement
+              </Button>
+            </div>
           </div>
         </div>
 

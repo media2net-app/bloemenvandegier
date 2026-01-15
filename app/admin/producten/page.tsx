@@ -14,7 +14,11 @@ import {
   Filter,
   MoreVertical,
   CheckCircle,
-  XCircle
+  XCircle,
+  Download,
+  CheckSquare,
+  Square,
+  ChevronDown
 } from 'lucide-react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import Button from '@/components/ui/Button'
@@ -22,6 +26,7 @@ import Card from '@/components/ui/Card'
 import { formatPrice } from '@/lib/utils/format'
 import { getProductImage } from '@/lib/utils/getProductImage'
 import type { Product } from '@/lib/data/products'
+import { cn } from '@/lib/utils/cn'
 
 const PRODUCTS_PER_PAGE = 100
 
@@ -32,6 +37,8 @@ export default function AdminProductenPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedProducts, setSelectedProducts] = useState<Set<number>>(new Set())
+  const [showBulkActions, setShowBulkActions] = useState(false)
 
   useEffect(() => {
     // Check if admin is authenticated
@@ -89,7 +96,113 @@ export default function AdminProductenPage() {
       // In a real app, this would be an API call
       setProducts(products.filter(p => p.id !== productId))
       setFilteredProducts(filteredProducts.filter(p => p.id !== productId))
+      setSelectedProducts(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(productId)
+        return newSet
+      })
     }
+  }
+
+  const handleSelectAll = () => {
+    if (selectedProducts.size === currentProducts.length) {
+      setSelectedProducts(new Set())
+    } else {
+      setSelectedProducts(new Set(currentProducts.map(p => p.id)))
+    }
+  }
+
+  const handleSelectProduct = (productId: number) => {
+    setSelectedProducts(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(productId)) {
+        newSet.delete(productId)
+      } else {
+        newSet.add(productId)
+      }
+      return newSet
+    })
+  }
+
+  const handleBulkAction = async (action: string) => {
+    if (selectedProducts.size === 0) return
+
+    const selected = Array.from(selectedProducts)
+    const selectedProductsData = products.filter(p => selected.includes(p.id))
+
+    switch (action) {
+      case 'delete':
+        if (confirm(`Weet je zeker dat je ${selectedProducts.size} product(en) wilt verwijderen?`)) {
+          setProducts(products.filter(p => !selected.includes(p.id)))
+          setFilteredProducts(filteredProducts.filter(p => !selected.includes(p.id)))
+          setSelectedProducts(new Set())
+          alert(`${selectedProducts.size} product(en) verwijderd`)
+        }
+        break
+      case 'instock':
+        setProducts(products.map(p => 
+          selected.includes(p.id) ? { ...p, stock_status: 'instock' as const } : p
+        ))
+        setFilteredProducts(filteredProducts.map(p => 
+          selected.includes(p.id) ? { ...p, stock_status: 'instock' as const } : p
+        ))
+        alert(`${selectedProducts.size} product(en) op voorraad gezet`)
+        setSelectedProducts(new Set())
+        break
+      case 'outofstock':
+        setProducts(products.map(p => 
+          selected.includes(p.id) ? { ...p, stock_status: 'outofstock' as const } : p
+        ))
+        setFilteredProducts(filteredProducts.map(p => 
+          selected.includes(p.id) ? { ...p, stock_status: 'outofstock' as const } : p
+        ))
+        alert(`${selectedProducts.size} product(en) uitverkocht gezet`)
+        setSelectedProducts(new Set())
+        break
+      case 'featured':
+        setProducts(products.map(p => 
+          selected.includes(p.id) ? { ...p, featured: true } : p
+        ))
+        setFilteredProducts(filteredProducts.map(p => 
+          selected.includes(p.id) ? { ...p, featured: true } : p
+        ))
+        alert(`${selectedProducts.size} product(en) als featured gemarkeerd`)
+        setSelectedProducts(new Set())
+        break
+      case 'unfeatured':
+        setProducts(products.map(p => 
+          selected.includes(p.id) ? { ...p, featured: false } : p
+        ))
+        setFilteredProducts(filteredProducts.map(p => 
+          selected.includes(p.id) ? { ...p, featured: false } : p
+        ))
+        alert(`${selectedProducts.size} product(en) niet meer featured`)
+        setSelectedProducts(new Set())
+        break
+      case 'export':
+        // Export to CSV
+        const csv = [
+          ['Naam', 'SKU', 'Prijs', 'Voorraad', 'Status', 'Featured'].join(','),
+          ...selectedProductsData.map(p => [
+            `"${p.name}"`,
+            p.sku || '',
+            p.price,
+            p.stock_quantity ?? '',
+            p.stock_status,
+            p.featured ? 'Ja' : 'Nee'
+          ].join(','))
+        ].join('\n')
+        const blob = new Blob([csv], { type: 'text/csv' })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `producten-export-${new Date().toISOString().split('T')[0]}.csv`
+        a.click()
+        window.URL.revokeObjectURL(url)
+        alert(`${selectedProducts.size} product(en) geëxporteerd`)
+        break
+    }
+    setShowBulkActions(false)
   }
 
   const getStockBadge = (status: string) => {
@@ -164,8 +277,110 @@ export default function AdminProductenPage() {
                 <Filter className="h-4 w-4 mr-2" />
                 Filters
               </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const csv = [
+                    ['Naam', 'SKU', 'Prijs', 'Voorraad', 'Status', 'Featured'].join(','),
+                    ...filteredProducts.map(p => [
+                      `"${p.name}"`,
+                      p.sku || '',
+                      p.price,
+                      p.stock_quantity ?? '',
+                      p.stock_status,
+                      p.featured ? 'Ja' : 'Nee'
+                    ].join(','))
+                  ].join('\n')
+                  const blob = new Blob([csv], { type: 'text/csv' })
+                  const url = window.URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `alle-producten-${new Date().toISOString().split('T')[0]}.csv`
+                  a.click()
+                  window.URL.revokeObjectURL(url)
+                }}
+                className="border-gray-300"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Alles
+              </Button>
             </div>
           </Card>
+
+          {/* Bulk Actions Bar */}
+          {selectedProducts.size > 0 && (
+            <Card className="p-4 mb-6 bg-primary-50 border-primary-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-900">
+                    {selectedProducts.size} product(en) geselecteerd
+                  </span>
+                  <button
+                    onClick={() => setSelectedProducts(new Set())}
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Deselecteer alles
+                  </button>
+                </div>
+                <div className="relative">
+                  <Button
+                    variant="primary"
+                    onClick={() => setShowBulkActions(!showBulkActions)}
+                    className="flex items-center gap-2"
+                  >
+                    Bulk Acties
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                  {showBulkActions && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                      <div className="py-1">
+                        <button
+                          onClick={() => handleBulkAction('instock')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Op voorraad zetten
+                        </button>
+                        <button
+                          onClick={() => handleBulkAction('outofstock')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Uitverkocht zetten
+                        </button>
+                        <button
+                          onClick={() => handleBulkAction('featured')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Als featured markeren
+                        </button>
+                        <button
+                          onClick={() => handleBulkAction('unfeatured')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Featured verwijderen
+                        </button>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={() => handleBulkAction('export')}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Download className="h-4 w-4 inline mr-2" />
+                          Export geselecteerde
+                        </button>
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={() => handleBulkAction('delete')}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 inline mr-2" />
+                          Verwijderen
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
 
           {/* Products Table */}
           {isLoading ? (
@@ -259,6 +474,19 @@ export default function AdminProductenPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                        <button
+                          onClick={handleSelectAll}
+                          className="flex items-center"
+                          title={selectedProducts.size === currentProducts.length ? 'Deselecteer alles' : 'Selecteer alles'}
+                        >
+                          {selectedProducts.size === currentProducts.length && currentProducts.length > 0 ? (
+                            <CheckSquare className="h-5 w-5 text-primary-600" />
+                          ) : (
+                            <Square className="h-5 w-5 text-gray-400" />
+                          )}
+                        </button>
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Product
                       </th>
@@ -282,8 +510,21 @@ export default function AdminProductenPage() {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {currentProducts.map((product) => {
                       const image = getProductImage(product.images)
+                      const isSelected = selectedProducts.has(product.id)
                       return (
-                        <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                        <tr key={product.id} className={cn("hover:bg-gray-50 transition-colors", isSelected && "bg-primary-50")}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <button
+                              onClick={() => handleSelectProduct(product.id)}
+                              className="flex items-center"
+                            >
+                              {isSelected ? (
+                                <CheckSquare className="h-5 w-5 text-primary-600" />
+                              ) : (
+                                <Square className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
