@@ -18,9 +18,11 @@ export default function ConditionalLayout({
   // Hide header and footer on admin login page
   const isAdminLogin = pathname?.startsWith('/admin/login')
   const isAdminDashboard = pathname?.startsWith('/admin') && !isAdminLogin
+  const isMiddelbareScholenLogin = pathname?.startsWith('/middelbare-scholen/login')
+  const isMiddelbareScholenValentijn = pathname?.startsWith('/middelbare-scholen/valentijn')
 
-  if (isAdminLogin) {
-    // Admin login page - no header, footer, trustbar, or help widget
+  if (isAdminLogin || isMiddelbareScholenLogin || isMiddelbareScholenValentijn) {
+    // Admin login page, middelbare scholen login, or middelbare scholen valentijn - no header, footer, trustbar, or help widget
     // Return children directly without wrapper to avoid CSS conflicts
     return <>{children}</>
   }

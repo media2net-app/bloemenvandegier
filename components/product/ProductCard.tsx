@@ -35,6 +35,7 @@ interface ProductCardProps {
   ratingCount?: number
   label?: ProductLabel
   onQuickView?: () => void
+  basePath?: string // Custom base path for product links (e.g., '/middelbare-scholen/valentijn')
 }
 
 export default function ProductCard({
@@ -52,6 +53,7 @@ export default function ProductCard({
   ratingCount,
   label,
   onQuickView,
+  basePath,
 }: ProductCardProps) {
   const { openCart } = useCart()
   const addItem = useCartStore((state) => state.addItem)
@@ -82,6 +84,7 @@ export default function ProductCard({
   const productId = product?.id || id!
   const productName = product?.name || name!
   const productSlug = product?.slug || slug || ''
+  const productPath = basePath ? `${basePath}/${productSlug}` : `/product/${productSlug}`
   const productPrice = product?.sale_price || product?.price || price || '0'
   const productRegularPrice = product?.regular_price || regularPrice
   const productImages = product?.images || images || []
@@ -128,7 +131,7 @@ export default function ProductCard({
   
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
-      <Link href={`/product/${productSlug}`} className="block" prefetch>
+      <Link href={productPath} className="block" prefetch>
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           <Image
             src={getProductImage([currentImage])}
@@ -255,7 +258,7 @@ export default function ProductCard({
       </Link>
 
       <div className="p-4">
-        <Link href={`/product/${productSlug}`} prefetch>
+        <Link href={productPath} prefetch>
           <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
             {productName}
           </h3>

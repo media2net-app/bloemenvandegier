@@ -1,19 +1,24 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useRef, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/auth/store'
+import Link from 'next/link'
+import Image from 'next/image'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import ProductGallery from '@/components/product/ProductGallery'
-import ProductInfo from '@/components/product/ProductInfo'
+import ProductInfoValentijn from '@/components/product/ProductInfoValentijn'
 import ProductReviews from '@/components/product/ProductReviews'
 import ProductRecommendations from '@/components/product/ProductRecommendations'
 import ProductBundles from '@/components/product/ProductBundles'
 import ProductVideo from '@/components/product/ProductVideo'
 import ProductQA from '@/components/product/ProductQA'
 import StickyAddToCart from '@/components/product/StickyAddToCart'
+import Button from '@/components/ui/Button'
 import { Product } from '@/lib/data/products'
 import { getRelatedProducts } from '@/lib/data/products'
+import { LogOut, ShoppingCart, Heart } from 'lucide-react'
+import { useCartStore } from '@/lib/cart/store'
 
 // Mock reviews - will be replaced with real reviews later
 const mockReviews = [
@@ -44,10 +49,11 @@ interface ProductDetailClientProps {
   product: Product
 }
 
-export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+export default function MiddelbareScholenProductDetailClient({ product }: ProductDetailClientProps) {
+  const router = useRouter()
   const reviewsRef = useRef<HTMLDivElement>(null)
-  const pathname = usePathname()
-  const { userType } = useAuthStore()
+  const { user, isAuthenticated, userType, logout } = useAuthStore()
+  const { getItemCount } = useCartStore()
   const [cartData, setCartData] = useState<{
     quantity: number
     price: string
@@ -62,42 +68,95 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     onAddToCart: () => {},
   })
 
-  // Only use valentijn mode if we're on the middelbare-scholen route
-  // Normal /product/[slug] routes should always use normal shop styling
-  const isValentijnMode = pathname?.startsWith('/middelbare-scholen/valentijn') && userType === 'middelbare-school'
+  useEffect(() => {
+    // Redirect if not authenticated as middelbare school
+    const timer = setTimeout(() => {
+      if (!isAuthenticated || userType !== 'middelbare-school') {
+        router.push('/middelbare-scholen/login')
+      }
+    }, 100)
+    
+    return () => clearTimeout(timer)
+  }, [isAuthenticated, userType, router])
 
-  // Get related products
-  const relatedProducts = getRelatedProducts(product, 4)
+  const handleLogout = () => {
+    logout()
+    router.push('/middelbare-scholen/login')
+  }
 
-  // Build breadcrumbs based on product categories
+  // Get related products (filter for valentijn products)
+  const allRelated = getRelatedProducts(product, 10)
+  const valentijnProductSlugs = [
+    'onbewerkte-rode-roos-per-stuk-te-bestellen',
+    'onbewerkte-rode-roos-142',
+    'per-stuk-verpakte-rode-roos-245'
+  ]
+  const relatedProducts = allRelated.filter(p => valentijnProductSlugs.includes(p.slug)).slice(0, 4)
+
+  // Build breadcrumbs
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
+    { label: 'Valentijn Assortiment', href: '/middelbare-scholen/valentijn' },
+    { label: product.name, href: '#' },
   ]
-  
-  if (product.categories && product.categories.length > 0) {
-    const mainCategory = product.categories[0]
-    // Map category names to routes
-    const categoryRoutes: Record<string, string> = {
-      'Rozen': '/rozen',
-      'Boeketten': '/boeketten',
-      'BloemenBundels': '/boeketten',
-      'Emmer Bloemen': '/boeketten',
-      'Groen & Decoratief': '/groen-decoratief',
-    }
-    
-    const categoryRoute = categoryRoutes[mainCategory.name] || `/categorie/${mainCategory.slug}`
-    breadcrumbItems.push({
-      label: mainCategory.name,
-      href: categoryRoute,
-    })
+
+  if (!isAuthenticated || userType !== 'middelbare-school') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Laden...</p>
+        </div>
+      </div>
+    )
   }
-  
-  breadcrumbItems.push({ label: product.name, href: '#' })
 
   return (
-    <div className={`min-h-screen ${isValentijnMode ? 'bg-red-50' : 'bg-white'}`}>
-      {/* Section 1: Product Header & Info - White background */}
-      <section className={isValentijnMode ? 'bg-red-50' : 'bg-white'}>
+    <div className="min-h-screen bg-red-50">
+      {/* Valentijn Header */}
+      <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/middelbare-scholen/valentijn" className="flex items-center">
+                <Image
+                  src="/images/logo.svg"
+                  alt="Bloemen van De Gier"
+                  width={200}
+                  height={50}
+                  className="h-10 w-auto brightness-0 invert"
+                />
+              </Link>
+              <div className="hidden md:block">
+                <h1 className="text-xl font-bold">Valentijn Assortiment</h1>
+                <p className="text-sm text-red-100">{user?.schoolName}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/afrekenen" className="relative p-2 hover:bg-white/10 rounded-lg transition-colors">
+                <ShoppingCart className="h-6 w-6" />
+                {getItemCount() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-white text-red-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {getItemCount()}
+                  </span>
+                )}
+              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="border-white text-white hover:bg-white hover:text-red-600"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Uitloggen
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 1: Product Header & Info */}
+      <section className="bg-red-50">
         <div className="container mx-auto px-4 py-8">
           <Breadcrumbs items={breadcrumbItems} />
 
@@ -114,7 +173,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
               {/* Product Info (60%) */}
               <div className="lg:col-span-3">
-                <ProductInfo
+                <ProductInfoValentijn
                   id={product.id}
                   name={product.name}
                   price={product.price}
@@ -137,8 +196,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
       </section>
 
-      {/* Section 2: Reviews - Gray background */}
-      <section ref={reviewsRef} className={`${isValentijnMode ? 'bg-red-100' : 'bg-gray-50'} py-16 scroll-mt-20`}>
+      {/* Section 2: Reviews */}
+      <section ref={reviewsRef} className="bg-red-100 py-16 scroll-mt-20">
         <div className="container mx-auto px-4">
           <ProductReviews
             reviews={mockReviews}
@@ -148,8 +207,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
       </section>
 
-      {/* Section 3: Product Bundles - White background */}
-      <section className="bg-white py-16">
+      {/* Section 3: Product Bundles */}
+      <section className="bg-red-50 py-16">
         <div className="container mx-auto px-4">
           <ProductBundles
             currentProduct={product}
@@ -158,27 +217,27 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
       </section>
 
-      {/* Section 4: Video & Verzorging - Gray background */}
-      <section className={`${isValentijnMode ? 'bg-red-100' : 'bg-gray-50'} py-16`}>
+      {/* Section 4: Video & Verzorging */}
+      <section className="bg-red-100 py-16">
         <div className="container mx-auto px-4">
           <ProductVideo productName={product.name} />
         </div>
       </section>
 
-      {/* Section 5: Q&A - White background */}
-      <section className={`${isValentijnMode ? 'bg-red-50' : 'bg-white'} py-16`}>
+      {/* Section 5: Q&A */}
+      <section className="bg-red-50 py-16">
         <div className="container mx-auto px-4">
           <ProductQA productId={product.id} productName={product.name} />
         </div>
       </section>
 
-      {/* Section 6: Related Products - Gray background */}
+      {/* Section 6: Related Products */}
       {relatedProducts.length > 0 && (
-        <section className={`${isValentijnMode ? 'bg-red-100' : 'bg-gray-50'} py-16`}>
+        <section className="bg-red-100 py-16">
           <div className="container mx-auto px-4">
             <ProductRecommendations
               products={relatedProducts}
-              title="Gerelateerde producten"
+              title="Andere Valentijn producten"
             />
           </div>
         </section>

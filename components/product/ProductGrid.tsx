@@ -10,6 +10,7 @@ interface ProductGridProps {
   products: Product[]
   columns?: 2 | 3 | 4
   showUSPBanners?: boolean // Only show USP banners on category pages, not homepage
+  basePath?: string // Custom base path for product links (e.g., '/middelbare-scholen/valentijn')
 }
 
 type ProductLabel = 'meest-verkocht' | 'nieuw' | 'dagtopper' | null
@@ -89,7 +90,7 @@ function USPBanner({ columns }: { columns: 2 | 3 | 4 }) {
   )
 }
 
-export default function ProductGrid({ products, columns = 4, showUSPBanners = false }: ProductGridProps) {
+export default function ProductGrid({ products, columns = 4, showUSPBanners = false, basePath }: ProductGridProps) {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   
   const gridCols = {
@@ -126,6 +127,7 @@ export default function ProductGrid({ products, columns = 4, showUSPBanners = fa
               product={product}
               label={label}
               onQuickView={() => setQuickViewProduct(product)}
+              basePath={basePath}
             />
           )
         })}
