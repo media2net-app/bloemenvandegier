@@ -28,7 +28,8 @@ import {
   Music,
   Calendar,
   ClipboardList,
-  FileEdit
+  FileEdit,
+  Briefcase
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -45,6 +46,9 @@ const implementedPages = [
   '/admin',
   '/admin/paginas',
   '/admin/paginas/nieuw',
+  '/admin/zakelijke-leads',
+  '/admin/zakelijke-leads/lead-finder',
+  '/admin/mailing',
   '/admin/producten',
   '/admin/bestellingen',
   '/admin/order-picker',
@@ -64,6 +68,7 @@ const implementedPages = [
   '/admin/marketing/content-kalender',
   '/admin/taken',
   '/admin/notificaties',
+  '/admin/mailing',
   '/admin/rapporten',
   '/admin/activity-log',
 ]
@@ -71,6 +76,15 @@ const implementedPages = [
 const menuItems: MenuItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Pagina\'s', href: '/admin/paginas', icon: FileEdit },
+  { 
+    name: 'Zakelijke Leads', 
+    href: '/admin/zakelijke-leads', 
+    icon: Briefcase,
+    children: [
+      { name: 'Lead Finder', href: '/admin/zakelijke-leads/lead-finder', icon: Search },
+    ]
+  },
+  { name: 'Mailing', href: '/admin/mailing', icon: Mail, isNew: true },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },
@@ -111,6 +125,16 @@ export default function AdminSidebar() {
       setExpandedMenus(prev => {
         if (!prev.includes('Marketing')) {
           return [...prev, 'Marketing']
+        }
+        return prev
+      })
+    }
+
+    // Auto-expand Zakelijke Leads menu if on a leads page
+    if (pathname?.startsWith('/admin/zakelijke-leads')) {
+      setExpandedMenus(prev => {
+        if (!prev.includes('Zakelijke Leads')) {
+          return [...prev, 'Zakelijke Leads']
         }
         return prev
       })
