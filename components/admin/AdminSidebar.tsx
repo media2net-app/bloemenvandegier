@@ -29,7 +29,8 @@ import {
   Calendar,
   ClipboardList,
   FileEdit,
-  Briefcase
+  Briefcase,
+  DollarSign
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -71,6 +72,7 @@ const implementedPages = [
   '/admin/mailing',
   '/admin/rapporten',
   '/admin/activity-log',
+  '/admin/omzet-generator',
 ]
 
 const menuItems: MenuItem[] = [
@@ -85,6 +87,7 @@ const menuItems: MenuItem[] = [
     ]
   },
   { name: 'Mailing', href: '/admin/mailing', icon: Mail, isNew: true },
+  { name: 'Omzet Generator', href: '/admin/omzet-generator', icon: DollarSign },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },

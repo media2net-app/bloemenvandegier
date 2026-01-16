@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -911,7 +911,9 @@ function EmailBuilderModal({
   const [subject, setSubject] = useState(template.subject)
   const [elements, setElements] = useState<any[]>([])
   const [selectedElement, setSelectedElement] = useState<number | null>(null)
-  const [previewMode, setPreviewMode] = useState(false)
+  const [editingElement, setEditingElement] = useState<number | null>(null)
+  const [draggedElement, setDraggedElement] = useState<string | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
   useEffect(() => {
     // Parse existing HTML body into elements
@@ -995,6 +997,20 @@ function EmailBuilderModal({
     }
     setElements([...elements, newElement])
     setSelectedElement(elements.length)
+    setEditingElement(elements.length)
+  }
+
+  const insertElementAt = (type: string, index: number) => {
+    const newElement = {
+      type,
+      id: `${type}-${Date.now()}`,
+      content: getDefaultContent(type),
+      settings: getDefaultSettings(type)
+    }
+    const updated = [...elements]
+    updated.splice(index, 0, newElement)
+    setElements(updated)
+    setEditingElement(index)
   }
 
   const getDefaultContent = (type: string): string => {
@@ -1052,7 +1068,31 @@ function EmailBuilderModal({
     setSelectedElement(newIndex)
   }
 
-  const generateHtml = (): string => {
+  const findElementIndexFromTarget = (target: HTMLElement, elements: any[]): number | null => {
+    // Walk up the DOM tree to find data-element-index attribute
+    let current: HTMLElement | null = target
+    let depth = 0
+    const maxDepth = 10
+
+    while (current && depth < maxDepth) {
+      // Check for data-element-index attribute
+      const elementIndex = current.getAttribute('data-element-index')
+      if (elementIndex !== null) {
+        return parseInt(elementIndex, 10)
+      }
+      
+      current = current.parentElement
+      depth++
+    }
+
+    return null
+  }
+
+  const generateHtmlWithDropZones = (): string => {
+    return generateHtml(true)
+  }
+
+  const generateHtml = (showDropZones: boolean = false): string => {
     const logoUrl = '{{logo_url}}'
     
     let html = `<!DOCTYPE html>
@@ -1175,30 +1215,96 @@ function EmailBuilderModal({
     
     <div class="content">`
 
-    elements.forEach(element => {
+    elements.forEach((element, index) => {
+      // Add data attribute for element identification
+      const editingClass = editingElement === index ? 'editing' : ''
+      const dragOverClass = dragOverIndex === index ? 'drag-over' : ''
+      const dataAttr = `data-element-index="${index}"`
+      const classes = `${editingClass} ${dragOverClass}`.trim()
+      
       switch (element.type) {
         case 'text':
           const textClass = element.settings.style === 'greeting' ? 'greeting' : 'text-normal'
-          html += `<div class="${textClass}">${element.content}</div>`
+          if (editingElement === index) {
+            html += `<div class="${textClass} ${classes}" ${dataAttr}>
+              <textarea 
+                style="width: 100%; min-height: 60px; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif; font-size: 16px;"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              >${element.content}</textarea>
+            </div>`
+          } else {
+            html += `<div class="${textClass} ${classes}" ${dataAttr}>${element.content}</div>`
+          }
           break
         case 'heading':
           const headingClass = `heading heading-${element.settings.level || 'h2'}`
-          html += `<div class="${headingClass}">${element.content}</div>`
+          if (editingElement === index) {
+            html += `<div class="${headingClass} ${classes}" ${dataAttr}>
+              <input 
+                type="text" 
+                value="${element.content}"
+                style="width: 100%; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif; font-weight: bold; font-size: ${element.settings.level === 'h1' ? '24px' : element.settings.level === 'h3' ? '18px' : '20px'};"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              />
+            </div>`
+          } else {
+            html += `<div class="${headingClass} ${classes}" ${dataAttr}>${element.content}</div>`
+          }
           break
         case 'offer':
-          html += `<div class="offer-section">
-            <div class="offer-title">${element.content}</div>
-          </div>`
+          if (editingElement === index) {
+            html += `<div class="offer-section ${classes}" ${dataAttr}>
+              <textarea 
+                style="width: 100%; min-height: 80px; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif;"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              >${element.content}</textarea>
+            </div>`
+          } else {
+            html += `<div class="offer-section ${classes}" ${dataAttr}>
+              <div class="offer-title">${element.content}</div>
+            </div>`
+          }
           break
         case 'cta':
-          html += `<div class="cta-section">
-            <div class="cta-text">${element.content}</div>
-            <a href="${element.settings.buttonUrl || 'mailto:info@bloemenvandegier.nl'}" class="cta-button">${element.settings.buttonText || 'Contact opnemen'}</a>
-          </div>`
+          if (editingElement === index) {
+            html += `<div class="cta-section ${classes}" ${dataAttr} style="padding: 20px;">
+              <input 
+                type="text" 
+                placeholder="CTA tekst..."
+                value="${element.content}"
+                style="width: 100%; margin-bottom: 10px; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              />
+              <input 
+                type="text" 
+                placeholder="Button tekst..."
+                value="${element.settings.buttonText || ''}"
+                style="width: 100%; margin-bottom: 10px; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              />
+              <input 
+                type="text" 
+                placeholder="URL..."
+                value="${element.settings.buttonUrl || ''}"
+                style="width: 100%; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;"
+                onBlur="this.parentElement.dispatchEvent(new Event('blur'))"
+              />
+            </div>`
+          } else {
+            html += `<div class="cta-section ${classes}" ${dataAttr}>
+              <div class="cta-text">${element.content}</div>
+              <a href="${element.settings.buttonUrl || 'mailto:info@bloemenvandegier.nl'}" class="cta-button">${element.settings.buttonText || 'Contact opnemen'}</a>
+            </div>`
+          }
           break
         case 'divider':
-          html += `<div class="divider"></div>`
+          html += `<div class="divider ${classes}" ${dataAttr}></div>`
           break
+      }
+      
+      // Add drop zone after each element (except last)
+      if (showDropZones && index < elements.length - 1) {
+        html += `<div class="drop-zone" data-drop-index="${index + 1}">Sleep element hier</div>`
       }
     })
 
@@ -1247,14 +1353,6 @@ function EmailBuilderModal({
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button
-                variant="secondary"
-                className="bg-white text-primary-600 hover:bg-primary-50"
-                onClick={() => setPreviewMode(!previewMode)}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                {previewMode ? 'Bewerken' : 'Preview'}
-              </Button>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-primary-500 rounded-lg transition-colors"
@@ -1265,46 +1363,71 @@ function EmailBuilderModal({
           </div>
 
           <div className="flex-1 flex overflow-hidden">
-            {/* Left: Elements Library */}
-            {!previewMode && (
-              <div className="w-64 border-r border-gray-200 bg-gray-50 p-4 overflow-y-auto">
+            {/* Left: Elements Library - Draggable */}
+            <div className="w-64 border-r border-gray-200 bg-gray-50 p-4 overflow-y-auto">
                 <h3 className="font-semibold text-gray-900 mb-4">Elementen</h3>
+                <p className="text-xs text-gray-600 mb-4">Sleep elementen naar de preview</p>
                 <div className="space-y-2">
-                  <button
-                    onClick={() => addElement('text')}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedElement('text')
+                      e.dataTransfer.effectAllowed = 'copy'
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-move"
                   >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
                     <Type className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">Tekst</span>
-                  </button>
-                  <button
-                    onClick={() => addElement('heading')}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                    <span className="text-sm text-gray-900">Tekst</span>
+                  </div>
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedElement('heading')
+                      e.dataTransfer.effectAllowed = 'copy'
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-move"
                   >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
                     <FileText className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">Koptekst</span>
-                  </button>
-                  <button
-                    onClick={() => addElement('button')}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                    <span className="text-sm text-gray-900">Koptekst</span>
+                  </div>
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedElement('button')
+                      e.dataTransfer.effectAllowed = 'copy'
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-move"
                   >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
                     <MousePointerClick className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">Button</span>
-                  </button>
-                  <button
-                    onClick={() => addElement('offer')}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                    <span className="text-sm text-gray-900">Button</span>
+                  </div>
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedElement('offer')
+                      e.dataTransfer.effectAllowed = 'copy'
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-move"
                   >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
                     <Sparkles className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">Aanbod Sectie</span>
-                  </button>
-                  <button
-                    onClick={() => addElement('divider')}
-                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                    <span className="text-sm text-gray-900">Aanbod Sectie</span>
+                  </div>
+                  <div
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedElement('divider')
+                      e.dataTransfer.effectAllowed = 'copy'
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-move"
                   >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
                     <Minus className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm">Scheidingslijn</span>
-                  </button>
+                    <span className="text-sm text-gray-900">Scheidingslijn</span>
+                  </div>
                 </div>
 
                 <div className="mt-6">
@@ -1318,7 +1441,7 @@ function EmailBuilderModal({
                         type="text"
                         value={templateName}
                         onChange={(e) => setTemplateName(e.target.value)}
-                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
                       />
                     </div>
                     <div>
@@ -1329,150 +1452,45 @@ function EmailBuilderModal({
                         type="text"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
-                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white placeholder:text-gray-400"
                         placeholder="E-mail onderwerp..."
                       />
                     </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* Center: Editor */}
+            {/* Center: Full Preview with Editable Elements */}
             <div className="flex-1 flex flex-col overflow-hidden">
-              {previewMode ? (
-                <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-2xl mx-auto">
-                    <div dangerouslySetInnerHTML={{ __html: generateHtml().replace(/\{\{logo_url\}\}/g, typeof window !== 'undefined' ? `${window.location.origin}/images/logo.svg` : '/images/logo.svg') }} />
+              <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <div className="max-w-2xl mx-auto">
+                  <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <strong>💡 Tip:</strong> Sleep elementen van links naar de preview. Klik op elementen in de preview om ze direct te bewerken.
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden relative">
+                    <EmailPreviewEditable
+                      elements={elements}
+                      editingElement={editingElement}
+                      dragOverIndex={dragOverIndex}
+                      draggedElement={draggedElement}
+                      onElementClick={(index) => setEditingElement(index)}
+                      onElementUpdate={(index, updates) => updateElement(index, updates)}
+                      onElementBlur={() => setEditingElement(null)}
+                      onDragOver={(index) => setDragOverIndex(index)}
+                      onDrop={(type, index) => {
+                        insertElementAt(type, index)
+                        setDraggedElement(null)
+                        setDragOverIndex(null)
+                      }}
+                      onDragLeave={() => setDragOverIndex(null)}
+                      generateHtml={generateHtml}
+                      findElementIndexFromTarget={findElementIndexFromTarget}
+                    />
                   </div>
                 </div>
-              ) : (
-                <div className="flex-1 overflow-y-auto p-6">
-                  <div className="max-w-2xl mx-auto space-y-4">
-                    {elements.map((element, index) => (
-                      <div
-                        key={element.id}
-                        className={cn(
-                          "border-2 rounded-lg p-4 transition-all",
-                          selectedElement === index
-                            ? "border-primary-500 bg-primary-50"
-                            : "border-gray-200 bg-white hover:border-gray-300"
-                        )}
-                        onClick={() => setSelectedElement(index)}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex flex-col gap-1 mt-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                moveElement(index, 'up')
-                              }}
-                              disabled={index === 0}
-                              className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
-                            >
-                              <GripVertical className="h-4 w-4 text-gray-400" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                moveElement(index, 'down')
-                              }}
-                              disabled={index === elements.length - 1}
-                              className="p-1 hover:bg-gray-100 rounded disabled:opacity-30"
-                            >
-                              <GripVertical className="h-4 w-4 text-gray-400" />
-                            </button>
-                          </div>
-                          <div className="flex-1">
-                            {element.type === 'text' && (
-                              <textarea
-                                value={element.content}
-                                onChange={(e) => updateElement(index, { content: e.target.value })}
-                                rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500"
-                                placeholder="Tekst..."
-                              />
-                            )}
-                            {element.type === 'heading' && (
-                              <div className="space-y-2">
-                                <input
-                                  type="text"
-                                  value={element.content}
-                                  onChange={(e) => updateElement(index, { content: e.target.value })}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 font-bold text-lg"
-                                  placeholder="Koptekst..."
-                                />
-                                <select
-                                  value={element.settings.level || 'h2'}
-                                  onChange={(e) => updateElement(index, { settings: { ...element.settings, level: e.target.value } })}
-                                  className="text-sm px-2 py-1 border border-gray-300 rounded"
-                                >
-                                  <option value="h1">Groot (H1)</option>
-                                  <option value="h2">Normaal (H2)</option>
-                                  <option value="h3">Klein (H3)</option>
-                                </select>
-                              </div>
-                            )}
-                            {element.type === 'button' && (
-                              <div className="space-y-2">
-                                <input
-                                  type="text"
-                                  value={element.settings.buttonText || ''}
-                                  onChange={(e) => updateElement(index, { settings: { ...element.settings, buttonText: e.target.value } })}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500"
-                                  placeholder="Button tekst..."
-                                />
-                                <input
-                                  type="text"
-                                  value={element.settings.buttonUrl || ''}
-                                  onChange={(e) => updateElement(index, { settings: { ...element.settings, buttonUrl: e.target.value } })}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 text-sm"
-                                  placeholder="URL (bijv. mailto:info@bloemenvandegier.nl)"
-                                />
-                              </div>
-                            )}
-                            {element.type === 'offer' && (
-                              <textarea
-                                value={element.content}
-                                onChange={(e) => updateElement(index, { content: e.target.value })}
-                                rows={4}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500"
-                                placeholder="Aanbod beschrijving..."
-                              />
-                            )}
-                            {element.type === 'divider' && (
-                              <div className="text-center text-gray-400 py-4">
-                                <Minus className="h-6 w-6 mx-auto" />
-                                <span className="text-xs">Scheidingslijn</span>
-                              </div>
-                            )}
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              deleteElement(index)
-                            }}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                        <div className="mt-2 text-xs text-gray-500">
-                          {element.type === 'text' && element.settings.style === 'greeting' && (
-                            <span className="text-primary-600">✓ Groetstijl</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {elements.length === 0 && (
-                      <div className="text-center py-12 text-gray-400">
-                        <FileText className="h-12 w-12 mx-auto mb-4" />
-                        <p>Klik op een element om toe te voegen</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
@@ -1488,6 +1506,301 @@ function EmailBuilderModal({
           </div>
         </div>
       </div>
+    </>
+  )
+}
+
+// Email Preview Editable Component
+function EmailPreviewEditable({
+  elements,
+  editingElement,
+  dragOverIndex,
+  draggedElement,
+  onElementClick,
+  onElementUpdate,
+  onElementBlur,
+  onDragOver,
+  onDrop,
+  onDragLeave,
+  generateHtml,
+  findElementIndexFromTarget
+}: {
+  elements: any[]
+  editingElement: number | null
+  dragOverIndex: number | null
+  draggedElement: string | null
+  onElementClick: (index: number) => void
+  onElementUpdate: (index: number, updates: any) => void
+  onElementBlur: () => void
+  onDragOver: (index: number | null) => void
+  onDrop: (type: string, index: number) => void
+  onDragLeave: () => void
+  generateHtml: (showDropZones?: boolean) => string
+  findElementIndexFromTarget: (target: HTMLElement, elements: any[]) => number | null
+}) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    let html = generateHtml(true)
+    
+    // Replace variables with example data
+    const processedHtml = html
+      .replace(/\{\{logo_url\}\}/g, typeof window !== 'undefined' ? `${window.location.origin}/images/logo.svg` : '/images/logo.svg')
+      .replace(/\{\{bedrijfsnaam\}\}/g, 'Voorbeeld Bedrijf')
+      .replace(/\{\{contactpersoon\}\}/g, 'Jan de Vries')
+      .replace(/\{\{stad\}\}/g, 'Amsterdam')
+      .replace(/\{\{adres\}\}/g, 'Voorbeeldstraat 123')
+      .replace(/\{\{postcode\}\}/g, '1234 AB')
+      .replace(/\{\{email\}\}/g, 'info@voorbeeld.nl')
+      .replace(/\{\{telefoon\}\}/g, '020-1234567')
+
+    containerRef.current.innerHTML = processedHtml
+
+    // Add inline editing for elements
+    if (editingElement !== null && elements[editingElement]) {
+      const element = elements[editingElement]
+      const elementDiv = containerRef.current.querySelector(`[data-element-index="${editingElement}"]`)
+      
+      if (elementDiv) {
+        elementDiv.classList.add('editing')
+        
+        // Replace content with editable input based on type
+        if (element.type === 'text') {
+          const textarea = document.createElement('textarea')
+          textarea.value = element.content
+          textarea.style.cssText = 'width: 100%; min-height: 60px; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif; font-size: 16px; background: white; color: #333;'
+          textarea.oninput = (e) => {
+            const target = e.target as HTMLTextAreaElement
+            onElementUpdate(editingElement, { content: target.value })
+          }
+          textarea.onblur = () => {
+            onElementBlur()
+          }
+          elementDiv.innerHTML = ''
+          elementDiv.appendChild(textarea)
+          setTimeout(() => textarea.focus(), 50)
+        } else if (element.type === 'heading') {
+          const input = document.createElement('input')
+          input.type = 'text'
+          input.value = element.content
+          input.style.cssText = `width: 100%; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif; font-weight: bold; font-size: ${element.settings.level === 'h1' ? '24px' : element.settings.level === 'h3' ? '18px' : '20px'}; background: white; color: #333;`
+          input.oninput = (e) => {
+            const target = e.target as HTMLInputElement
+            onElementUpdate(editingElement, { content: target.value })
+          }
+          input.onblur = () => {
+            onElementBlur()
+          }
+          elementDiv.innerHTML = ''
+          elementDiv.appendChild(input)
+          setTimeout(() => input.focus(), 50)
+        } else if (element.type === 'offer') {
+          const textarea = document.createElement('textarea')
+          textarea.value = element.content
+          textarea.style.cssText = 'width: 100%; min-height: 80px; padding: 8px; border: 2px solid #356443; border-radius: 4px; font-family: Arial, sans-serif; background: white; color: #333;'
+          textarea.oninput = (e) => {
+            const target = e.target as HTMLTextAreaElement
+            onElementUpdate(editingElement, { content: target.value })
+          }
+          textarea.onblur = () => {
+            onElementBlur()
+          }
+          const titleDiv = elementDiv.querySelector('.offer-title')
+          if (titleDiv) {
+            titleDiv.innerHTML = ''
+            titleDiv.appendChild(textarea)
+            setTimeout(() => textarea.focus(), 50)
+          }
+        } else if (element.type === 'cta') {
+          const ctaText = elementDiv.querySelector('.cta-text')
+          
+          if (ctaText) {
+            const input1 = document.createElement('input')
+            input1.type = 'text'
+            input1.value = element.content
+            input1.placeholder = 'CTA tekst...'
+            input1.style.cssText = 'width: 100%; margin-bottom: 10px; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;'
+            input1.oninput = (e) => {
+              const target = e.target as HTMLInputElement
+              onElementUpdate(editingElement, { content: target.value })
+            }
+            
+            const input2 = document.createElement('input')
+            input2.type = 'text'
+            input2.value = element.settings.buttonText || ''
+            input2.placeholder = 'Button tekst...'
+            input2.style.cssText = 'width: 100%; margin-bottom: 10px; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;'
+            input2.oninput = (e) => {
+              const target = e.target as HTMLInputElement
+              onElementUpdate(editingElement, { settings: { ...element.settings, buttonText: target.value } })
+            }
+            
+            const input3 = document.createElement('input')
+            input3.type = 'text'
+            input3.value = element.settings.buttonUrl || ''
+            input3.placeholder = 'URL...'
+            input3.style.cssText = 'width: 100%; padding: 8px; border: 2px solid white; border-radius: 4px; background: white; color: #333;'
+            input3.oninput = (e) => {
+              const target = e.target as HTMLInputElement
+              onElementUpdate(editingElement, { settings: { ...element.settings, buttonUrl: target.value } })
+            }
+            input3.onblur = () => {
+              onElementBlur()
+            }
+            
+            elementDiv.innerHTML = ''
+            elementDiv.appendChild(input1)
+            elementDiv.appendChild(input2)
+            elementDiv.appendChild(input3)
+            setTimeout(() => input1.focus(), 50)
+          }
+        }
+      }
+    }
+
+    // Add click handlers for non-editing elements
+    const contentDivs = containerRef.current.querySelectorAll('.content > div:not(.editing)')
+    contentDivs.forEach((div) => {
+      const clickHandler = (e: Event) => {
+        const target = e.target as HTMLElement
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'A' || target.tagName === 'IMG') {
+          return
+        }
+        const elementIndex = findElementIndexFromTarget(target, elements)
+        if (elementIndex !== null && editingElement !== elementIndex) {
+          onElementClick(elementIndex)
+        }
+      }
+      div.removeEventListener('click', clickHandler)
+      div.addEventListener('click', clickHandler)
+    })
+
+    // Add drag and drop handlers
+    const dropZones = containerRef.current.querySelectorAll('.drop-zone, .content > div')
+    dropZones.forEach((zone) => {
+      const dragOverHandler = (e: Event) => {
+        const dragEvent = e as DragEvent
+        dragEvent.preventDefault()
+        dragEvent.stopPropagation()
+        if (draggedElement) {
+          if (zone.classList.contains('drop-zone')) {
+            const dropIndex = parseInt(zone.getAttribute('data-drop-index') || '0', 10)
+            onDragOver(dropIndex)
+          } else {
+            const target = dragEvent.target as HTMLElement
+            const index = findElementIndexFromTarget(target, elements)
+            if (index !== null) {
+              onDragOver(index)
+            }
+          }
+        }
+      }
+
+      const dropHandler = (e: Event) => {
+        const dragEvent = e as DragEvent
+        dragEvent.preventDefault()
+        dragEvent.stopPropagation()
+        if (draggedElement) {
+          let dropIndex = elements.length
+          
+          if (zone.classList.contains('drop-zone')) {
+            dropIndex = parseInt(zone.getAttribute('data-drop-index') || '0', 10)
+          } else {
+            const target = dragEvent.target as HTMLElement
+            const index = findElementIndexFromTarget(target, elements)
+            if (index !== null) {
+              dropIndex = index
+            }
+          }
+          
+          onDrop(draggedElement, dropIndex)
+        }
+      }
+
+      const dragLeaveHandler = () => {
+        onDragLeave()
+      }
+
+      zone.removeEventListener('dragover', dragOverHandler)
+      zone.removeEventListener('drop', dropHandler)
+      zone.removeEventListener('dragleave', dragLeaveHandler)
+      
+      zone.addEventListener('dragover', dragOverHandler)
+      zone.addEventListener('drop', dropHandler)
+      zone.addEventListener('dragleave', dragLeaveHandler)
+    })
+
+    // Highlight drag over element
+    if (dragOverIndex !== null) {
+      const element = containerRef.current.querySelector(`[data-element-index="${dragOverIndex}"]`)
+      if (element) {
+        element.classList.add('drag-over')
+      }
+    } else {
+      containerRef.current.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'))
+    }
+
+  }, [elements, editingElement, dragOverIndex, draggedElement, generateHtml, onElementClick, onElementUpdate, onElementBlur, onDragOver, onDrop, onDragLeave, findElementIndexFromTarget])
+
+  return (
+    <>
+      <div
+        ref={containerRef}
+        className="email-preview-editable"
+        onDragOver={(e) => {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'copy'
+        }}
+      />
+      <style dangerouslySetInnerHTML={{ __html: `
+        .email-preview-editable .content > div {
+          position: relative;
+          transition: all 0.2s;
+        }
+        .email-preview-editable .content > div:not(.editing):hover {
+          outline: 2px dashed #356443;
+          outline-offset: 4px;
+          background-color: rgba(53, 100, 67, 0.05);
+          cursor: pointer;
+        }
+        .email-preview-editable .content > div:not(.editing):hover::before {
+          content: 'Klik om te bewerken';
+          position: absolute;
+          top: -30px;
+          left: 0;
+          background: #356443;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          z-index: 10;
+          pointer-events: none;
+        }
+        .email-preview-editable .content > div.drag-over {
+          outline: 3px solid #356443;
+          outline-offset: 4px;
+          background-color: rgba(53, 100, 67, 0.1);
+        }
+        .email-preview-editable .content > div.editing {
+          outline: 3px solid #f59e0b;
+          outline-offset: 4px;
+          background-color: rgba(245, 158, 11, 0.1);
+        }
+        .email-preview-editable .drop-zone {
+          min-height: 40px;
+          border: 2px dashed #356443;
+          background: rgba(53, 100, 67, 0.05);
+          margin: 10px 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #356443;
+          font-size: 12px;
+        }
+      `}} />
     </>
   )
 }
