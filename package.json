@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "fetch-omzet": "npx tsx scripts/fetch-and-save-omzet-data.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

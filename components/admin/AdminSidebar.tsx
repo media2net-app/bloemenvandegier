@@ -30,7 +30,8 @@ import {
   ClipboardList,
   FileEdit,
   Briefcase,
-  DollarSign
+  DollarSign,
+  History
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
@@ -40,6 +41,7 @@ interface MenuItem {
   icon: React.ComponentType<{ className?: string }>
   children?: MenuItem[]
   isNew?: boolean
+  badge?: 'orange' | 'red' | 'blue' | 'green'
 }
 
 // Define which pages are implemented
@@ -73,6 +75,7 @@ const implementedPages = [
   '/admin/rapporten',
   '/admin/activity-log',
   '/admin/omzet-generator',
+  '/admin/omzet-oude-shop',
 ]
 
 const menuItems: MenuItem[] = [
@@ -88,6 +91,7 @@ const menuItems: MenuItem[] = [
   },
   { name: 'Mailing', href: '/admin/mailing', icon: Mail, isNew: true },
   { name: 'Omzet Generator', href: '/admin/omzet-generator', icon: DollarSign },
+  { name: 'Omzet Oude Shop', href: '/admin/omzet-oude-shop', icon: History, badge: 'orange' },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },
@@ -204,6 +208,7 @@ export default function AdminSidebar() {
               const isImplemented = item.href ? implementedPages.includes(item.href) : true
               const showUnreadBadge = item.href === '/admin/berichten' && unreadCount > 0
               const showNewBadge = item.isNew
+              const showOrangeBadge = item.badge === 'orange'
               
               return (
                 <li key={item.name}>
@@ -234,6 +239,11 @@ export default function AdminSidebar() {
                               NIEUW
                             </span>
                           )}
+                          {showOrangeBadge && (
+                            <span className="px-1.5 py-0.5 bg-orange-500 text-white text-xs font-bold rounded">
+                              OUDE
+                            </span>
+                          )}
                         </div>
                         {isExpanded ? (
                           <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -247,22 +257,30 @@ export default function AdminSidebar() {
                             const ChildIcon = child.icon
                             const isChildActive = child.href && (pathname === child.href ||
                               (child.href !== '/admin/marketing' && pathname?.startsWith(child.href)))
-                            const isChildImplemented = child.href ? implementedPages.includes(child.href) : true
-                            
+              const isChildImplemented = child.href ? implementedPages.includes(child.href) : true
+              const showChildBadge = child.badge === 'orange'
+              
                             return (
                               <li key={child.name}>
                                 {isChildImplemented ? (
                                   <Link
                                     href={child.href || '#'}
                                     className={cn(
-                                      "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors text-sm no-underline",
+                                      "flex items-center justify-between gap-3 px-4 py-2 rounded-lg transition-colors text-sm no-underline",
                                       isChildActive
                                         ? "bg-primary-500 text-white shadow-md"
                                         : "text-primary-100 hover:bg-primary-500/50 hover:text-white"
                                     )}
                                   >
-                                    <ChildIcon className="h-4 w-4 flex-shrink-0" />
-                                    <span>{child.name}</span>
+                                    <div className="flex items-center gap-3 flex-1">
+                                      <ChildIcon className="h-4 w-4 flex-shrink-0" />
+                                      <span>{child.name}</span>
+                                    </div>
+                                    {showChildBadge && (
+                                      <span className="px-1.5 py-0.5 bg-orange-500 text-white text-xs font-bold rounded">
+                                        OUDE
+                                      </span>
+                                    )}
                                   </Link>
                                 ) : (
                                   <div
@@ -302,6 +320,11 @@ export default function AdminSidebar() {
                             {showNewBadge && (
                               <span className="px-1.5 py-0.5 bg-red-500 text-white text-xs font-bold rounded">
                                 NIEUW
+                              </span>
+                            )}
+                            {showOrangeBadge && (
+                              <span className="px-1.5 py-0.5 bg-orange-500 text-white text-xs font-bold rounded">
+                                OUDE
                               </span>
                             )}
                           </div>

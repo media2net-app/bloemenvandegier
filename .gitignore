@@ -32,3 +32,10 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Cached omzet data
+/data/omzet-2025.json
+
+# Large CSV files
+CSV/*.csv
+CSV/omzet-2025.json
