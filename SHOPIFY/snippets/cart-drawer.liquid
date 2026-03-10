@@ -1,0 +1,36 @@
+<div id="cart-drawer" class="cart-drawer" aria-hidden="true">
+  <div class="cart-drawer__backdrop" data-cart-drawer-close></div>
+  <div class="cart-drawer__panel">
+    <div class="cart-drawer__header">
+      <div class="cart-drawer__header-inner">
+        <svg class="cart-drawer__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <h2 class="cart-drawer__title">Bloemenmand (<span id="cart-drawer-count">0</span>)</h2>
+      </div>
+      <button type="button" class="cart-drawer__close" data-cart-drawer-close aria-label="Sluit">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body">
+      <div id="cart-drawer-empty" class="cart-drawer__empty" hidden>
+        <svg class="cart-drawer__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <p class="cart-drawer__empty-title">Je bloemenmand is leeg</p>
+        <p class="cart-drawer__empty-desc">Voeg producten toe aan je bloemenmand om verder te gaan</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline cart-drawer__btn-continue" data-cart-drawer-close>Verder winkelen</a>
+      </div>
+      <div id="cart-drawer-items" class="cart-drawer__items"></div>
+    </div>
+    <div id="cart-drawer-footer" class="cart-drawer__footer" hidden>
+      <div class="cart-drawer__total-row">
+        <span>Totaal:</span>
+        <span id="cart-drawer-total" class="cart-drawer__total-value">€0,00</span>
+      </div>
+      <a href="{{ routes.cart_url }}" class="btn btn--primary btn--lg cart-drawer__btn-checkout">Afrekenen</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline btn--lg cart-drawer__btn-continue" data-cart-drawer-close>Verder winkelen</a>
+    </div>
+  </div>
+</div>

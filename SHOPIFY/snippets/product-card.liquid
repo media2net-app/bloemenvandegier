@@ -1,0 +1,39 @@
+<div class="product-card">
+  <a href="{{ product.url }}" class="product-card__link">
+    <div class="product-card__image">
+      {%- if product.featured_image -%}
+        <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.featured_image.alt | escape }}" width="400" height="400" loading="lazy">
+      {%- else -%}
+        <div class="product-card__placeholder">{{ 'product.no_image' | t }}</div>
+      {%- endif -%}
+    </div>
+  </a>
+  <div class="product-card__body">
+    <a href="{{ product.url }}"><h3 class="product-card__title">{{ product.title }}</h3></a>
+    {%- if show_rating -%}
+      <div class="product-card__rating">
+        <span class="product-card__stars" aria-hidden="true">★★★★★</span>
+        <span class="product-card__rating-text">{{ product.metafields.reviews.rating.value | default: '4.8' }} ({{ product.metafields.reviews.rating_count.value | default: '148' }})</span>
+      </div>
+    {%- endif -%}
+    <div class="product-card__price-row">
+      <span class="product-card__price">{{ product.price | money }}</span>
+      {%- if product.available -%}
+        <span class="product-card__stock">{{ 'product.in_stock' | t }}</span>
+      {%- endif -%}
+    </div>
+    <div class="product-card__actions">
+      <a href="{{ product.url }}" class="btn btn--outline btn--sm product-card__btn-quick">
+        <svg class="product-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        {{ 'product.quick_view' | t }}
+      </a>
+      <form action="{{ routes.cart_add_url }}" method="post" class="product-card__form">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" name="add" class="btn btn--primary btn--sm product-card__btn-cart">
+          {{ 'product.add_to_cart_short' | t }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

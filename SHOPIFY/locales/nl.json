@@ -1,0 +1,99 @@
+{
+  "general": {
+    "pagination": {
+      "page": "Pagina",
+      "previous": "Vorige",
+      "next": "Volgende"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Ga naar inhoud"
+  },
+  "header": {
+    "nav": {
+      "roses": "Rozen",
+      "spring_flowers": "Voorjaarsbloemen",
+      "bouquets": "Boeketten",
+      "green_decorative": "Groen & Decoratief",
+      "subscriptions": "Abonnementen",
+      "business": "Zakelijk"
+    },
+    "search": "Zoeken",
+    "account": "Account",
+    "cart": "Winkelwagen",
+    "menu": "Menu"
+  },
+  "footer": {
+    "company": "Bloemen van De Gier",
+    "address": "Adres placeholder",
+    "description": "Prachtige bloemen van topkwaliteit. Gegarandeerd meer bloemen voor je geld.",
+    "service": "Service & Contact",
+    "categories": "Categorieën",
+    "occasions": "Gelegenheden",
+    "faq": "Veelgestelde vragen",
+    "business": "Zakelijk bestellen",
+    "shipping": "Verzendkosten",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "roses": "Rozen",
+    "bouquets": "Boeketten",
+    "subscriptions": "Abonnementen",
+    "mothers_day": "Moederdag",
+    "valentines": "Valentijn",
+    "christmas": "Kerst",
+    "rights": "Alle rechten voorbehouden."
+  },
+  "product": {
+    "add_to_cart": "In bloemenmand",
+    "no_image": "Geen afbeelding",
+    "quick_view": "Snel bekijken",
+    "add_to_cart_short": "In bloemenmand",
+    "in_stock": "Op voorraad",
+    "placeholder_title": "Product",
+    "quantity": "Aantal",
+    "variant": "Variant",
+    "favorites": "Favorieten",
+    "share": "Delen",
+    "description": "Beschrijving",
+    "read_more": "Lees meer",
+    "related": "Gerelateerde producten",
+    "reviews": "Reviews",
+    "no_reviews": "Nog geen reviews beschikbaar.",
+    "out_of_stock": "Niet op voorraad"
+  },
+  "collection": {
+    "empty": "Geen producten in deze collectie.",
+    "products_available": "producten beschikbaar",
+    "products_found": "producten gevonden",
+    "filters": "Filters",
+    "apply": "Toepassen",
+    "clear_filters": "Wis filters",
+    "sort_by": "Sorteren op",
+    "sort": {
+      "manual": "Aanbevolen",
+      "best_selling": "Meest verkocht",
+      "title_asc": "Naam A-Z",
+      "title_desc": "Naam Z-A",
+      "price_asc": "Prijs: laag naar hoog",
+      "price_desc": "Prijs: hoog naar laag",
+      "created_asc": "Nieuwste eerst",
+      "created_desc": "Oudste eerst"
+    }
+  },
+  "404": {
+    "subtext": "Deze pagina kon niet worden gevonden.",
+    "back": "Terug naar home"
+  },
+  "cart": {
+    "title": "Winkelwagen",
+    "quantity": "Aantal",
+    "total": "Totaal",
+    "update": "Bijwerken",
+    "checkout": "Afrekenen",
+    "empty": "Je winkelwagen is leeg.",
+    "continue_shopping": "Verder winkelen"
+  },
+  "breadcrumb": {
+    "home": "Home"
+  }
+}

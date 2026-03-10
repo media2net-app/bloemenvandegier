@@ -1,0 +1,94 @@
+/* Auto-generated. */
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "background_image": "shopify://shop_images/wallpaper_roos_animaatjes-37.jpg",
+        "title": "Prachtige bloemen van topkwaliteit",
+        "text": "Gegarandeerd meer bloemen voor je geld. 7 dagen versgarantie.",
+        "button_text": "Bekijk assortiment",
+        "button_link": "/collections/all",
+        "circle_image": "shopify://shop_images/wallpaper_roos_animaatjes-37.jpg",
+        "circle_border_color": "#ffffff",
+        "height_mobile": 380,
+        "height_desktop": 480
+      }
+    },
+    "usp": {
+      "type": "usp",
+      "blocks": {
+        "usp_1": {
+          "type": "usp_item",
+          "settings": {
+            "icon": "flower",
+            "title": "Meer bloemen voor je geld",
+            "text": "Omdat we niet aangesloten zitten in een netwerk met andere bloemisten maar alleen onze eigen boeketten verkopen en versturen."
+          }
+        },
+        "usp_2": {
+          "type": "usp_item",
+          "settings": {
+            "icon": "shield",
+            "title": "7 dagen versgarantie",
+            "text": "Elke betaalde cent zit in het boeket wat je bestelt en ben jij door heel Nederland verzekerd van de kwaliteit."
+          }
+        },
+        "usp_3": {
+          "type": "usp_item",
+          "settings": {
+            "icon": "users",
+            "title": "Ervaren bloembinders",
+            "text": "De bloembinders van De Gier Bloemen weten als de beste hoe je met al deze verse bloemen, de mooiste creaties maakt."
+          }
+        },
+        "usp_4": {
+          "type": "usp_item",
+          "settings": {
+            "icon": "check",
+            "title": "Kwaliteit & Ervaring",
+            "text": "Inkopers met kennis en gevoel voor bloemen en altijd hoge kwaliteitseisen."
+          }
+        }
+      },
+      "block_order": [
+        "usp_1",
+        "usp_2",
+        "usp_3",
+        "usp_4"
+      ],
+      "settings": {
+        "title": "Kwaliteit | Ervaring | Zekerheid",
+        "subtitle": "Gegarandeerd meer bloemen voor je geld"
+      }
+    },
+    "featured-products": {
+      "type": "featured-products",
+      "settings": {
+        "title": "Populaire producten",
+        "subtitle": "Onze meest geliefde bloemen en boeketten",
+        "limit": 8,
+        "link_text": "Bekijk alles",
+        "show_rating": true
+      }
+    },
+    "deal": {
+      "type": "deal",
+      "settings": {
+        "subtitle": "ELKE DONDERDAG",
+        "title": "Bloemenpakket Deal",
+        "description": "Elke donderdag hebben we een speciale bloemenpakket deal! Beperkte voorraad, dus wees er snel bij.",
+        "stock_total": 40,
+        "stock_sold": 30,
+        "button_text": "Bestel nu",
+        "week_badge": "Deal van de week"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured-products",
+    "deal",
+    "usp"
+  ]
+}

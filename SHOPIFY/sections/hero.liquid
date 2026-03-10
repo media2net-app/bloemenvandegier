@@ -1,0 +1,82 @@
+<section class="hero" style="--hero-height-mobile: {{ section.settings.height_mobile }}px; --hero-height-desktop: {{ section.settings.height_desktop }}px;">
+  <div class="hero__bg" style="background-image: url('{{ section.settings.background_image | image_url: width: 1920 }}');"></div>
+  <div class="hero__overlay"></div>
+  <div class="container hero__content">
+    <div class="hero__text">
+      <h1 class="hero__title">{{ section.settings.title }}</h1>
+      <p class="hero__subtitle">{{ section.settings.text }}</p>
+      <a href="{{ section.settings.button_link }}" class="hero__btn">{{ section.settings.button_text }}</a>
+    </div>
+    {%- if section.settings.circle_image != blank -%}
+      <div class="hero__circle" style="background-image: url('{{ section.settings.circle_image | image_url: width: 800 }}'); border-color: {{ section.settings.circle_border_color }};"></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "class": "section-hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Achtergrondafbeelding"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titel",
+      "default": "Prachtige bloemen van topkwaliteit"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Tekst",
+      "default": "Gegarandeerd meer bloemen voor je geld. 7 dagen versgarantie."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Knoptekst",
+      "default": "Shop nu"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Knopplink"
+    },
+    {
+      "type": "image_picker",
+      "id": "circle_image",
+      "label": "Cirkel afbeelding (rechts)"
+    },
+    {
+      "type": "color",
+      "id": "circle_border_color",
+      "label": "Cirkel randkleur",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 300,
+      "max": 600,
+      "step": 20,
+      "default": 380,
+      "unit": "px",
+      "label": "Hoogte mobiel"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 400,
+      "max": 700,
+      "step": 20,
+      "default": 480,
+      "unit": "px",
+      "label": "Hoogte desktop"
+    }
+  ]
+}
+{% endschema %}

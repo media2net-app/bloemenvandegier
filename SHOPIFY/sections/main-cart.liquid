@@ -1,0 +1,146 @@
+<section class="cart-page">
+  <div class="container">
+    <h1 class="cart-page__title">
+      <svg class="cart-page__title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      Bloemenmand ({{ cart.item_count }})
+    </h1>
+
+    {% if cart.item_count > 0 %}
+      <form action="{{ routes.cart_url }}" method="post" id="CartForm">
+        <div class="cart-page__items">
+          {% for item in cart.items %}
+            <div class="cart-item" data-line-key="{{ item.key }}">
+              <a href="{{ item.url }}" class="cart-item__image-wrap">
+                {%- if item.image -%}
+                  <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}" width="80" height="80" class="cart-item__image-img" loading="lazy">
+                {%- else -%}
+                  <div class="cart-item__image-placeholder">{{ 'product.no_image' | t }}</div>
+                {%- endif -%}
+              </a>
+              <div class="cart-item__info">
+                <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+                <p class="cart-item__price">{{ item.final_price | money }}</p>
+
+                {%- if item.properties.size > 0 -%}
+                  <div class="cart-item__properties">
+                    {%- for property in item.properties -%}
+                      {%- unless property.first == '_' -%}
+                        <p class="cart-item__property">
+                          <span class="cart-item__property-label">{{ property.first }}:</span>
+                          {%- assign prop_val = property.last -%}
+                          {%- if prop_val.size > 30 -%}{{ prop_val | slice: 0, 30 }}…{%- else -%}{{ prop_val }}{%- endif -%}
+                        </p>
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                <div class="cart-item__actions">
+                  <div class="cart-item__qty">
+                    <button type="button" class="cart-item__qty-btn" data-cart-qty-minus data-key="{{ item.key }}" aria-label="Minder">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" max="99" class="cart-item__qty-input" data-line-index="{{ forloop.index0 }}" aria-label="{{ 'cart.quantity' | t }}">
+                    <button type="button" class="cart-item__qty-btn" data-cart-qty-plus data-key="{{ item.key }}" aria-label="Meer">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                  </div>
+                  <button type="button" class="cart-item__remove" data-cart-remove data-key="{{ item.key }}" aria-label="Verwijderen">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="cart-item__subtotal">
+                <p class="cart-item__subtotal-value">{{ item.final_line_price | money }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="cart-page__footer">
+          <div class="cart-page__total-row">
+            <span class="cart-page__total-label">{{ 'cart.total' | t }}:</span>
+            <span class="cart-page__total-value">{{ cart.total_price | money }}</span>
+          </div>
+          <div class="cart-page__buttons">
+            <button type="submit" name="checkout" class="btn btn--primary btn--lg cart-page__btn-checkout">
+              {{ 'cart.checkout' | t }}
+            </button>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline btn--lg cart-page__btn-continue">
+              {{ 'cart.continue_shopping' | t }}
+            </a>
+          </div>
+        </div>
+      </form>
+    {% else %}
+      <div class="cart-page__empty-state">
+        <svg class="cart-page__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <p class="cart-page__empty-title">Je bloemenmand is leeg</p>
+        <p class="cart-page__empty-desc">Voeg producten toe aan je bloemenmand om verder te gaan</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline cart-page__btn-continue">
+          {{ 'cart.continue_shopping' | t }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+(function() {
+  var form = document.getElementById('CartForm');
+  if (!form) return;
+  form.querySelectorAll('[data-cart-qty-minus]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = this.getAttribute('data-key');
+      var line = form.querySelector('[data-line-key="' + key + '"]');
+      var input = line ? line.querySelector('.cart-item__qty-input') : null;
+      if (input) {
+        var v = parseInt(input.value, 10) || 1;
+        input.value = Math.max(0, v - 1);
+        form.submit();
+      }
+    });
+  });
+  form.querySelectorAll('[data-cart-qty-plus]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = this.getAttribute('data-key');
+      var line = form.querySelector('[data-line-key="' + key + '"]');
+      var input = line ? line.querySelector('.cart-item__qty-input') : null;
+      if (input) {
+        var v = parseInt(input.value, 10) || 0;
+        input.value = Math.min(99, v + 1);
+        form.submit();
+      }
+    });
+  });
+  form.querySelectorAll('[data-cart-remove]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = this.getAttribute('data-key');
+      var line = form.querySelector('[data-line-key="' + key + '"]');
+      var input = line ? line.querySelector('.cart-item__qty-input') : null;
+      if (input) {
+        var idx = input.getAttribute('data-line-index');
+        if (idx !== null) {
+          var updates = form.querySelectorAll('input[name="updates[]"]');
+          if (updates[idx]) updates[idx].value = '0';
+          form.submit();
+        }
+      }
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "section-main-cart",
+  "settings": []
+}
+{% endschema %}

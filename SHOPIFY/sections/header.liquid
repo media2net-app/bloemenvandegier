@@ -1,0 +1,75 @@
+<header class="header sticky top-0 z-50 bg-primary border-b border-primary-dark shadow-sm">
+  <div class="container">
+    <div class="header__inner">
+      <a href="{{ routes.root_url }}" class="header__logo">
+        {%- assign logo = section.settings.logo | default: settings.logo -%}
+        {%- if logo != blank -%}
+          <img src="{{ logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="200" height="50" class="header__logo-img">
+        {%- else -%}
+          <span class="header__logo-text">{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+
+      <nav class="header__nav" aria-label="Hoofdnavigatie">
+        <ul class="header__nav-list">
+          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.roses' | t }}</a></li>
+          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.spring_flowers' | t }}</a></li>
+          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.bouquets' | t }}</a></li>
+          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.green_decorative' | t }}</a></li>
+          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.subscriptions' | t }}</a></li>
+          <li><a href="/pages/zakelijk">{{ 'header.nav.business' | t }}</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <a href="{{ routes.search_url }}" class="header__action" aria-label="{{ 'header.search' | t }}">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </a>
+        <a href="{{ routes.account_url }}" class="header__action" aria-label="{{ 'header.account' | t }}">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+        <button type="button" class="header__action header__cart" aria-label="{{ 'header.cart' | t }}" data-cart-drawer-toggle data-cart-count="{{ cart.item_count }}">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span class="header__cart-count{% if cart.item_count == 0 %} header__cart-count--empty{% endif %}" data-header-cart-count>{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+        </button>
+        <button type="button" class="header__menu-btn" aria-label="{{ 'header.menu' | t }}" aria-expanded="false" data-mobile-menu-toggle>
+          <svg class="header__icon header__icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="header__mobile" id="mobile-menu" hidden>
+    <nav class="header__mobile-nav">
+      <a href="{{ routes.collections_url }}">{{ 'header.nav.roses' | t }}</a>
+      <a href="{{ routes.collections_url }}">{{ 'header.nav.spring_flowers' | t }}</a>
+      <a href="{{ routes.collections_url }}">{{ 'header.nav.bouquets' | t }}</a>
+      <a href="{{ routes.collections_url }}">{{ 'header.nav.green_decorative' | t }}</a>
+      <a href="{{ routes.collections_url }}">{{ 'header.nav.subscriptions' | t }}</a>
+      <a href="/pages/zakelijk">{{ 'header.nav.business' | t }}</a>
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
+  ]
+}
+{% endschema %}

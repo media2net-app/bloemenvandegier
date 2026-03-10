@@ -1,0 +1,203 @@
+<section class="product-page">
+  <div class="container">
+    <nav class="breadcrumbs product-page__breadcrumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumbs__sep">/</span>
+      {%- if product.collections.first -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span class="breadcrumbs__sep">/</span>
+      {%- endif -%}
+      <span class="breadcrumbs__current">{{ product.title }}</span>
+    </nav>
+
+    <div class="product-page__grid">
+      <div class="product-page__gallery-wrap">
+        <div class="product-page__gallery-main">
+          {%- if product.featured_image -%}
+            <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.featured_image.alt | escape }}" width="800" height="800" loading="eager" id="ProductImage" class="product-page__main-img">
+          {%- else -%}
+            <div class="product-page__placeholder">{{ 'product.no_image' | t }}</div>
+          {%- endif -%}
+          {%- if product.images.size > 1 -%}
+            <button type="button" class="product-page__nav product-page__nav--prev" aria-label="Vorige" data-gallery-prev>‹</button>
+            <button type="button" class="product-page__nav product-page__nav--next" aria-label="Volgende" data-gallery-next>›</button>
+          {%- endif -%}
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="product-page__thumbs">
+            {% for image in product.images %}
+              <button type="button" class="product-page__thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" data-src="{{ image | image_url: width: 800 }}">
+                <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | escape }}" width="100" height="100">
+              </button>
+            {% endfor %}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-page__info">
+        <h1 class="product-page__title">{{ product.title }}</h1>
+
+        <div class="product-page__rating">
+          <span class="product-card__stars">★★★★★</span>
+          <span>{{ product.metafields.reviews.rating.value | default: '4.8' }} ({{ product.metafields.reviews.rating_count.value | default: '0' }})</span>
+        </div>
+
+        <div class="product-page__price-row">
+          <span class="product-page__price">{{ product.price | money }}</span>
+          {%- if product.compare_at_price > product.price -%}
+            <span class="product-page__compare-price">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+          {%- if product.available -%}
+            <span class="product-page__stock">{{ 'product.in_stock' | t }}</span>
+          {%- endif -%}
+        </div>
+
+        {% form 'product', product, id: 'ProductForm' %}
+          {%- if product.variants.size > 1 -%}
+            <div class="product-page__variants">
+              <label>{{ 'product.variant' | t }}</label>
+              <select name="id" class="product-page__variant-select">
+                {% for variant in product.variants %}
+                  <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                    {{ variant.title }} - {{ variant.price | money }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {%- endif -%}
+
+          <div class="product-page__quantity">
+            <label for="Quantity">{{ 'product.quantity' | t }}</label>
+            <div class="product-page__qty-controls">
+              <button type="button" class="product-page__qty-btn" data-qty-minus aria-label="Minder">−</button>
+              <input type="number" id="Quantity" name="quantity" value="1" min="1" max="99" class="product-page__qty-input">
+              <button type="button" class="product-page__qty-btn" data-qty-plus aria-label="Meer">+</button>
+            </div>
+          </div>
+
+          <button type="submit" name="add" class="btn btn--primary btn--lg product-page__add" {% unless product.available %}disabled{% endunless %}>
+            {% if product.available %}{{ 'product.add_to_cart' | t }}{% else %}{{ 'product.out_of_stock' | t }}{% endif %}
+          </button>
+
+          <div class="product-page__actions">
+            <a href="/pages/wishlist" class="product-page__action-btn">{{ 'product.favorites' | t }}</a>
+            <button type="button" class="product-page__action-btn" data-share>{{ 'product.share' | t }}</button>
+          </div>
+        {% endform %}
+
+        <div class="product-page__trust">
+          <div class="product-page__trust-item">
+            <svg class="product-page__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Gratis bezorging vanaf €50</span>
+          </div>
+          <div class="product-page__trust-item">
+            <svg class="product-page__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>7 dagen versgarantie</span>
+          </div>
+        </div>
+
+        {%- if product.description != blank -%}
+          <div class="product-page__description-wrap">
+            <h2 class="product-page__desc-title">{{ 'product.description' | t }}</h2>
+            <div class="product-page__description rte" data-description>
+              {{ product.description }}
+            </div>
+            
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="product-page__reviews">
+  <div class="container">
+    <h2 class="product-page__reviews-title">{{ 'product.reviews' | t }}</h2>
+    <p class="product-page__reviews-empty">{{ 'product.no_reviews' | t }}</p>
+  </div>
+</section>
+
+{%- if product.recommendations.size > 0 -%}
+<section class="product-page__related">
+  <div class="container">
+    <h2 class="product-page__related-title">{{ 'product.related' | t }}</h2>
+    <div class="product-page__related-grid">
+      {% for rec in product.recommendations limit: 4 %}
+        {% if rec.featured_image %}
+          {% render 'product-card', product: rec, show_rating: true %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<div class="product-page__sticky" id="sticky-add-to-cart" hidden>
+  <div class="container">
+    <div class="product-page__sticky-inner">
+      <div>
+        <div class="product-page__sticky-title">{{ product.title }}</div>
+        <div class="product-page__sticky-price">{{ product.price | money }}</div>
+      </div>
+      <form action="{{ routes.cart_add_url }}" method="post">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" name="add" class="btn btn--primary product-page__sticky-btn">{{ 'product.add_to_cart' | t }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var thumbs = document.querySelectorAll('.product-page__thumb');
+  var mainImg = document.getElementById('ProductImage');
+  thumbs.forEach(function(t) {
+    t.addEventListener('click', function() {
+      var src = this.getAttribute('data-src');
+      if (src && mainImg) {
+        mainImg.src = src;
+        thumbs.forEach(function(x) { x.classList.remove('active'); });
+        this.classList.add('active');
+      }
+    });
+  });
+  var prev = document.querySelector('[data-gallery-prev]');
+  var next = document.querySelector('[data-gallery-next]');
+  if (prev && next && thumbs.length) {
+    prev.addEventListener('click', function() {
+      var idx = Array.from(thumbs).findIndex(function(t) { return t.classList.contains('active'); });
+      idx = idx <= 0 ? thumbs.length - 1 : idx - 1;
+      thumbs[idx].click();
+    });
+    next.addEventListener('click', function() {
+      var idx = Array.from(thumbs).findIndex(function(t) { return t.classList.contains('active'); });
+      idx = idx < 0 || idx >= thumbs.length - 1 ? 0 : idx + 1;
+      thumbs[idx].click();
+    });
+  }
+  var qtyInput = document.getElementById('Quantity');
+  document.querySelector('[data-qty-minus]')?.addEventListener('click', function() {
+    if (qtyInput) { var v = parseInt(qtyInput.value) || 1; qtyInput.value = Math.max(1, v - 1); }
+  });
+  document.querySelector('[data-qty-plus]')?.addEventListener('click', function() {
+    if (qtyInput) { var v = parseInt(qtyInput.value) || 1; qtyInput.value = Math.min(99, v + 1); }
+  });
+  var sticky = document.getElementById('sticky-add-to-cart');
+  if (sticky && window.matchMedia('(max-width: 1023px)').matches) {
+    function updateSticky() { sticky.hidden = window.scrollY < window.innerHeight * 0.5; }
+    window.addEventListener('scroll', updateSticky);
+    updateSticky();
+  }
+  document.querySelector('[data-share]')?.addEventListener('click', function() {
+    if (navigator.share) {
+      navigator.share({ title: document.title, url: window.location.href });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link gekopieerd!');
+    }
+  });
+})();
+</script>

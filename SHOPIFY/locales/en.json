@@ -1,0 +1,99 @@
+{
+  "general": {
+    "pagination": {
+      "page": "Page",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content"
+  },
+  "header": {
+    "nav": {
+      "roses": "Roses",
+      "spring_flowers": "Spring flowers",
+      "bouquets": "Bouquets",
+      "green_decorative": "Green & Decorative",
+      "subscriptions": "Subscriptions",
+      "business": "Business"
+    },
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart",
+    "menu": "Menu"
+  },
+  "footer": {
+    "company": "Bloemen van De Gier",
+    "address": "Address placeholder",
+    "description": "Beautiful flowers of the highest quality. Guaranteed more flowers for your money.",
+    "service": "Service & Contact",
+    "categories": "Categories",
+    "occasions": "Occasions",
+    "faq": "FAQ",
+    "business": "Business orders",
+    "shipping": "Shipping costs",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "roses": "Roses",
+    "bouquets": "Bouquets",
+    "subscriptions": "Subscriptions",
+    "mothers_day": "Mother's Day",
+    "valentines": "Valentine's",
+    "christmas": "Christmas",
+    "rights": "All rights reserved."
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "no_image": "No image",
+    "quick_view": "Quick view",
+    "add_to_cart_short": "Add to cart",
+    "in_stock": "In stock",
+    "placeholder_title": "Product",
+    "quantity": "Quantity",
+    "variant": "Variant",
+    "favorites": "Favorites",
+    "share": "Share",
+    "description": "Description",
+    "read_more": "Read more",
+    "related": "Related products",
+    "reviews": "Reviews",
+    "no_reviews": "No reviews yet.",
+    "out_of_stock": "Out of stock"
+  },
+  "collection": {
+    "empty": "No products in this collection.",
+    "products_available": "products available",
+    "products_found": "products found",
+    "filters": "Filters",
+    "apply": "Apply",
+    "clear_filters": "Clear filters",
+    "sort_by": "Sorteren op",
+    "sort": {
+      "manual": "Featured",
+      "best_selling": "Best selling",
+      "title_asc": "Name A-Z",
+      "title_desc": "Name Z-A",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "created_asc": "Newest first",
+      "created_desc": "Oldest first"
+    }
+  },
+  "404": {
+    "subtext": "This page could not be found.",
+    "back": "Back to home"
+  },
+  "cart": {
+    "title": "Cart",
+    "quantity": "Quantity",
+    "total": "Total",
+    "update": "Update",
+    "checkout": "Checkout",
+    "empty": "Your cart is empty.",
+    "continue_shopping": "Continue shopping"
+  },
+  "breadcrumb": {
+    "home": "Home"
+  }
+}

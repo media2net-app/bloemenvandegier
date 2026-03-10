@@ -1,0 +1,91 @@
+<section class="usp">
+  <div class="container">
+    <div class="usp__header">
+      <h2 class="usp__title">{{ section.settings.title }}</h2>
+      <p class="usp__subtitle">{{ section.settings.subtitle }}</p>
+    </div>
+    <div class="usp__grid">
+      {% for block in section.blocks %}
+        <div class="usp__item" {{ block.shopify_attributes }}>
+          <div class="usp__icon-wrap">
+            {%- case block.settings.icon -%}
+              {%- when 'flower' -%}
+                <svg class="usp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="2.5"/><circle cx="12" cy="5" r="2.5"/><circle cx="16.6" cy="7.5" r="2.5"/><circle cx="15.1" cy="12.5" r="2.5"/><circle cx="8.9" cy="12.5" r="2.5"/><circle cx="7.4" cy="7.5" r="2.5"/><path d="M12 12.5V21"/></svg>
+              {%- when 'shield' -%}
+                <svg class="usp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              {%- when 'users' -%}
+                <svg class="usp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              {%- when 'check' -%}
+                <svg class="usp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              {%- else -%}
+                <svg class="usp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            {%- endcase -%}
+          </div>
+          <h3 class="usp__item-title">{{ block.settings.title }}</h3>
+          <p class="usp__item-text">{{ block.settings.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "USP",
+  "class": "section-usp",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titel",
+      "default": "Kwaliteit | Ervaring | Zekerheid"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Ondertitel",
+      "default": "Gegarandeerd meer bloemen voor je geld"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "usp_item",
+      "name": "USP item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icoon",
+          "options": [
+            { "value": "flower", "label": "Bloem" },
+            { "value": "shield", "label": "Schild" },
+            { "value": "users", "label": "Gebruikers" },
+            { "value": "check", "label": "Vinkje" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titel"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Tekst"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "USP",
+      "blocks": [
+        { "type": "usp_item", "settings": { "icon": "flower", "title": "Meer bloemen voor je geld", "text": "Omdat we niet aangesloten zitten in een netwerk met andere bloemisten maar alleen onze eigen boeketten verkopen en versturen." } },
+        { "type": "usp_item", "settings": { "icon": "shield", "title": "7 dagen versgarantie", "text": "Elke betaalde cent zit in het boeket wat je bestelt en ben jij door heel Nederland verzekerd van de kwaliteit." } },
+        { "type": "usp_item", "settings": { "icon": "users", "title": "Ervaren bloembinders", "text": "De bloembinders van De Gier Bloemen weten als de beste hoe je met al deze verse bloemen, de mooiste creaties maakt." } },
+        { "type": "usp_item", "settings": { "icon": "check", "title": "Kwaliteit & Ervaring", "text": "Inkopers met kennis en gevoel voor bloemen en altijd hoge kwaliteitseisen. Elke dag de meest verse bloemen beschikbaar." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

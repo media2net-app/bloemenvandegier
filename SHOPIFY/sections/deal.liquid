@@ -1,0 +1,120 @@
+<section class="deal">
+  <div class="container">
+    <div class="deal__inner">
+      <div class="deal__content">
+        <div class="deal__badge">
+          <svg class="deal__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>{{ section.settings.subtitle }}</span>
+        </div>
+        <h2 class="deal__title">{{ section.settings.title }}</h2>
+        <p class="deal__description">{{ section.settings.description }}</p>
+
+        <div class="deal__stock-card">
+          <div class="deal__stock-header">
+            <span>Nog beschikbaar</span>
+            <span class="deal__stock-count">{{ section.settings.stock_total | minus: section.settings.stock_sold }} / {{ section.settings.stock_total }}</span>
+          </div>
+          <div class="deal__progress-bar">
+            <div class="deal__progress-fill" style="width: {{ section.settings.stock_sold | times: 100 | divided_by: section.settings.stock_total }}%"></div>
+          </div>
+          <p class="deal__stock-text">{{ section.settings.stock_sold }} van de {{ section.settings.stock_total }} boeketten al verkocht</p>
+        </div>
+
+        {%- if section.settings.product != blank -%}
+          <div class="deal__product">
+            <div>
+              <h3 class="deal__product-name">{{ section.settings.product.title }}</h3>
+              <p class="deal__product-price">{{ section.settings.product.price | money }}</p>
+            </div>
+            <a href="{{ section.settings.product.url }}" class="deal__btn">
+              <svg class="deal__btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              {{ section.settings.button_text }}
+              <svg class="deal__btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="deal__image-wrap">
+        {%- if section.settings.product != blank and section.settings.product.featured_image -%}
+          <div class="deal__image-card">
+            <img src="{{ section.settings.product.featured_image | image_url: width: 600 }}" alt="{{ section.settings.product.title | escape }}" width="600" height="600">
+            <span class="deal__week-badge">{{ section.settings.week_badge }}</span>
+          </div>
+        {%- elsif section.settings.image != blank -%}
+          <div class="deal__image-card">
+            <img src="{{ section.settings.image | image_url: width: 600 }}" alt="{{ section.settings.title | escape }}" width="600" height="600">
+            <span class="deal__week-badge">{{ section.settings.week_badge }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Deal sectie",
+  "class": "section-deal",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Deal product"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Afbeelding (fallback als product geen afbeelding heeft)"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Ondertitel",
+      "default": "ELKE DONDERDAG"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titel",
+      "default": "Bloemenpakket Deal"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Beschrijving",
+      "default": "Elke donderdag hebben we een speciale bloemenpakket deal! Beperkte voorraad, dus wees er snel bij."
+    },
+    {
+      "type": "range",
+      "id": "stock_total",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 40,
+      "label": "Totaal voorraad"
+    },
+    {
+      "type": "range",
+      "id": "stock_sold",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 30,
+      "label": "Verkocht"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Knoptekst",
+      "default": "Bestel nu"
+    },
+    {
+      "type": "text",
+      "id": "week_badge",
+      "label": "Badge tekst",
+      "default": "Deal van de week"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+<section class="collection-page">
+  <div class="collection-page__header">
+    <div class="container">
+      {% render 'breadcrumbs' %}
+      <h1 class="collection-page__title">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="collection-page__description rte">{{ collection.description }}</div>
+      {%- endif -%}
+      <p class="collection-page__count">{{ collection.products_count }} {{ 'collection.products_available' | t }}</p>
+    </div>
+  </div>
+
+  <div class="container collection-page__body">
+    <div class="collection-page__layout">
+      <aside class="collection-page__sidebar" {% if collection.filters.size == 0 %}style="display:none"{% endif %}>
+        <div class="collection-filters">
+          <div class="collection-filters__header">
+            <h3 class="collection-filters__title">{{ 'collection.filters' | t }}</h3>
+          </div>
+          <form id="CollectionFiltersForm" class="collection-filters__form">
+            {%- for filter in collection.filters -%}
+              <div class="collection-filter">
+                <h4 class="collection-filter__title">{{ filter.label }}</h4>
+                {%- case filter.type -%}
+                  {%- when 'price_range' -%}
+                    <div class="collection-filter__price">
+                      <input type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100 }}" placeholder="Van" min="0" class="collection-filter__input">
+                      <span>-</span>
+                      <input type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100 }}" placeholder="Tot" min="0" class="collection-filter__input">
+                    </div>
+                  {%- when 'list' -%}
+                    <div class="collection-filter__list">
+                      {%- for value in filter.values -%}
+                        <label class="collection-filter__option">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %}>
+                          <span>{{ value.label }}</span>
+                          {%- if value.count -%}<span class="collection-filter__count">({{ value.count }})</span>{%- endif -%}
+                        </label>
+                      {%- endfor -%}
+                    </div>
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+            <div class="collection-filters__actions">
+              <button type="submit" class="btn btn--primary btn--sm">{{ 'collection.apply' | t }}</button>
+              <a href="{{ collection.url }}" class="collection-filters__clear">{{ 'collection.clear_filters' | t }}</a>
+            </div>
+          </form>
+        </div>
+      </aside>
+
+      <main class="collection-page__main">
+        <div class="collection-toolbar">
+          <p class="collection-toolbar__count">{{ collection.products_count }} {{ 'collection.products_found' | t }}</p>
+          <div class="collection-sort">
+            <form method="get" class="collection-sort__form">
+              <label for="SortBy">{{ 'collection.sort_by' | t }}</label>
+              <select id="SortBy" name="sort_by" class="collection-sort__select" onchange="this.form.submit()">
+                <option value="manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>{{ 'collection.sort.manual' | t }}</option>
+                <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>{{ 'collection.sort.best_selling' | t }}</option>
+                <option value="title-ascending" {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>{{ 'collection.sort.title_asc' | t }}</option>
+                <option value="title-descending" {% if collection.sort_by == 'title-descending' %}selected{% endif %}>{{ 'collection.sort.title_desc' | t }}</option>
+                <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>{{ 'collection.sort.price_asc' | t }}</option>
+                <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>{{ 'collection.sort.price_desc' | t }}</option>
+                <option value="created-ascending" {% if collection.sort_by == 'created-ascending' %}selected{% endif %}>{{ 'collection.sort.created_asc' | t }}</option>
+                <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>{{ 'collection.sort.created_desc' | t }}</option>
+              </select>
+              {%- for value in current_tags -%}<input type="hidden" name="constraint" value="{{ value }}">{%- endfor -%}
+            </form>
+          </div>
+        </div>
+
+        {% paginate collection.products by 24 %}
+        {%- if collection.products.size > 0 -%}
+          <div class="collection-page__grid">
+            {% for product in collection.products %}
+              {% if product.featured_image %}
+                {% render 'product-card', product: product, show_rating: true %}
+              {% endif %}
+            {% endfor %}
+          </div>
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate %}
+          {%- endif -%}
+        {%- else -%}
+          <div class="collection-page__empty">
+            <p>{{ 'collection.empty' | t }}</p>
+            <a href="{{ collection.url }}" class="btn btn--primary">{{ 'collection.clear_filters' | t }}</a>
+          </div>
+        {%- endif -%}
+        {% endpaginate %}
+      </main>
+    </div>
+  </div>
+</section>
+
+<script>
+document.getElementById('CollectionFiltersForm')?.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const params = new URLSearchParams();
+  formData.forEach((v, k) => { if (v) params.set(k, v); });
+  window.location = '{{ collection.url }}?' + params.toString();
+});
+</script>

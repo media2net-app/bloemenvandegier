@@ -1,0 +1,18 @@
+/**
+ * Bloemen van De Gier - Shopify Theme
+ * Layout & mobile menu
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+  const menuToggle = document.querySelector('[data-mobile-menu-toggle]');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (menuToggle && mobileMenu) {
+    menuToggle.addEventListener('click', function() {
+      const isOpen = mobileMenu.hidden;
+      mobileMenu.hidden = !isOpen;
+      mobileMenu.setAttribute('data-open', isOpen ? 'true' : 'false');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+  }
+});

@@ -1,0 +1,399 @@
+<section class="product-page">
+  <div class="container">
+    <nav class="breadcrumbs product-page__breadcrumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="breadcrumbs__sep">/</span>
+      {%- if product.collections.first -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span class="breadcrumbs__sep">/</span>
+      {%- endif -%}
+      <span class="breadcrumbs__current">{{ product.title }}</span>
+    </nav>
+
+    <div class="product-page__grid">
+      <div class="product-page__gallery-wrap">
+        <div class="product-page__gallery-main">
+          {%- if product.featured_image -%}
+            <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.featured_image.alt | escape }}" width="800" height="800" loading="eager" id="ProductImage" class="product-page__main-img">
+          {%- else -%}
+            <div class="product-page__placeholder">{{ 'product.no_image' | t }}</div>
+          {%- endif -%}
+          {%- if product.images.size > 1 -%}
+            <button type="button" class="product-page__nav product-page__nav--prev" aria-label="Vorige" data-gallery-prev>‹</button>
+            <button type="button" class="product-page__nav product-page__nav--next" aria-label="Volgende" data-gallery-next>›</button>
+          {%- endif -%}
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="product-page__thumbs">
+            {% for image in product.images %}
+              <button type="button" class="product-page__thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" data-src="{{ image | image_url: width: 800 }}">
+                <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | escape }}" width="100" height="100">
+              </button>
+            {% endfor %}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-page__info">
+        <h1 class="product-page__title">{{ product.title }}</h1>
+
+        <div class="product-page__rating">
+          <span class="product-card__stars">★★★★★</span>
+          <span>{{ product.metafields.reviews.rating.value | default: '4.8' }} ({{ product.metafields.reviews.rating_count.value | default: '0' }})</span>
+        </div>
+
+        <div class="product-page__price-row">
+          <span class="product-page__price">{{ product.price | money }}</span>
+          {%- if product.compare_at_price > product.price -%}
+            <span class="product-page__compare-price">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+          {%- if product.available -%}
+            <span class="product-page__stock">{{ 'product.in_stock' | t }}</span>
+          {%- endif -%}
+        </div>
+
+        {% form 'product', product, id: 'ProductForm' %}
+          {%- if product.variants.size > 1 -%}
+            <div class="product-page__variants">
+              <label>{{ 'product.variant' | t }}</label>
+              <select name="id" class="product-page__variant-select">
+                {% for variant in product.variants %}
+                  <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                    {{ variant.title }} - {{ variant.price | money }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {%- endif -%}
+
+          <div class="product-page__quantity">
+            <label for="Quantity">{{ 'product.quantity' | t }}</label>
+            <div class="product-page__qty-controls">
+              <button type="button" class="product-page__qty-btn" data-qty-minus aria-label="Minder">−</button>
+              <input type="number" id="Quantity" name="quantity" value="1" min="1" max="99" class="product-page__qty-input">
+              <button type="button" class="product-page__qty-btn" data-qty-plus aria-label="Meer">+</button>
+            </div>
+          </div>
+
+          <!-- Option Cards - 3 cards naast elkaar (1:1 als Next.js) -->
+          <div class="product-page__options">
+            <div class="product-page__options-grid">
+              <button type="button" class="product-page__option-card" data-option="card" aria-pressed="false">
+                <div class="product-page__option-icon product-page__option-icon--card">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="product-page__option-text">
+                  <h3 class="product-page__option-title">Persoonlijk kaartje</h3>
+                  <p class="product-page__option-desc">Voeg een persoonlijke boodschap toe</p>
+                </div>
+                <span class="product-page__option-check" data-option-check="card" hidden>✓ Kaartje toegevoegd</span>
+              </button>
+              <button type="button" class="product-page__option-card" data-option="ribbon" aria-pressed="false">
+                <div class="product-page__option-icon product-page__option-icon--ribbon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/></svg>
+                </div>
+                <div class="product-page__option-text">
+                  <h3 class="product-page__option-title">Lint toevoegen</h3>
+                  <p class="product-page__option-desc">Kies kleur en tekst voor lint</p>
+                </div>
+                <span class="product-page__option-check" data-option-check="ribbon" hidden>✓ Lint toegevoegd</span>
+              </button>
+              <button type="button" class="product-page__option-card" data-option="addons" aria-pressed="false">
+                <div class="product-page__option-icon product-page__option-icon--addons">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+                <div class="product-page__option-text">
+                  <h3 class="product-page__option-title">Extra toevoegingen</h3>
+                  <p class="product-page__option-desc">Maak je bestelling speciaal</p>
+                </div>
+                <span class="product-page__option-check" data-option-check="addons" hidden>✓ 0 opties geselecteerd</span>
+              </button>
+            </div>
+
+            <!-- Persoonlijk kaartje - uitgeklapt -->
+            <div class="product-page__option-panel" id="panel-card" hidden>
+              <div class="product-page__option-panel-header">
+                <span class="product-page__option-panel-title">
+                  <svg class="product-page__option-panel-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  Persoonlijk kaartje toevoegen
+                </span>
+                <button type="button" class="product-page__option-panel-close" aria-label="Sluiten" data-close-option="card">×</button>
+              </div>
+              <textarea name="properties[Kaartje]" id="card-message" class="product-page__card-textarea" placeholder="Schrijf hier je persoonlijke boodschap…" maxlength="150" rows="4"></textarea>
+              <div class="product-page__card-counter">Max: 150 tekens (<span id="card-count">0</span>/150)</div>
+            </div>
+
+            <!-- Lint toevoegen - uitgeklapt -->
+            <div class="product-page__option-panel" id="panel-ribbon" hidden>
+              <div class="product-page__option-panel-header product-page__option-panel-header--ribbon">
+                <span class="product-page__option-panel-title">Lint toevoegen</span>
+                <button type="button" class="product-page__option-panel-close" aria-label="Sluiten" data-close-option="ribbon">×</button>
+              </div>
+              <div class="product-page__ribbon-grid">
+                <div class="product-page__ribbon-options">
+                  <div class="product-page__ribbon-colors">
+                    <label class="product-page__ribbon-label">Kleur lint:</label>
+                    <div class="product-page__ribbon-color-grid" data-ribbon-colors>
+                      <button type="button" class="product-page__ribbon-color active" data-color="rood" aria-label="Kies rood" style="background-color:#dc2626"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="roze" aria-label="Kies roze" style="background-color:#ec4899"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="blauw" aria-label="Kies blauw" style="background-color:#3b82f6"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="geel" aria-label="Kies geel" style="background-color:#eab308"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="groen" aria-label="Kies groen" style="background-color:#22c55e"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="paars" aria-label="Kies paars" style="background-color:#a855f7"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="oranje" aria-label="Kies oranje" style="background-color:#f97316"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="wit" aria-label="Kies wit" style="background-color:#fff;border:1px solid #e5e7eb"></button>
+                      <button type="button" class="product-page__ribbon-color" data-color="zwart" aria-label="Kies zwart" style="background-color:#1f2937"></button>
+                    </div>
+                  </div>
+                  <div class="product-page__ribbon-text-wrap">
+                    <label class="product-page__ribbon-label">Tekst op lint:</label>
+                    <p class="product-page__ribbon-hint">Typ direct in het voorbeeld hiernaast</p>
+                    <p class="product-page__ribbon-counter">Max: 30 tekens (<span id="ribbon-count">0</span>/30)</p>
+                  </div>
+                </div>
+                <div class="product-page__ribbon-preview-wrap">
+                  <p class="product-page__ribbon-preview-label">Voorbeeld (klik om te bewerken):</p>
+                  <div class="product-page__ribbon-preview" data-ribbon-preview>
+                    <div class="product-page__ribbon-preview-bg">
+                      <div class="product-page__ribbon-band" data-ribbon-band style="background-color:#dc2626">
+                        <div contenteditable="true" class="product-page__ribbon-editable" id="ribbon-text" data-placeholder="Je tekst hier…" data-max="30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" name="properties[Lint kleur]" id="ribbon-color-input" value="">
+              <input type="hidden" name="properties[Lint tekst]" id="ribbon-text-input" value="">
+            </div>
+
+            <!-- Extra toevoegingen - uitgeklapt -->
+            <div class="product-page__option-panel" id="panel-addons" hidden>
+              <div class="product-page__option-panel-header">
+                <h3 class="product-page__option-panel-title">Maak je bestelling extra speciaal</h3>
+                <button type="button" class="product-page__option-panel-close" aria-label="Sluiten" data-close-option="addons">×</button>
+              </div>
+              <p class="product-page__addons-placeholder">Binnenkort beschikbaar.</p>
+            </div>
+          </div>
+
+          <button type="submit" name="add" class="btn btn--primary btn--lg product-page__add" {% unless product.available %}disabled{% endunless %}>
+            {% if product.available %}{{ 'product.add_to_cart' | t }}{% else %}{{ 'product.out_of_stock' | t }}{% endif %}
+          </button>
+
+          <div class="product-page__actions">
+            <a href="/pages/wishlist" class="product-page__action-btn">{{ 'product.favorites' | t }}</a>
+            <button type="button" class="product-page__action-btn" data-share>{{ 'product.share' | t }}</button>
+          </div>
+        {% endform %}
+
+        <div class="product-page__trust">
+          <div class="product-page__trust-item">
+            <svg class="product-page__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Gratis bezorging vanaf €50</span>
+          </div>
+          <div class="product-page__trust-item">
+            <svg class="product-page__trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>7 dagen versgarantie</span>
+          </div>
+        </div>
+
+        {%- if product.description != blank -%}
+          <div class="product-page__description-wrap">
+            <h2 class="product-page__desc-title">{{ 'product.description' | t }}</h2>
+            <div class="product-page__description rte" data-description>
+              {{ product.description }}
+            </div>
+            
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="product-page__reviews">
+  <div class="container">
+    <h2 class="product-page__reviews-title">{{ 'product.reviews' | t }}</h2>
+    <p class="product-page__reviews-empty">{{ 'product.no_reviews' | t }}</p>
+  </div>
+</section>
+
+{%- if product.recommendations.size > 0 -%}
+<section class="product-page__related">
+  <div class="container">
+    <h2 class="product-page__related-title">{{ 'product.related' | t }}</h2>
+    <div class="product-page__related-grid">
+      {% for rec in product.recommendations limit: 4 %}
+        {% if rec.featured_image %}
+          {% render 'product-card', product: rec, show_rating: true %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<div class="product-page__sticky" id="sticky-add-to-cart" hidden>
+  <div class="container">
+    <div class="product-page__sticky-inner">
+      <div>
+        <div class="product-page__sticky-title">{{ product.title }}</div>
+        <div class="product-page__sticky-price">{{ product.price | money }}</div>
+      </div>
+      <form action="{{ routes.cart_add_url }}" method="post">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" name="add" class="btn btn--primary product-page__sticky-btn">{{ 'product.add_to_cart' | t }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var thumbs = document.querySelectorAll('.product-page__thumb');
+  var mainImg = document.getElementById('ProductImage');
+  thumbs.forEach(function(t) {
+    t.addEventListener('click', function() {
+      var src = this.getAttribute('data-src');
+      if (src && mainImg) {
+        mainImg.src = src;
+        thumbs.forEach(function(x) { x.classList.remove('active'); });
+        this.classList.add('active');
+      }
+    });
+  });
+  var prev = document.querySelector('[data-gallery-prev]');
+  var next = document.querySelector('[data-gallery-next]');
+  if (prev && next && thumbs.length) {
+    prev.addEventListener('click', function() {
+      var idx = Array.from(thumbs).findIndex(function(t) { return t.classList.contains('active'); });
+      idx = idx <= 0 ? thumbs.length - 1 : idx - 1;
+      thumbs[idx].click();
+    });
+    next.addEventListener('click', function() {
+      var idx = Array.from(thumbs).findIndex(function(t) { return t.classList.contains('active'); });
+      idx = idx < 0 || idx >= thumbs.length - 1 ? 0 : idx + 1;
+      thumbs[idx].click();
+    });
+  }
+  var qtyInput = document.getElementById('Quantity');
+  document.querySelector('[data-qty-minus]')?.addEventListener('click', function() {
+    if (qtyInput) { var v = parseInt(qtyInput.value) || 1; qtyInput.value = Math.max(1, v - 1); }
+  });
+  document.querySelector('[data-qty-plus]')?.addEventListener('click', function() {
+    if (qtyInput) { var v = parseInt(qtyInput.value) || 1; qtyInput.value = Math.min(99, v + 1); }
+  });
+  var sticky = document.getElementById('sticky-add-to-cart');
+  if (sticky && window.matchMedia('(max-width: 1023px)').matches) {
+    function updateSticky() { sticky.hidden = window.scrollY < window.innerHeight * 0.5; }
+    window.addEventListener('scroll', updateSticky);
+    updateSticky();
+  }
+  document.querySelector('[data-share]')?.addEventListener('click', function() {
+    if (navigator.share) {
+      navigator.share({ title: document.title, url: window.location.href });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link gekopieerd!');
+    }
+  });
+
+  // Option cards: toggle panels
+  var activeOption = null;
+  var optionCards = document.querySelectorAll('.product-page__option-card');
+  var panels = document.querySelectorAll('.product-page__option-panel');
+  function setActive(opt) {
+    activeOption = opt;
+    optionCards.forEach(function(c) {
+      var isActive = c.getAttribute('data-option') === opt;
+      c.classList.toggle('active', !!opt && isActive);
+      c.setAttribute('aria-pressed', !!opt && isActive);
+      var check = c.querySelector('[data-option-check="' + c.getAttribute('data-option') + '"]');
+      if (check) check.hidden = !isActive || !hasContent(c.getAttribute('data-option'));
+    });
+    panels.forEach(function(p) {
+      var id = p.id;
+      var match = id === 'panel-card' && opt === 'card' || id === 'panel-ribbon' && opt === 'ribbon' || id === 'panel-addons' && opt === 'addons';
+      p.hidden = !match;
+    });
+  }
+  function hasContent(opt) {
+    if (opt === 'card') return (document.getElementById('card-message')?.value || '').trim().length > 0;
+    if (opt === 'ribbon') return (document.getElementById('ribbon-text-input')?.value || '').trim().length > 0;
+    return false;
+  }
+  optionCards.forEach(function(c) {
+    c.addEventListener('click', function() {
+      var opt = this.getAttribute('data-option');
+      setActive(activeOption === opt ? null : opt);
+    });
+  });
+  document.querySelectorAll('[data-close-option]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) { e.stopPropagation(); setActive(null); });
+  });
+
+  // Card message: character count
+  var cardMsg = document.getElementById('card-message');
+  var cardCount = document.getElementById('card-count');
+  if (cardMsg && cardCount) {
+    function updateCardCount() {
+      cardCount.textContent = cardMsg.value.length;
+      var check = document.querySelector('[data-option-check="card"]');
+      if (check) check.hidden = cardMsg.value.trim().length === 0;
+    }
+    cardMsg.addEventListener('input', updateCardCount);
+    cardMsg.addEventListener('change', updateCardCount);
+  }
+
+  // Ribbon: color + text
+  var ribbonColors = document.querySelectorAll('.product-page__ribbon-color');
+  var ribbonBand = document.querySelector('[data-ribbon-band]');
+  var ribbonInput = document.getElementById('ribbon-text-input');
+  var ribbonColorInput = document.getElementById('ribbon-color-input');
+  var ribbonTextEl = document.getElementById('ribbon-text');
+  var ribbonCountEl = document.getElementById('ribbon-count');
+  var ribbonHex = { rood:'#dc2626',roze:'#ec4899',blauw:'#3b82f6',geel:'#eab308',groen:'#22c55e',paars:'#a855f7',oranje:'#f97316',wit:'#fff',zwart:'#1f2937' };
+  var currentRibbonColor = 'rood';
+  ribbonColors.forEach(function(b) {
+    b.addEventListener('click', function() {
+      ribbonColors.forEach(function(x) { x.classList.remove('active'); });
+      this.classList.add('active');
+      var c = this.getAttribute('data-color');
+      currentRibbonColor = c;
+      if (ribbonBand) {
+        ribbonBand.style.backgroundColor = ribbonHex[c] || ribbonHex.rood;
+        }
+      if (ribbonTextEl) ribbonTextEl.classList.toggle('light-bg', c === 'wit' || c === 'geel');
+      if (ribbonColorInput) ribbonColorInput.value = c;
+    });
+  });
+  if (ribbonColorInput) ribbonColorInput.value = 'rood';
+  function updateRibbonText() {
+    var t = (ribbonTextEl && ribbonTextEl.textContent) ? ribbonTextEl.textContent.trim().slice(0, 30) : '';
+    if (ribbonTextEl && ribbonTextEl.textContent !== t) ribbonTextEl.textContent = t;
+    if (ribbonCountEl) ribbonCountEl.textContent = t.length;
+    if (ribbonInput) ribbonInput.value = t;
+    var check = document.querySelector('[data-option-check="ribbon"]');
+    if (check) check.hidden = t.length === 0;
+  }
+  if (ribbonTextEl) {
+    ribbonTextEl.addEventListener('input', function() {
+      var max = 30;
+      if (this.textContent.length > max) this.textContent = this.textContent.slice(0, max);
+      updateRibbonText();
+    });
+    ribbonTextEl.addEventListener('blur', updateRibbonText);
+  }
+  document.getElementById('ProductForm')?.addEventListener('submit', function() {
+    updateRibbonText && updateRibbonText();
+    var cardMsg = document.getElementById('card-message');
+    if (cardMsg && !cardMsg.value.trim()) cardMsg.removeAttribute('name');
+    var rc = document.getElementById('ribbon-color-input');
+    var rt = document.getElementById('ribbon-text-input');
+    if (rc && !rt?.value?.trim()) { rc.removeAttribute('name'); rt?.removeAttribute('name'); }
+  });
+})();
+</script>

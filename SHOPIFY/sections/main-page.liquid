@@ -1,0 +1,27 @@
+<article class="page-content">
+  <div class="container">
+    <h1 class="page-content__title">{{ page.title }}</h1>
+    <div class="page-content__body rte">
+      {{ page.content }}
+    </div>
+  </div>
+</article>
+
+<style>
+.page-content { padding: 3rem 0; }
+.page-content__title {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Page",
+  "class": "section-main-page",
+  "settings": []
+}
+{% endschema %}

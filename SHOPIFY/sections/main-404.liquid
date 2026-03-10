@@ -1,0 +1,33 @@
+<section class="page-404">
+  <div class="container">
+    <h1 class="page-404__title">404</h1>
+    <p class="page-404__text">{{ '404.subtext' | t }}</p>
+    <a href="{{ routes.root_url }}" class="btn btn--primary">{{ '404.back' | t }}</a>
+  </div>
+</section>
+
+<style>
+.page-404 {
+  padding: 4rem 0;
+  text-align: center;
+}
+.page-404__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-serif);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-primary-500);
+}
+.page-404__text {
+  margin: 0 0 1.5rem;
+  color: #6b7280;
+}
+</style>
+
+{% schema %}
+{
+  "name": "404",
+  "class": "section-main-404",
+  "settings": []
+}
+{% endschema %}
