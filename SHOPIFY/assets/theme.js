@@ -69,8 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cart drawer
   (function() {
     var drawer = document.getElementById('cart-drawer');
-    var toggleBtn = document.querySelector('[data-cart-drawer-toggle]');
-    var closeBtns = document.querySelectorAll('[data-cart-drawer-close]');
     var headerCount = document.querySelector('[data-header-cart-count]');
 
     function formatMoney(cents) {
@@ -190,14 +188,18 @@ document.addEventListener('DOMContentLoaded', function() {
       document.body.style.overflow = '';
     }
 
-    if (toggleBtn) toggleBtn.addEventListener('click', function(e) { e.preventDefault(); openDrawer(); });
-    closeBtns.forEach(function(b) { b.addEventListener('click', closeDrawer); });
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('[data-cart-drawer-toggle]')) { e.preventDefault(); openDrawer(); }
+      if (e.target.closest('[data-cart-drawer-close]')) closeDrawer();
+    });
     var backdrop = drawer ? drawer.querySelector('.cart-drawer__backdrop') : null;
     if (backdrop) backdrop.addEventListener('click', closeDrawer);
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && drawer && drawer.getAttribute('data-open') === 'true') closeDrawer();
     });
+
+    if (drawer) window.bloemenCartDrawer = { open: openDrawer, close: closeDrawer };
   })();
 
 });
