@@ -1,0 +1,220 @@
+{%- comment -%}
+  Order Printer Pro — plak DIT HELE BESTAND in de Code-tab.
+  Vervang alles wat er staat (inclusief de lege div en oude style).
+
+  Formaat: liggend A6 (148 × 105 mm), zoals WC CardPreview 3:2
+  Test: Preview-tab → order #1001
+{%- endcomment -%}
+
+<div class="bvdg-kaartje">
+
+{%- assign cards_printed = 0 -%}
+
+{%- for line_item in line_items -%}
+  {%- assign card_text = blank -%}
+  {%- assign ribbon_color = blank -%}
+  {%- assign ribbon_text = blank -%}
+
+  {%- for property in line_item.properties -%}
+    {%- assign key = property.first | downcase -%}
+    {%- assign val = property.last -%}
+    {%- if val != blank -%}
+      {%- if key contains 'kaartje' -%}
+        {%- assign card_text = val -%}
+      {%- elsif key == 'lint kleur' -%}
+        {%- assign ribbon_color = val -%}
+      {%- elsif key == 'lint tekst' -%}
+        {%- assign ribbon_text = val -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if card_text != blank -%}
+    {%- assign cards_printed = cards_printed | plus: 1 -%}
+    <div class="card-sheet">
+      <div class="card-frame">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <span class="deco-line deco-line-top"></span>
+        <span class="deco-line deco-line-bottom"></span>
+
+        <div class="card-meta">
+          <span class="card-logo">{{ shop.name }}</span>
+          <span>{{ order.name }}</span>
+        </div>
+
+        <div class="card-body">
+          <p class="card-message">{{ card_text }}</p>
+        </div>
+
+        {%- if ribbon_color != blank or ribbon_text != blank -%}
+        <div class="card-footer">
+          <p>
+            Lint{% if ribbon_color != blank %}: {{ ribbon_color }}{% endif -%}
+            {%- if ribbon_text != blank %} — "{{ ribbon_text }}"{% endif -%}
+          </p>
+        </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if cards_printed == 0 -%}
+  <div class="no-cards">
+    <h2>Geen kaartje</h2>
+    <p>Order {{ order.name }} heeft geen kaartjetekst in de orderregels.</p>
+  </div>
+{%- endif -%}
+
+</div>
+
+<style type="text/css">
+  @page {
+    size: 148mm 105mm landscape;
+    margin: 0;
+  }
+
+  .bvdg-kaartje,
+  .bvdg-kaartje * {
+    box-sizing: border-box;
+  }
+
+  .bvdg-kaartje {
+    margin: 0;
+    padding: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1f2937;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .bvdg-kaartje .card-sheet {
+    width: 148mm;
+    height: 105mm;
+    margin: 0 auto;
+    page-break-after: always;
+    page-break-inside: avoid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7mm;
+    background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 35%, #ecfdf5 100%);
+  }
+
+  .bvdg-kaartje .card-sheet:last-child {
+    page-break-after: auto;
+  }
+
+  .bvdg-kaartje .card-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(5, 150, 105, 0.35);
+    border-radius: 6mm;
+    padding: 8mm 10mm;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .bvdg-kaartje .corner {
+    position: absolute;
+    width: 7mm;
+    height: 7mm;
+    border: 1.5px solid rgba(5, 150, 105, 0.35);
+    border-radius: 50%;
+    opacity: 0.45;
+  }
+
+  .bvdg-kaartje .corner-tl { top: 4mm; left: 4mm; }
+  .bvdg-kaartje .corner-tr { top: 4mm; right: 4mm; }
+  .bvdg-kaartje .corner-bl { bottom: 4mm; left: 4mm; }
+  .bvdg-kaartje .corner-br { bottom: 4mm; right: 4mm; }
+
+  .bvdg-kaartje .deco-line {
+    position: absolute;
+    left: 12mm;
+    right: 12mm;
+    height: 1px;
+    background: rgba(5, 150, 105, 0.2);
+  }
+
+  .bvdg-kaartje .deco-line-top { top: 3.5mm; }
+  .bvdg-kaartje .deco-line-bottom { bottom: 3.5mm; }
+
+  .bvdg-kaartje .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 7pt;
+    color: #6b7280;
+    margin-bottom: 3mm;
+    z-index: 1;
+  }
+
+  .bvdg-kaartje .card-logo {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #059669;
+  }
+
+  .bvdg-kaartje .card-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2mm 4mm;
+    z-index: 1;
+  }
+
+  .bvdg-kaartje .card-message {
+    margin: 0;
+    font-size: 13pt;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .bvdg-kaartje .card-footer {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 6.5pt;
+    color: #9ca3af;
+    text-align: center;
+    border-top: 1px solid rgba(5, 150, 105, 0.15);
+    padding-top: 2mm;
+    z-index: 1;
+  }
+
+  .bvdg-kaartje .card-footer p { margin: 0; }
+
+  .bvdg-kaartje .no-cards {
+    width: 148mm;
+    height: 105mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding: 10mm;
+  }
+
+  .bvdg-kaartje .no-cards h2 {
+    font-size: 12pt;
+    margin: 0 0 4mm;
+  }
+
+  .bvdg-kaartje .no-cards p {
+    font-size: 9pt;
+    color: #6b7280;
+    margin: 0;
+  }
+</style>

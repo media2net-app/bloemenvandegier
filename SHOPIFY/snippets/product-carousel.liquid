@@ -1,0 +1,52 @@
+{%- liquid
+  assign carousel_collection = collection
+  assign exclude_id = exclude_product.id
+  assign has_related = false
+
+  if carousel_collection != blank
+    for item in carousel_collection.products limit: 20
+      if item.id != exclude_id and item.featured_image
+        assign has_related = true
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if has_related -%}
+  <section class="product-carousel" data-product-carousel>
+    <div class="product-carousel__header">
+      <div>
+        <h2 class="product-carousel__title">{{ title | default: 'Gerelateerde producten' }}</h2>
+        <p class="product-carousel__subtitle">{{ 'product.related_from_collection' | t: collection: carousel_collection.title }}</p>
+      </div>
+      <div class="product-carousel__nav">
+        <button type="button" class="product-carousel__btn" data-carousel-prev aria-label="{{ 'product.carousel_prev' | t }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="product-carousel__btn" data-carousel-next aria-label="{{ 'product.carousel_next' | t }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="product-carousel__viewport">
+      <div class="product-carousel__track" data-carousel-track>
+        {%- for item in carousel_collection.products limit: 20 -%}
+          {%- if item.id != exclude_id and item.featured_image -%}
+            <div class="product-carousel__slide">
+              {% render 'product-card', product: item, show_rating: true %}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="product-carousel__footer">
+      <a href="{{ carousel_collection.url }}" class="product-carousel__link">
+        {{ 'product.view_collection' | t: collection: carousel_collection.title }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+{%- endif -%}

@@ -1,0 +1,106 @@
+{%- comment -%}
+  Alleen kaartjes — voor Shopify Admin packing slip template (GEEN app nodig)
+
+  Gebruik als je ALLEEN kaartjes wilt printen (geen pakbon):
+    Settings → Shipping and delivery → Packing slip template
+    Plak deze code (vervangt tijdelijk de volledige pakbon-template)
+    Print → alleen kaartje-velden
+
+  Voor pakbon + kaartje samen gebruik je packing-slip-template.liquid
+{%- endcomment -%}
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <title>Kaartje {{ order.name }}</title>
+</head>
+<body>
+
+{%- assign cards_printed = 0 -%}
+
+{%- for line_item in order.line_items -%}
+  {%- assign card_text = blank -%}
+  {%- assign ribbon_color = blank -%}
+  {%- assign ribbon_text = blank -%}
+
+  {%- for property in line_item.properties -%}
+    {%- assign key = property.first | downcase -%}
+    {%- assign val = property.last -%}
+    {%- if val != blank -%}
+      {%- if key contains 'kaartje' -%}
+        {%- assign card_text = val -%}
+      {%- elsif key == 'lint kleur' -%}
+        {%- assign ribbon_color = val -%}
+      {%- elsif key == 'lint tekst' -%}
+        {%- assign ribbon_text = val -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if card_text != blank -%}
+    {%- assign cards_printed = cards_printed | plus: 1 -%}
+    <div class="card-sheet">
+      <div class="card-frame">
+        <div class="card-header">
+          <span class="card-logo">{{ shop.name }}</span>
+          <span class="card-order">{{ order.name }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-message">{{ card_text }}</p>
+        </div>
+        <div class="card-footer">
+          <p class="card-product">{{ line_item.title }}{% if line_item.variant.title != 'Default Title' %} — {{ line_item.variant.title }}{% endif %}</p>
+          {%- if ribbon_color != blank or ribbon_text != blank -%}
+            <p class="card-ribbon">
+              Lint:
+              {%- if ribbon_color != blank %} {{ ribbon_color }}{% endif -%}
+              {%- if ribbon_text != blank %} — "{{ ribbon_text }}"{% endif -%}
+            </p>
+          {%- endif -%}
+          <p class="card-ship">Voor: {{ order.shipping_address.name }}, {{ order.shipping_address.city }}</p>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if cards_printed == 0 -%}
+  <div class="no-cards">
+    <h1>Geen kaartje bij {{ order.name }}</h1>
+    <p>Deze bestelling heeft geen kaartjetekst in de orderregels.</p>
+  </div>
+{%- endif -%}
+
+<style>
+  @page { size: A6 portrait; margin: 8mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0; font-family: Georgia, serif; color: #1f2937; background: #fff; }
+  .card-sheet {
+    width: 105mm; min-height: 148mm; margin: 0 auto;
+    page-break-after: always; page-break-inside: avoid;
+    display: flex; align-items: center; justify-content: center; padding: 6mm;
+  }
+  .card-sheet:last-child { page-break-after: auto; }
+  .card-frame {
+    width: 100%; min-height: 130mm; border: 1.5px solid #d1d5db; border-radius: 4mm;
+    padding: 8mm 10mm; display: flex; flex-direction: column; background: #fff;
+  }
+  .card-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid #e5e7eb; padding-bottom: 4mm; margin-bottom: 6mm;
+    font-family: Arial, sans-serif; font-size: 9pt; color: #6b7280;
+  }
+  .card-logo { font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.04em; font-size: 8pt; }
+  .card-body { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4mm 2mm; }
+  .card-message { margin: 0; font-size: 14pt; line-height: 1.55; white-space: pre-wrap; word-wrap: break-word; }
+  .card-footer {
+    border-top: 1px solid #e5e7eb; padding-top: 4mm;
+    font-family: Arial, sans-serif; font-size: 7.5pt; color: #6b7280; line-height: 1.4;
+  }
+  .card-product, .card-ribbon, .card-ship { margin: 0 0 2mm; }
+  .no-cards { padding: 20mm; font-family: Arial, sans-serif; text-align: center; }
+</style>
+
+</body>
+</html>

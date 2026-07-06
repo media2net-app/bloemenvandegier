@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import Hero from '@/components/homepage/Hero'
 import FeaturedProducts from '@/components/homepage/FeaturedProducts'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
@@ -9,8 +10,10 @@ import OccasionSelector from '@/components/homepage/OccasionSelector'
 import DeliveryCalculator from '@/components/homepage/DeliveryCalculator'
 import { getProductBySlug } from '@/lib/data/products'
 
-export default function HomePage() {
-  // Get plukboeket XL product for Thursday deal
+const migrationGate =
+  process.env.MIGRATION_GATE === 'true' || process.env.NODE_ENV === 'development'
+
+function ShopHomePage() {
   const dealProduct = getProductBySlug('plukboeket-xl')
 
   return (
@@ -26,4 +29,12 @@ export default function HomePage() {
       <USP />
     </>
   )
+}
+
+export default function HomePage() {
+  if (migrationGate) {
+    redirect('/login')
+  }
+
+  return <ShopHomePage />
 }

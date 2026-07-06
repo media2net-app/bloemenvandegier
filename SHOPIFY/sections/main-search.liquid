@@ -1,0 +1,78 @@
+<section class="search-page">
+  <div class="search-page__header">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">{{ 'breadcrumb.home' | t }}</a>
+        <span class="breadcrumbs__sep">/</span>
+        <span class="breadcrumbs__current">{{ 'search.title' | t }}</span>
+      </nav>
+
+      <h1 class="search-page__title">{{ 'search.title' | t }}</h1>
+
+      <div class="search-page__form-wrap">
+        {% render 'predictive-search-form', id_prefix: 'Page', wrapper_class: 'predictive-search predictive-search--page' %}
+      </div>
+
+      {%- if search.performed -%}
+        <p class="search-page__count">
+          {%- if search.results_count == 0 -%}
+            {{ 'search.no_results_for' | t: terms: search.terms }}
+          {%- else -%}
+            {{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="container search-page__body">
+    {%- if search.performed -%}
+      {% paginate search.results by 24 %}
+        {%- if search.results_count > 0 -%}
+          <div class="search-page__grid">
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'product' -%}
+                {%- if item.featured_image -%}
+                  {% render 'product-card', product: item, show_rating: true %}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate %}
+          {%- endif -%}
+        {%- else -%}
+          <div class="search-page__empty">
+            <p>{{ 'search.empty_help' | t }}</p>
+            <div class="search-page__suggestions">
+              <a href="/collections/alle-boeketten" class="btn btn--outline">{{ 'search.suggestion_bouquets' | t }}</a>
+              <a href="/collections/rozen" class="btn btn--outline">{{ 'search.suggestion_roses' | t }}</a>
+              <a href="/pages/boeketten" class="btn btn--primary">{{ 'search.suggestion_all' | t }}</a>
+            </div>
+          </div>
+        {%- endif -%}
+      {% endpaginate %}
+    {%- else -%}
+      <div class="search-page__intro">
+        <p>{{ 'search.intro' | t }}</p>
+        <div class="search-page__popular">
+          <span class="search-page__popular-label">{{ 'search.popular' | t }}</span>
+          <a href="{{ routes.search_url }}?type=product&amp;q=rozen" class="search-page__tag">Rozen</a>
+          <a href="{{ routes.search_url }}?type=product&amp;q=boeket" class="search-page__tag">Boeket</a>
+          <a href="{{ routes.search_url }}?type=product&amp;q=tulpen" class="search-page__tag">Tulpen</a>
+          <a href="{{ routes.search_url }}?type=product&amp;q=pioenrozen" class="search-page__tag">Pioenrozen</a>
+          <a href="{{ routes.search_url }}?type=product&amp;q=plukboeket" class="search-page__tag">Plukboeket</a>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Zoekresultaten",
+  "class": "section-search",
+  "settings": []
+}
+{% endschema %}

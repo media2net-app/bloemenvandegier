@@ -43,14 +43,18 @@
         </div>
 
         <div class="product-page__price-row">
-          <span class="product-page__price">{{ product.price | money }}</span>
-          {%- if product.compare_at_price > product.price -%}
-            <span class="product-page__compare-price">{{ product.compare_at_price | money }}</span>
-          {%- endif -%}
+          <span class="product-page__price" id="ProductPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
+          <span class="product-page__compare-price" id="ProductComparePrice" {% unless product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}hidden{% endunless %}>
+            {{ product.selected_or_first_available_variant.compare_at_price | money }}
+          </span>
           {%- if product.available -%}
-            <span class="product-page__stock">{{ 'product.in_stock' | t }}</span>
+            <span class="product-page__stock" id="ProductStock">{{ 'product.in_stock' | t }}</span>
           {%- endif -%}
         </div>
+
+        <script type="application/json" id="ProductVariantsJson">
+          {{ product.variants | json }}
+        </script>
 
         {% form 'product', product, id: 'ProductForm' %}
           {%- if product.variants.size > 1 -%}
@@ -121,7 +125,7 @@
                 </span>
                 <button type="button" class="product-page__option-panel-close" aria-label="Sluiten" data-close-option="card">×</button>
               </div>
-              <textarea name="properties[Kaartje]" id="card-message" class="product-page__card-textarea" placeholder="Schrijf hier je persoonlijke boodschap…" maxlength="150" rows="4"></textarea>
+              <textarea name="properties[Kaartje]" id="card-message" class="product-page__card-textarea" placeholder="Schrijf hier je persoonlijke boodschap… (emoji's zijn toegestaan)" maxlength="150" rows="4" inputmode="text"></textarea>
               <div class="product-page__card-counter">Max: 150 tekens (<span id="card-count">0</span>/150)</div>
             </div>
 
@@ -220,19 +224,32 @@
   </div>
 </section>
 
-{%- if product.recommendations.size > 0 -%}
-<section class="product-page__related">
-  <div class="container">
-    <h2 class="product-page__related-title">{{ 'product.related' | t }}</h2>
-    <div class="product-page__related-grid">
-      {% for rec in product.recommendations limit: 4 %}
-        {% if rec.featured_image %}
-          {% render 'product-card', product: rec, show_rating: true %}
-        {% endif %}
-      {% endfor %}
+{%- liquid
+  assign related_collection = nil
+  for coll in product.collections
+    assign coll_handle = coll.handle
+    if coll_handle == 'all' or coll_handle == 'frontpage' or coll_handle == 'alle-boeketten'
+      continue
+    endif
+    assign related_collection = coll
+    break
+  endfor
+  if related_collection == nil and product.collections.first
+    assign related_collection = product.collections.first
+  endif
+-%}
+
+{%- if related_collection -%}
+  <div class="product-page__related-wrap">
+    <div class="container">
+      {%- assign related_title = 'product.related' | t -%}
+      {% render 'product-carousel',
+        collection: related_collection,
+        exclude_product: product,
+        title: related_title
+      %}
     </div>
   </div>
-</section>
 {%- endif -%}
 
 <div class="product-page__sticky" id="sticky-add-to-cart" hidden>
@@ -240,10 +257,10 @@
     <div class="product-page__sticky-inner">
       <div>
         <div class="product-page__sticky-title">{{ product.title }}</div>
-        <div class="product-page__sticky-price">{{ product.price | money }}</div>
+        <div class="product-page__sticky-price" id="ProductStickyPrice">{{ product.selected_or_first_available_variant.price | money }}</div>
       </div>
-      <form action="{{ routes.cart_add_url }}" method="post">
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <form action="{{ routes.cart_add_url }}" method="post" id="StickyAddToCartForm">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="StickyVariantId">
         <input type="hidden" name="quantity" value="1">
         <button type="submit" name="add" class="btn btn--primary product-page__sticky-btn">{{ 'product.add_to_cart' | t }}</button>
       </form>
@@ -395,5 +412,46 @@
     var rt = document.getElementById('ribbon-text-input');
     if (rc && !rt?.value?.trim()) { rc.removeAttribute('name'); rt?.removeAttribute('name'); }
   });
+
+  // Variant select: update price when option changes
+  var variantSelect = document.querySelector('.product-page__variant-select');
+  var variantsJson = document.getElementById('ProductVariantsJson');
+  if (variantSelect && variantsJson) {
+    var variants = JSON.parse(variantsJson.textContent);
+    var priceEl = document.getElementById('ProductPrice');
+    var compareEl = document.getElementById('ProductComparePrice');
+    var stickyPriceEl = document.getElementById('ProductStickyPrice');
+    var stickyVariantId = document.getElementById('StickyVariantId');
+    var moneyFormat = {{ shop.money_format | json }};
+
+    function formatMoney(cents) {
+      if (window.Shopify && typeof Shopify.formatMoney === 'function') {
+        return Shopify.formatMoney(cents, moneyFormat);
+      }
+      return (cents / 100).toLocaleString('nl-NL', { style: 'currency', currency: 'EUR' });
+    }
+
+    function updateVariantDisplay(variantId) {
+      var variant = variants.find(function(v) { return String(v.id) === String(variantId); });
+      if (!variant) return;
+
+      if (priceEl) priceEl.textContent = formatMoney(variant.price);
+      if (compareEl) {
+        if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+          compareEl.textContent = formatMoney(variant.compare_at_price);
+          compareEl.hidden = false;
+        } else {
+          compareEl.hidden = true;
+        }
+      }
+      if (stickyPriceEl) stickyPriceEl.textContent = formatMoney(variant.price);
+      if (stickyVariantId) stickyVariantId.value = variant.id;
+    }
+
+    variantSelect.addEventListener('change', function() {
+      updateVariantDisplay(this.value);
+    });
+    updateVariantDisplay(variantSelect.value);
+  }
 })();
 </script>

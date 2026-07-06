@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-track",
+      "settings": {
+        "title": "Volg je bestelling",
+        "intro": "Bekijk de status van je bestelling of volg je bezorging met het trackingnummer uit je e-mail.",
+        "footer_note": "Vragen over je bestelling? Neem contact op via info@bloemenvandegier.nl"
+      }
+    }
+  },
+  "order": ["main"]
+}

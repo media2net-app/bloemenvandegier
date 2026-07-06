@@ -1,0 +1,17 @@
+{%- comment -%}
+  Toont productlabels op basis van tags (nieuw, valentijnstip, weekdeal, actie).
+  Voeg in Shopify Admin een tag toe aan het product.
+{%- endcomment -%}
+{%- liquid
+  assign label_tags = 'nieuw,valentijnstip,valentijn,weekdeal,actie,tip' | split: ','
+  assign shown = 0
+-%}
+{%- for tag in product.tags -%}
+  {%- assign tag_key = tag | downcase | strip -%}
+  {%- if label_tags contains tag_key and shown < 2 -%}
+    <span class="product-card__badge product-card__badge--{{ tag_key | handleize }}">
+      {{ tag | capitalize }}
+    </span>
+    {%- assign shown = shown | plus: 1 -%}
+  {%- endif -%}
+{%- endfor -%}

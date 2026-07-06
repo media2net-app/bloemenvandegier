@@ -1,0 +1,185 @@
+{%- comment -%}
+  Kaartje print template — voor Order Printer Pro of vergelijkbare apps
+  (De oude Shopify Order Printer-app is niet meer beschikbaar in de App Store.)
+
+  Optie zonder app: gebruik packing-slip-template.liquid of kaartje-only-slip-template.liquid
+  in Settings → Shipping → Packing slip template.
+
+  Met app (Order Printer Pro):
+    1. Installeer Order Printer Pro (gratis)
+    2. Templates → custom template "Kaartje" → plak deze code
+    3. Orders → Print → Kaartje
+{%- endcomment -%}
+
+{%- assign cards_printed = 0 -%}
+
+{%- for line_item in line_items -%}
+  {%- assign card_text = blank -%}
+  {%- assign ribbon_color = blank -%}
+  {%- assign ribbon_text = blank -%}
+
+  {%- for property in line_item.properties -%}
+    {%- assign key = property.first | downcase -%}
+    {%- assign val = property.last -%}
+    {%- if val != blank -%}
+      {%- if key contains 'kaartje' -%}
+        {%- assign card_text = val -%}
+      {%- elsif key == 'lint kleur' -%}
+        {%- assign ribbon_color = val -%}
+      {%- elsif key == 'lint tekst' -%}
+        {%- assign ribbon_text = val -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if card_text != blank -%}
+    {%- assign cards_printed = cards_printed | plus: 1 -%}
+    <div class="card-sheet">
+      <div class="card-frame">
+        <div class="card-header">
+          <span class="card-logo">{{ shop.name }}</span>
+          <span class="card-order">{{ order.name }}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-message">{{ card_text }}</p>
+        </div>
+        <div class="card-footer">
+          <p class="card-product">{{ line_item.title }}{% if line_item.variant.title != 'Default Title' %} — {{ line_item.variant.title }}{% endif %}</p>
+          {%- if ribbon_color != blank or ribbon_text != blank -%}
+            <p class="card-ribbon">
+              Lint:
+              {%- if ribbon_color != blank %} {{ ribbon_color }}{% endif -%}
+              {%- if ribbon_text != blank %} — "{{ ribbon_text }}"{% endif -%}
+            </p>
+          {%- endif -%}
+          <p class="card-ship">
+            Voor: {{ order.shipping_address.name }}, {{ order.shipping_address.city }}
+          </p>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if cards_printed == 0 -%}
+  <div class="no-cards">
+    <h1>Geen kaartje bij deze bestelling</h1>
+    <p>Order {{ order.name }} bevat geen kaartje-tekst in de orderregels.</p>
+  </div>
+{%- endif -%}
+
+<style>
+  @page {
+    size: A6 portrait;
+    margin: 8mm;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1f2937;
+    background: #fff;
+  }
+
+  .card-sheet {
+    width: 105mm;
+    min-height: 148mm;
+    margin: 0 auto;
+    page-break-after: always;
+    page-break-inside: avoid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6mm;
+  }
+
+  .card-sheet:last-child {
+    page-break-after: auto;
+  }
+
+  .card-frame {
+    width: 100%;
+    min-height: 130mm;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4mm;
+    padding: 8mm 10mm;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 4mm;
+    margin-bottom: 6mm;
+    font-family: Arial, sans-serif;
+    font-size: 9pt;
+    color: #6b7280;
+  }
+
+  .card-logo {
+    font-weight: 600;
+    color: #059669;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 8pt;
+  }
+
+  .card-order {
+    font-size: 8pt;
+  }
+
+  .card-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4mm 2mm;
+  }
+
+  .card-message {
+    margin: 0;
+    font-size: 14pt;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .card-footer {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 4mm;
+    font-family: Arial, sans-serif;
+    font-size: 7.5pt;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+
+  .card-product,
+  .card-ribbon,
+  .card-ship {
+    margin: 0 0 2mm;
+  }
+
+  .no-cards {
+    padding: 20mm;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+
+  @media screen {
+    body { background: #f3f4f6; padding: 10mm; }
+    .card-sheet {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 10mm;
+      background: #fff;
+    }
+  }
+</style>

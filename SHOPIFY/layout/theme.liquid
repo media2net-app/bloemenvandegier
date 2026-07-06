@@ -28,6 +28,8 @@
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
+  {% render 'structured-data' %}
+
   {{ content_for_header }}
 </head>
 <body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %} antialiased font-sans">
@@ -35,7 +37,6 @@
 
   {% section 'header' %}
   {% render 'cart-drawer' %}
-  {% section 'trust-bar' %}
 
   <main id="MainContent" class="min-h-screen" role="main" tabindex="-1">
     {{ content_for_layout }}

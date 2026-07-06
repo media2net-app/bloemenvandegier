@@ -1,0 +1,24 @@
+<section class="hub-page">
+  <div class="hub-page__header collection-page__header">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="{{ routes.root_url }}">{{ 'breadcrumb.home' | t }}</a>
+        <span class="breadcrumbs__sep">/</span>
+        <span class="breadcrumbs__current">{{ page.title }}</span>
+      </nav>
+      <h1 class="collection-page__title">{% render 'hub-page-heading' %}</h1>
+    </div>
+  </div>
+
+  <div class="container hub-page__body">
+    {% render 'hub-pages-content' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hub pagina",
+  "class": "section-hub-page",
+  "settings": []
+}
+{% endschema %}

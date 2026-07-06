@@ -24,7 +24,7 @@ export default function LoginPage() {
     try {
       const success = await login(email, password)
       if (success) {
-        router.push('/account')
+        router.push('/migratie')
       } else {
         setError('Inloggen mislukt. Probeer het opnieuw.')
       }
@@ -53,8 +53,8 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Welkom terug</h1>
-          <p className="text-gray-600 mb-6">Log in op je account</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Migratie dashboard</h1>
+          <p className="text-gray-600 mb-6">Log in om het WC → Shopify migratie-overzicht te openen</p>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -138,17 +138,21 @@ export default function LoginPage() {
           {/* Demo Info */}
           <div className="mt-6 p-4 bg-primary-50 rounded-lg">
             <p className="text-sm text-gray-700">
-              <strong>Demo account:</strong> De gegevens zijn al ingevuld. Klik op "Inloggen" om door te gaan.
+              <strong>Demo account:</strong> Gegevens staan al ingevuld. Na inloggen ga je naar{' '}
+              <strong>/migratie</strong>.
             </p>
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link href="/migratie" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+              Direct naar migratie dashboard →
+            </Link>
           </div>
 
           {/* Register Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Nog geen account?{' '}
-              <Link href="/registreren" className="text-primary-600 hover:text-primary-700 font-medium">
-                Registreer hier
-              </Link>
+            <p className="text-sm text-gray-500">
+              Webshop tijdelijk verborgen tijdens migratie.
             </p>
           </div>
         </div>

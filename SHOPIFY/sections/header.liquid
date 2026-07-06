@@ -1,61 +1,205 @@
-<header class="header sticky top-0 z-50 bg-primary border-b border-primary-dark shadow-sm">
-  <div class="container">
-    <div class="header__inner">
-      <a href="{{ routes.root_url }}" class="header__logo">
-        {%- assign logo = section.settings.logo | default: settings.logo -%}
-        {%- if logo != blank -%}
-          <img src="{{ logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="200" height="50" class="header__logo-img">
-        {%- else -%}
-          <span class="header__logo-text">{{ shop.name }}</span>
-        {%- endif -%}
-      </a>
-
-      <nav class="header__nav" aria-label="Hoofdnavigatie">
-        <ul class="header__nav-list">
-          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.roses' | t }}</a></li>
-          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.spring_flowers' | t }}</a></li>
-          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.bouquets' | t }}</a></li>
-          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.green_decorative' | t }}</a></li>
-          <li><a href="{{ routes.collections_url }}">{{ 'header.nav.subscriptions' | t }}</a></li>
-          <li><a href="/pages/zakelijk">{{ 'header.nav.business' | t }}</a></li>
-        </ul>
-      </nav>
-
-      <div class="header__actions">
-        <a href="{{ routes.search_url }}" class="header__action" aria-label="{{ 'header.search' | t }}">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+<header class="header sticky top-0 z-50">
+  <div class="header__usp trust-bar">
+    <div class="container">
+      <div class="trust-bar__items trust-bar__items--desktop">
+        <div class="trust-bar__item">
+          <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
-        </a>
-        <a href="{{ routes.account_url }}" class="header__action" aria-label="{{ 'header.account' | t }}">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          <span><strong class="trust-bar__highlight">9.1</strong> uit 4700+ reviews</span>
+        </div>
+        <div class="trust-bar__item">
+          <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
           </svg>
-        </a>
-        <button type="button" class="header__action header__cart" aria-label="{{ 'header.cart' | t }}" data-cart-drawer-toggle data-cart-count="{{ cart.item_count }}">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          <span>Bezorging in heel Nederland & België</span>
+        </div>
+        <div class="trust-bar__item">
+          <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          <span class="header__cart-count{% if cart.item_count == 0 %} header__cart-count--empty{% endif %}" data-header-cart-count>{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
-        </button>
-        <button type="button" class="header__menu-btn" aria-label="{{ 'header.menu' | t }}" aria-expanded="false" data-mobile-menu-toggle>
-          <svg class="header__icon header__icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          <span>7 dagen versgarantie</span>
+        </div>
+        <div class="trust-bar__item">
+          <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
-        </button>
+          <span>Meer bloemen voor je geld</span>
+        </div>
+      </div>
+      <div class="trust-bar__slideshow" data-trust-bar-slideshow>
+        <div class="trust-bar__track">
+          <div class="trust-bar__slide">
+            <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            <span><strong class="trust-bar__highlight">9.1</strong> uit 4700+ reviews</span>
+          </div>
+          <div class="trust-bar__slide">
+            <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+            <span>Bezorging in heel Nederland & België</span>
+          </div>
+          <div class="trust-bar__slide">
+            <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>7 dagen versgarantie</span>
+          </div>
+          <div class="trust-bar__slide">
+            <svg class="trust-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span>Meer bloemen voor je geld</span>
+          </div>
+        </div>
+        <div class="trust-bar__dots" data-trust-bar-dots></div>
       </div>
     </div>
   </div>
 
+  <div class="header__toolbar bg-primary border-b border-primary-dark">
+    <div class="container">
+      <div class="header__toolbar-inner">
+        <a href="{{ routes.root_url }}" class="header__logo">
+          {%- assign logo = section.settings.logo | default: settings.logo -%}
+          {%- if logo != blank -%}
+            <img src="{{ logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="200" height="50" class="header__logo-img">
+          {%- else -%}
+            <span class="header__logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+
+        <div class="header__search-wrap">
+          {% render 'predictive-search-form', id_prefix: 'Header', wrapper_class: 'predictive-search predictive-search--header' %}
+        </div>
+
+        <div class="header__toolbar-actions">
+          <button type="button" class="header__action header__search-link" aria-label="{{ 'header.search' | t }}" data-mobile-search-toggle>
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+          <a href="/products/de-gier-abonnementen" class="header__cta-btn">{{ 'header.nav.subscriptions' | t }}</a>
+          <a href="/pages/zakelijk-bloemen-bestellen" class="header__cta-btn">{{ 'header.nav.business' | t }}</a>
+          <a href="{{ routes.account_url }}" class="header__action" aria-label="{{ 'header.account' | t }}">
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </a>
+          <button type="button" class="header__action header__cart" aria-label="{{ 'header.cart' | t }}" data-cart-drawer-toggle data-cart-count="{{ cart.item_count }}">
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span class="header__cart-count{% if cart.item_count == 0 %} header__cart-count--empty{% endif %}" data-header-cart-count>{% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}</span>
+          </button>
+          <button type="button" class="header__menu-btn" aria-label="{{ 'header.menu' | t }}" aria-expanded="false" data-mobile-menu-toggle>
+            <svg class="header__icon header__icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header__nav-bar">
+    <div class="container">
+      <nav class="header__nav" aria-label="Hoofdnavigatie">
+        <ul class="header__nav-list">
+          <li class="header__nav-item header__nav-item--dropdown">
+            <a href="/pages/rozen-bestellen-bij-de-gier">{{ 'header.nav.roses' | t }}</a>
+            <ul class="header__dropdown" aria-label="Rozen submenu">
+              <li><a href="/pages/witte-rozen">Witte rozen</a></li>
+              <li><a href="/pages/rode-rozen-2">Rode rozen</a></li>
+              <li><a href="/pages/roze-rozen">Roze rozen</a></li>
+              <li><a href="/pages/gele-rozen">Gele rozen</a></li>
+              <li><a href="/pages/gemengde-rozen">Gemengde rozen</a></li>
+              <li><a href="/pages/alle-rozen">Alle rozen overzicht</a></li>
+              <li><a href="/collections/rozen-boeketten">Rozen boeketten</a></li>
+              <li><a href="/collections/rozen">Alle rozen producten</a></li>
+            </ul>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/voorjaarsbloemen">{{ 'header.nav.spring_flowers' | t }}</a>
+          </li>
+          <li class="header__nav-item header__nav-item--dropdown">
+            <a href="/pages/boeketten">{{ 'header.nav.bouquets' | t }}</a>
+            <ul class="header__dropdown" aria-label="Boeketten submenu">
+              <li><a href="/collections/klassieke-boeketten">Klassieke boeketten</a></li>
+              <li><a href="/collections/plukboeketten">Plukboeketten</a></li>
+              <li><a href="/collections/rozen-boeketten">Rozen boeketten</a></li>
+              <li><a href="/collections/alle-boeketten">Alle boeketten</a></li>
+              <li><a href="/collections/tulpen-boeketten">Tulpen boeketten</a></li>
+              <li><a href="/pages/exclusieve-boeketten">Exclusieve boeketten</a></li>
+            </ul>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/groen-decoratief">{{ 'header.nav.green_decorative' | t }}</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/bloemen-per-soort">Bloemen per soort</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/bloemenpakketten">Bloemenpakketten</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/pioenrozen-bestellen-bij-de-gier">Pioenrozen</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/olijfbomen">Olijfbomen</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/pages/bruiloft-bundels">Bruiloft bundels</a>
+          </li>
+          <li class="header__nav-item">
+            <a href="/collections/krans-maken">Krans maken</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="header__search-mobile" id="mobile-search" hidden>
+    <div class="container">
+      {% render 'predictive-search-form', id_prefix: 'Mobile', wrapper_class: 'predictive-search predictive-search--header predictive-search--mobile' %}
+    </div>
+  </div>
+
   <div class="header__mobile" id="mobile-menu" hidden>
-    <nav class="header__mobile-nav">
-      <a href="{{ routes.collections_url }}">{{ 'header.nav.roses' | t }}</a>
-      <a href="{{ routes.collections_url }}">{{ 'header.nav.spring_flowers' | t }}</a>
-      <a href="{{ routes.collections_url }}">{{ 'header.nav.bouquets' | t }}</a>
-      <a href="{{ routes.collections_url }}">{{ 'header.nav.green_decorative' | t }}</a>
-      <a href="{{ routes.collections_url }}">{{ 'header.nav.subscriptions' | t }}</a>
-      <a href="/pages/zakelijk">{{ 'header.nav.business' | t }}</a>
+    <nav class="header__mobile-nav" aria-label="Mobiele navigatie">
+      <div class="header__mobile-group">
+        <span class="header__mobile-label">{{ 'header.nav.roses' | t }}</span>
+        <a href="/pages/rozen-bestellen-bij-de-gier">Rozen overzicht</a>
+        <a href="/pages/witte-rozen">Witte rozen</a>
+        <a href="/pages/rode-rozen-2">Rode rozen</a>
+        <a href="/pages/roze-rozen">Roze rozen</a>
+        <a href="/pages/gele-rozen">Gele rozen</a>
+        <a href="/pages/gemengde-rozen">Gemengde rozen</a>
+        <a href="/collections/rozen">Alle rozen producten</a>
+      </div>
+      <a href="/pages/voorjaarsbloemen">{{ 'header.nav.spring_flowers' | t }}</a>
+      <div class="header__mobile-group">
+        <span class="header__mobile-label">{{ 'header.nav.bouquets' | t }}</span>
+        <a href="/pages/boeketten">Boeketten overzicht</a>
+        <a href="/collections/klassieke-boeketten">Klassieke boeketten</a>
+        <a href="/collections/plukboeketten">Plukboeketten</a>
+        <a href="/collections/rozen-boeketten">Rozen boeketten</a>
+        <a href="/pages/exclusieve-boeketten">Exclusieve boeketten</a>
+      </div>
+      <a href="/pages/groen-decoratief">{{ 'header.nav.green_decorative' | t }}</a>
+      <a href="/pages/bloemen-per-soort">Bloemen per soort</a>
+      <a href="/pages/bloemenpakketten">Bloemenpakketten</a>
+      <a href="/pages/pioenrozen-bestellen-bij-de-gier">Pioenrozen</a>
+      <a href="/pages/olijfbomen">Olijfbomen</a>
+      <a href="/pages/bruiloft-bundels">Bruiloft bundels</a>
+      <a href="/collections/krans-maken">Krans maken</a>
+      <a href="/products/de-gier-abonnementen">{{ 'header.nav.subscriptions' | t }}</a>
+      <a href="/pages/zakelijk-bloemen-bestellen">{{ 'header.nav.business' | t }}</a>
     </nav>
   </div>
 </header>

@@ -1,0 +1,103 @@
+<section class="track-page">
+  <div class="container track-page__inner">
+    <div class="track-page__header">
+      <h1 class="track-page__title">{{ section.settings.title }}</h1>
+      <p class="track-page__intro">{{ section.settings.intro }}</p>
+    </div>
+
+    <div class="track-page__grid">
+      <div class="track-page__card">
+        <h2 class="track-page__card-title">{{ 'track.order_title' | t }}</h2>
+        <p class="track-page__card-text">{{ 'track.order_text' | t }}</p>
+        <a href="{{ routes.account_url }}" class="btn btn--primary track-page__btn">
+          {{ 'track.order_button' | t }}
+        </a>
+      </div>
+
+      <div class="track-page__card">
+        <h2 class="track-page__card-title">{{ 'track.courier_title' | t }}</h2>
+        <p class="track-page__card-text">{{ 'track.courier_text' | t }}</p>
+        <form class="track-page__form" data-track-form>
+          <label for="TrackNumber" class="track-page__label">{{ 'track.courier_label' | t }}</label>
+          <input
+            type="text"
+            id="TrackNumber"
+            name="track_number"
+            class="track-page__input"
+            placeholder="{{ 'track.courier_placeholder' | t }}"
+            autocomplete="off"
+          >
+          <button type="submit" class="btn btn--outline track-page__btn">{{ 'track.courier_button' | t }}</button>
+          <p class="track-page__hint" data-track-hint hidden></p>
+        </form>
+      </div>
+    </div>
+
+    <p class="track-page__footer-note">{{ section.settings.footer_note }}</p>
+  </div>
+</section>
+
+<script>
+(function() {
+  var form = document.querySelector('[data-track-form]');
+  if (!form) return;
+  var input = form.querySelector('#TrackNumber');
+  var hint = form.querySelector('[data-track-hint]');
+  var baseUrl = {{ section.settings.courier_track_url | json }};
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var value = (input && input.value) ? input.value.trim() : '';
+    if (!value) {
+      if (hint) {
+        hint.hidden = false;
+        hint.textContent = {{ 'track.courier_empty' | t | json }};
+      }
+      return;
+    }
+    if (!baseUrl) {
+      if (hint) {
+        hint.hidden = false;
+        hint.textContent = {{ 'track.courier_pending' | t | json }};
+      }
+      return;
+    }
+    var url = baseUrl.indexOf('TRACKING') >= 0
+      ? baseUrl.replace(/TRACKING/g, encodeURIComponent(value))
+      : baseUrl + encodeURIComponent(value);
+    window.open(url, '_blank', 'noopener');
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Track order",
+  "class": "section-main-track",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titel",
+      "default": "Volg je bestelling"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "default": "Bekijk de status van je bestelling of volg je bezorging met het trackingnummer uit je e-mail."
+    },
+    {
+      "type": "url",
+      "id": "courier_track_url",
+      "label": "Koerier trace-URL (gebruik TRACKING als placeholder)"
+    },
+    {
+      "type": "text",
+      "id": "footer_note",
+      "label": "Voettekst",
+      "default": "Vragen over je bestelling? Neem contact op via info@bloemenvandegier.nl"
+    }
+  ]
+}
+{% endschema %}

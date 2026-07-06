@@ -1,0 +1,50 @@
+{%- liquid
+  assign input_id = id_prefix | append: 'Search'
+  assign wrapper_class = wrapper_class | default: 'predictive-search'
+-%}
+
+<div class="{{ wrapper_class }}" data-predictive-search>
+  <form action="{{ routes.search_url }}" method="get" role="search" class="predictive-search__form">
+    <input type="hidden" name="type" value="product">
+    <label for="{{ input_id }}" class="visually-hidden">{{ 'search.title' | t }}</label>
+    <input
+      id="{{ input_id }}"
+      type="search"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'search.placeholder' | t }}"
+      class="predictive-search__input"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+      data-predictive-search-input
+      aria-expanded="false"
+      aria-controls="{{ input_id }}-results"
+      aria-autocomplete="list"
+    >
+    <button type="submit" class="predictive-search__submit" aria-label="{{ 'search.submit' | t }}">
+      <svg class="predictive-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+    </button>
+  </form>
+
+  <div
+    id="{{ input_id }}-results"
+    class="predictive-search__dropdown"
+    data-predictive-search-dropdown
+    hidden
+    role="listbox"
+    aria-label="{{ 'search.results_dropdown' | t }}"
+  >
+    <p class="predictive-search__status" data-predictive-search-loading hidden>{{ 'search.loading' | t }}</p>
+    <ul class="predictive-search__list" data-predictive-search-list></ul>
+    <p class="predictive-search__status" data-predictive-search-empty hidden>{{ 'search.no_results' | t }}</p>
+    <div class="predictive-search__footer" data-predictive-search-footer hidden>
+      <a href="{{ routes.search_url }}" class="predictive-search__view-all" data-predictive-search-view-all>
+        {{ 'search.view_all' | t }}
+      </a>
+    </div>
+  </div>
+</div>

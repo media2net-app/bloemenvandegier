@@ -1,0 +1,1071 @@
+{
+  "rozen-bestellen-bij-de-gier": {
+    "handle": "rozen-bestellen-bij-de-gier",
+    "title": "Rozen bestellen bij De Gier",
+    "heading": "Rozen bestellen bij De Gier",
+    "intro": "Bij De Gier hebben wij een assortiment samengesteld met de mooiste rozen, variërend van losse rozen tot aan grote volle boeketten. Wij hebben zelfs verschillende kleuren rozen in onze webshop opgenomen. Hierdoor is er voor iedereen wel een keuze mogelijk. Bij ons kan u rozen voor elke gelegenheid vinden! Met een uitgebreide selectie van de mooiste rozen en jarenlange ervaring in de bloemenindustrie, zijn wij uw ideale partner voor het vinden van de perfecte bloemen om uw emoties uit te drukken.",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Rode rozen",
+        "url": "/pages/rode-rozen-2",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/08/IMG_4909-1-scaled.webp"
+      },
+      {
+        "title": "Witte Rozen",
+        "url": "/pages/witte-rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/09/witte-rozen-zoom-jpg.webp"
+      },
+      {
+        "title": "Roze Rozen",
+        "url": "/pages/roze-rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/08/IMGL7979-scaled.webp"
+      },
+      {
+        "title": "Gemengde Rozen",
+        "url": "/pages/gemengde-rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/09/Ontwerp-zonder-titel-10-jpg.webp"
+      },
+      {
+        "title": "Gele Rozen",
+        "url": "/pages/gele-rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/09/gele-rozen-zoom-jpg.webp"
+      },
+      {
+        "title": "Alle Rozen",
+        "url": "/pages/alle-rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/09/Ontwerp-zonder-titel-11-jpg.webp"
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Onze selectie aan verschillende rozen",
+        "paragraphs": [
+          "Bij De Gier begrijpen we dat bloemen meer zijn dan alleen maar een cadeau – ze zijn een uiting van liefde, vreugde, medeleven en waardering. Daarom streven we ernaar om onze klanten de meest verse, levendige en prachtige rozen aan te bieden die hun boodschap perfect overbrengen. Ons assortiment bestaat uit een breed scala aan rozen in verschillende kleuren en arrangementen, zodat u zeker iets vindt dat past bij de gelegenheid en de ontvanger. Of u nu rode rozen zoekt om uw liefde te verklaren, roze rozen om dankbaarheid te tonen, of witte rozen om zuiverheid en respect uit te drukken, we hebben voor elk gevoel de juiste kleur. Onze deskundige bloemisten stellen zorgvuldig boeketten en arrangementen samen die de schoonheid van rozen accentueren en tegelijkertijd een onvergetelijke indruk achterlaten."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Gemakkelijk bestellen en snelle levering",
+        "paragraphs": [
+          "Bij De Gier geloven we dat het bestellen van prachtige rozen net zo aangenaam moet zijn als het ontvangen ervan. Onze gebruiksvriendelijke website maakt het eenvoudig om uw keuze te maken, het gewenste arrangement te selecteren en uw bestelling te plaatsen. We bieden ook handige leveringsopties, zodat uw rozen op tijd aankomen, waar u maar wilt."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Rozen voor alle gelegenheden",
+        "paragraphs": [
+          "Of het nu gaat om een romantische date, een jubileum, een verjaardag, een bruiloft of een rouwceremonie, onze rozen passen perfect bij elke gelegenheid. Onze boeketten kunnen worden aangepast aan uw specifieke wensen, waardoor ze een persoonlijke touch krijgen die uw emoties op de juiste manier weerspiegelt. Bij De Gier staan kwaliteit en klanttevredenheid voorop. We werken samen met gerenommeerde kwekers om de meest verse en levendige rozen te selecteren. Onze bloemisten zijn experts in hun vakgebied en zorgen ervoor dat elk boeket met zorg en aandacht wordt samengesteld. U kunt erop vertrouwen dat uw bestelling bij ons in goede handen is."
+        ]
+      }
+    ]
+  },
+  "alle-rozen": {
+    "handle": "alle-rozen",
+    "title": "Alle rozen",
+    "heading": "Alle rozen",
+    "intro": "",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "rozen",
+    "productHandles": [],
+    "seoSections": []
+  },
+  "witte-rozen": {
+    "handle": "witte-rozen",
+    "title": "Witte rozen",
+    "heading": "Witte rozen",
+    "intro": "",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "witte-rozen-xxl-avalanche-10-100-rozen",
+      "witte-rozen-30-of-meer",
+      "90-witte-rozen-xxl-avalanche",
+      "90-witte-rozen",
+      "80-witte-rozen-xxl-avalanche",
+      "80-witte-rozen",
+      "70-witte-rozen-xxl-avalanche",
+      "70-witte-rozen",
+      "60-witte-rozen-xxl-avalanche",
+      "60-witte-rozen",
+      "50-witte-rozen-xxl-avalanche",
+      "50-witte-rozen",
+      "40-witte-rozen-xxl-avalanche",
+      "40-witte-rozen",
+      "30-witte-rozen-xxl-avalanche",
+      "30-witte-rozen",
+      "20-witte-rozen-xxl-avalanche",
+      "100-witte-rozen-xxl-avalanche",
+      "100-witte-rozen",
+      "10-witte-rozen-xxl-avalanche"
+    ],
+    "seoSections": []
+  },
+  "rode-rozen-2": {
+    "handle": "rode-rozen-2",
+    "title": "Rode rozen",
+    "heading": "Rode rozen",
+    "intro": "",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "rode-rozen-xxl-red-naomi-10-of-meer",
+      "rode-rozen-met-gipskruid-30-of-meer",
+      "rode-rozen-30-of-meer",
+      "90-rode-rozen-xxl-red-naomi",
+      "90-rode-rozen",
+      "80-rode-rozen-xxl-red-naomi",
+      "80-rode-rozen",
+      "70-rode-rozen-xxl-red-naomi",
+      "70-rode-rozen",
+      "60-rode-rozen-xxl-red-naomi",
+      "60-rode-rozen",
+      "50-rode-rozen-xxl-red-naomi",
+      "50-rode-rozen",
+      "40-rode-rozen-xxl-red-naomi",
+      "40-rode-rozen",
+      "30-rode-rozen-xxl-red-naomi",
+      "30-rode-rozen",
+      "25-rode-rozen",
+      "20-rode-rozen-xxl-red-naomi",
+      "100-rode-rozen-xxl-red-naomi",
+      "100-rode-rozen",
+      "10-rode-rozen-xxl-red-naomi"
+    ],
+    "seoSections": []
+  },
+  "roze-rozen": {
+    "handle": "roze-rozen",
+    "title": "Roze rozen",
+    "heading": "Roze rozen",
+    "intro": "",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "roze-rozen-xxl-sweet-pink-10-of-meer",
+      "roze-rozen-30-of-meer",
+      "90-roze-rozen-xxl-sweet-pink",
+      "90-roze-rozen",
+      "80-roze-rozen-xxl-sweet-pink",
+      "80-roze-rozen",
+      "70-roze-rozen-xxl-sweet-pink",
+      "70-roze-rozen",
+      "60-roze-rozen-xxl-sweet-pink",
+      "60-roze-rozen",
+      "50-roze-rozen-xxl-sweet-pink",
+      "50-roze-rozen",
+      "40-roze-rozen-xxl-sweet-pink",
+      "40-roze-rozen",
+      "30-roze-rozen-xxl-sweet-pink",
+      "30-roze-rozen",
+      "20-roze-rozen-xxl-sweet-pink",
+      "100-roze-rozen-xxl-sweet-pink",
+      "100-roze-rozen",
+      "10-roze-rozen-xxl-sweet-pink"
+    ],
+    "seoSections": []
+  },
+  "gele-rozen": {
+    "handle": "gele-rozen",
+    "title": "Gele rozen",
+    "heading": "Gele rozen",
+    "intro": "",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "gele-rozen-30-of-meer",
+      "90-gele-rozen",
+      "80-gele-rozen",
+      "70-gele-rozen",
+      "60-gele-rozen",
+      "50-gele-rozen",
+      "40-gele-rozen",
+      "30-gele-rozen",
+      "100-gele-rozen"
+    ],
+    "seoSections": []
+  },
+  "gemengde-rozen": {
+    "handle": "gemengde-rozen",
+    "title": "Gemengde rozen",
+    "heading": "Gemengde rozen",
+    "intro": "",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "rozen-warme-liefde-30-of-meer",
+      "gekleurde-rozen-boeket-30-of-meer",
+      "rozen-boeket-lieve-mix-30-of-meer",
+      "rozen-boeket-kort-50-stelen",
+      "rozen-kort-50-stelen"
+    ],
+    "seoSections": []
+  },
+  "boeketten": {
+    "handle": "boeketten",
+    "title": "Boeketten",
+    "heading": "Boeket bloemen",
+    "intro": "Laat een mooi boeket bloemen bezorgen voor jezelf of verstuur een boeket naar iemand die je lief hebt. Met de boeketten van De Gier weet je zeker dat het goed zit. Schrijf een leuk kaartje of stuur stiekem anoniem een boeketje aan iemand die je wilt verrassen.",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Alle boeketten",
+        "url": "/collections/boeket-bloemen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-7061-scaled-1.jpg"
+      },
+      {
+        "title": "Klassieke Boeketten",
+        "url": "/collections/klassieke-boeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Klassieke-boeketten-1.jpg"
+      },
+      {
+        "title": "Plukboeketten",
+        "url": "/collections/plukboeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/plukboeket-1.jpg"
+      },
+      {
+        "title": "Rozen Boeketten",
+        "url": "/collections/rozen-boeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-9847-1-scaled-1.jpg"
+      },
+      {
+        "title": "Tulpen Boeketten",
+        "url": "/collections/tulpen-boeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Tulpen-boeket-zoom-scaled-1.jpg"
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Bestel voor 10:00 en laat je boeket bloemen vanavond nog bezorgen",
+        "paragraphs": [
+          "Snelle levering gewenst? Dat is geen enkel probleem! Op werkdagen voor 10:00 besteld, betekent nog diezelfde avond bezorgd! Was dit tijdstip toch wat te vroeg? Dan geldt: Voor 23:59 besteld betekent de volgende werkdag geleverd!"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Boeket bezorgen door heel Nederland",
+        "paragraphs": [
+          "Doordat er gebruik wordt gemaakt van unieke bloemsoorten van topkwaliteit, zijn de boeketten die wij bezorgen onderscheidend van de rest. Wij hebben er bewust voor gekozen om niet aangesloten te zijn in een netwerk met bloemisten omdat onze boeketten uniek zijn en omdat jij zeker wil zijn dat je Bloemen van De Gier bestelt en niet anders.",
+          "Alle bloemen uit de boeketten komen rechtstreeks van de door ons geselecteerde kwekers. Met deze bloemen zijn het onze specialisten die ervoor zorgen dat de beste bloemsoorten in de mooiste kleurcombinaties samenkomen tot een fraai boeket."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Zakelijk boeketten bestellen",
+        "paragraphs": [
+          "Bij De Gier Bloemen bestel je eenvoudig de mooiste boeketten voor bijvoorbeeld op de balie, bar of entree van de zaak. Wil je iemand feliciteren of bedanken? Stuur een prachtig boeket en schrijf een kaartje. Natuurlijk is het mogelijk om achteraf op factuur te betalen."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Boeketten sturen naar verschillende adressen?",
+        "paragraphs": [
+          "Geen probleem! Je kunt gerust de winkelmand vullen met meerdere boeketten en bij het afrekenen klik je eenvoudig op ”Stuur je bloemen naar verschillende adressen? Klik hier”.",
+          "Hier kun je de verschillende verzendadressen toevoegen en je account zal de adressen onthouden voor de volgende keer! Erg handig, als je bijvoorbeeld een boeket naar je personeel stuurt."
+        ]
+      }
+    ]
+  },
+  "groen-decoratief": {
+    "handle": "groen-decoratief",
+    "title": "Groen & Decoratief",
+    "heading": "Groen & Decoratief",
+    "intro": "",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Alle groen & decoratief",
+        "url": "/collections/alle-groen-decoratief",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2025/03/de-Gier-Bloemen-0171-scaled.jpg"
+      },
+      {
+        "title": "Asparagus Takken",
+        "url": "/collections/asparagus-takken",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Asparagus.jpg"
+      },
+      {
+        "title": "Dadeltakken",
+        "url": "/collections/dadeltakken",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Dadeltak-2-.jpeg"
+      },
+      {
+        "title": "Diplocyclos",
+        "url": "/collections/diplocyclos",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A8592-scaled-1.jpg"
+      },
+      {
+        "title": "Droogbloemen",
+        "url": "/collections/droogbloemen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A6703-scaled-1.jpg"
+      },
+      {
+        "title": "Eucalyptus",
+        "url": "/collections/eucalyptus",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A1974-2-scaled-1.jpg"
+      },
+      {
+        "title": "Fijn Bladgroen",
+        "url": "/collections/fijn-bladgroen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Fijn-bladgroen.jpg"
+      },
+      {
+        "title": "Grof Bladgroen",
+        "url": "/collections/grof-bladgroen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/grof-bladgroen.jpg"
+      },
+      {
+        "title": "Kerstgroen",
+        "url": "/collections/kerstgroen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-5185-scaled-2.jpg"
+      },
+      {
+        "title": "Kersttakken",
+        "url": "/collections/kersttakken",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/kerst-1.jpg"
+      },
+      {
+        "title": "Kleine Kerstbomen",
+        "url": "/collections/kleine-kerstbomen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/boompjes-2.jpg"
+      },
+      {
+        "title": "Kransen",
+        "url": "/collections/kransen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A8647-scaled-1.jpg"
+      },
+      {
+        "title": "Mos Kopen",
+        "url": "/collections/mos-kopen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Bolmos-.jpeg"
+      },
+      {
+        "title": "Pampasgras Pluimen",
+        "url": "/collections/pampasgras-pluimen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/IMG_6429-1-scaled-1.jpg"
+      },
+      {
+        "title": "Pepperberries",
+        "url": "/collections/pepperberries",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Pepperberries.jpg"
+      },
+      {
+        "title": "Rozenbottels",
+        "url": "/collections/rozenbottels",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-2362.jpg"
+      },
+      {
+        "title": "Schors",
+        "url": "/collections/schors",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A8591-scaled-1.jpg"
+      },
+      {
+        "title": "Takken",
+        "url": "/collections/takken",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A9122-scaled-1.jpg"
+      },
+      {
+        "title": "Wax Amaryllis",
+        "url": "/collections/wax-amaryllis",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/kerst22-15-1.jpg"
+      },
+      {
+        "title": "Wilde Tijm",
+        "url": "/collections/wilde-tijm",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/wilde-tijm.jpg"
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": []
+  },
+  "alle-groen-decoratief": {
+    "handle": "alle-groen-decoratief",
+    "title": "Alle Groen & Decoratief",
+    "heading": "Alle Groen & Decoratief",
+    "intro": "",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "alle-groen-decoratief",
+    "productHandles": [],
+    "seoSections": []
+  },
+  "voorjaarsbloemen": {
+    "handle": "voorjaarsbloemen",
+    "title": "Voorjaarsbloemen",
+    "heading": "Voorjaarsbloemen",
+    "intro": "We zijn terecht gekomen in de kleurrijkste periode van het jaar voor de bloemen, het voorjaar staat bol met kleuren en bloeiende bloemen. Het mooie aan de voorjaarsbloemen is dat deze bloemen de koude en natte winterdagen nodig hebben om tot mooie bloei te komen. Eigenlijk is het dus nodig om in het najaar al aan de slag te gaan om in het voorjaar mooie bloemen te laten groeien. Eigenlijk zijn voorjaarsbloemen enorm populair, het kan je huis enorm veel kleur geven. Vooral wanneer de zon de komende tijd even wat vaker doorbreekt en dagen wat langer worden zijn de kleuren van de voorjaarsbloemen een echte toevoeging in uw interieur.",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "voorjaarsbloemen",
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "De mooiste Voorjaarsbloemen",
+        "paragraphs": [
+          "Er zijn verschillende mooie voorjaarsbloemen, maar wij van Bloemen van De Gier hebben wel een paar persoonlijke favorieten. Bij onze persoonlijke favorieten zitten een aantal hele bekende bloemen, waaronder tulpen en ranonkels."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Bestel voor 11:30 en laat je voorjaarsbloemen vanavond nog bezorgen",
+        "paragraphs": [
+          "Snelle levering gewenst? Dat is geen enkel probleem! Op werkdagen voor 11:30 besteld betekent nog diezelfde avond bezorgd! Was dit tijdstip toch wat te vroeg? Dan geldt: Voor 23:59 besteld betekent de volgende werkdag geleverd! Wij willen u zo snel mogelijk leveren en zorgen dat uw gewenste voorjaarsbloemen zo snel mogelijk bij u thuis zijn."
+        ]
+      }
+    ]
+  },
+  "herfstbloemen": {
+    "handle": "herfstbloemen",
+    "title": "Herfstbloemen",
+    "heading": "Herfstbloemen",
+    "intro": "",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "herfstbloemen",
+    "productHandles": [],
+    "seoSections": []
+  },
+  "bloemen-per-soort": {
+    "handle": "bloemen-per-soort",
+    "title": "Bloemen per soort",
+    "heading": "Bossen bloemen per soort",
+    "intro": "Of je nu een fantastische week hebt gehad of juist een vervelende week, je verdient het om jezelf af en toe eens te trakteren op een mooie bos bloemen. Uiteindelijk moeten we toch allemaal goed voor onszelf zorgen en dit kun je eigenlijk niet beter doen dan wanneer je ons bloemen laat bezorgen. Zo is thuis zijn zeker weten een feestje, want hoe mooi staat zo’n boeket op jouw tafel!",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Zonnebloemen In Vaas",
+        "url": "/collections/zonnebloemen-in-vaas",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-9080-scaled-1.jpg"
+      },
+      {
+        "title": "Tulpen Boeketten",
+        "url": "/collections/tulpen-boeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Tulpen-boeket-zoom-scaled-1.jpg"
+      },
+      {
+        "title": "Takken",
+        "url": "/collections/takken",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A9122-scaled-1.jpg"
+      },
+      {
+        "title": "Rozen",
+        "url": "/collections/rozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/roze-rozen-2.jpg"
+      },
+      {
+        "title": "Pioenrozen",
+        "url": "/collections/pioenrozen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/IMG_6396-1-scaled-1.jpg"
+      },
+      {
+        "title": "Lisianthus",
+        "url": "/collections/lisianthus",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A9088-scaled-1.jpg"
+      },
+      {
+        "title": "Lelies",
+        "url": "/collections/lelies",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A0077-2.jpg"
+      },
+      {
+        "title": "Gipskruid",
+        "url": "/collections/gipskruid",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/Wit-gipskruid-2-.jpeg"
+      },
+      {
+        "title": "Gerberas",
+        "url": "/collections/gerberas",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/IMG_6395-1-scaled-1.jpg"
+      },
+      {
+        "title": "Freesias",
+        "url": "/collections/freesias",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/IMG_6421-1-scaled-1.jpg"
+      },
+      {
+        "title": "Eucalyptus",
+        "url": "/collections/eucalyptus",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A1974-2-scaled-1.jpg"
+      },
+      {
+        "title": "Chrysanten",
+        "url": "/collections/chrysanten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_webshop-5121.jpg"
+      },
+      {
+        "title": "Campanula",
+        "url": "/collections/campanula",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/IMG_6400-1-scaled-1.jpg"
+      },
+      {
+        "title": "Amaryllis",
+        "url": "/collections/amaryllis",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/De-Gier-bloemen_kerst-0061-scaled-1.jpg"
+      },
+      {
+        "title": "Alstroemerias",
+        "url": "/collections/alstroemerias",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2024/10/S30A9841-scaled-1.jpg"
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Bloempakketten",
+        "paragraphs": [
+          "We kunnen je bloemen bezorgen in vele verschillende kleuren en formaten. Vind je het leuk om zelf vazen te vullen en bloemen bij elkaar te zetten? Neem dan ook eens een kijkje bij onze ‘Bloempakketten, hier bezorgen we namelijk een emmer met verschillende soorten bloemen die je veel ziet op dat moment. Het is een flinke hoeveelheid bloemen, waarmee je in je hele huis de mooiste combinaties kunt maken."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Bloemen per soort",
+        "paragraphs": [
+          "Is dit je toch iets teveel van het goed of wil je juist een paar specifieke soorten bloemen bestellen, dan hebben we ook een ruim aanbod Bloemen per Soort beschikbaar. Zo kun je zelf de combinaties van kleuren en bloemen al in de webshop kiezen. Om de bloemen wat meer body te geven op de vaas, verwijzen we je graag door naar Groen & Decoratief. Hier vind je verschillende soorten groen om boeketten mee op te maken maar ook een aantal mooie decoratieve producten."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Plukboeketten",
+        "paragraphs": [
+          "Bij de bloemen die wij bezorgen zien we een enorme populariteit bij de verschillende plukboeketten. Daarom hebben we een aantal prachtige, bontgekleurde boeketten in ons vaste aanbod. Niet iedereen houdt natuurlijk van zo’n bontgekleurde bos bloemen, daarom hebben we ook een heel mooi plukboeket met enkel witte bloemen. Hoe mooi is dat?!"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Kwaliteit bloemen bezorgen",
+        "paragraphs": [
+          "De Gier Bloemen is al jaren actief binnen de inkoop en verkoop van bloemen. Daardoor kopen wij onze bloemen rechtstreeks op de veilig en het transport tussen veilig en magazijn in ons eigen beheer. Daardoor zijn we ervan verzekerd dat wij absolute topkwaliteit bloemen kunnen leveren en garanderen we dat jouw bloemen minimaal zeven dagen mooi blijven. Laat je De Gier jouw bloemen bezorgen? Dan krijg je gegarandeerd top kwaliteit!"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Snelle levering",
+        "paragraphs": [
+          "Blader vooral eens door onze webshop om ons ruime aanbod te bekijken. Wanneer je jouw bestelling op een werkdag voor 11:30 plaatst, zullen wij ervoor zorgen dat we jouw bloemen nog diezelfde avond bezorgen. We leveren van maandag tot en met vrijdag. Wij hebben ons aanbod volledig in eigen beheer en werken dus niet samen met andere bloemisten. De bos bloemen die je op de website ziet, is dus ook daadwerkelijk de bos bloemen die je zult ontvangen.",
+          "Trakteer jezelf zo snel mogelijk op een mooi boeket bloemen. Je verdient het!"
+        ]
+      }
+    ]
+  },
+  "bloemenpakketten": {
+    "handle": "bloemenpakketten",
+    "title": "Bloemenpakketten",
+    "heading": "Bloemenpakketten",
+    "intro": "",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "bloemenpakketten",
+    "productHandles": [],
+    "seoSections": []
+  },
+  "bloemenbundels": {
+    "handle": "bloemenbundels",
+    "title": "Bloemenbundels",
+    "heading": "Bloemenbundels",
+    "intro": "De mooiste pakketten bloemen zodat je zelf lekker aan de slag kunt met het vullen van vele vazen.",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "bloemenbundels",
+    "productHandles": [],
+    "seoSections": []
+  },
+  "bruiloft-bundels": {
+    "handle": "bruiloft-bundels",
+    "title": "Bruiloft Bundels",
+    "heading": "Volledige bruiloft bundels bij De Gier Bloemen",
+    "intro": "Een bruiloft decoreren met de mooiste bloemen en boeketten is heel erg gaaf! Met bloemen en boeketten kun je een hele mooie sfeer creëren, en het is een onderdeel dat niet mag missen tijdens een trouwdag. Het zijn niet alleen maar boeketten in de bundels van De Gier, bij bruidsdecoratie mag je lekker groots uitpakken. Bloemen en planten bij het welkomstbord, bloemstukken bij de ceremonie en mooie bloemen op de tafels tijdens het diner. Gemak dient de mens, of in dit geval de bruid. In onze shop willen we het zo makkelijk mogelijk maken om deze bruiloft bundels te bestellen. Er zijn verschillende groottes van de bruiloft bundels verkrijgbaar. Wanneer jullie een groot feest hebben gepland met een grote groep aan genodigden dan kunnen jullie kiezen voor de grote- of extra grote uitvoering van de bruiloft bundels. Echter wanneer jullie een klein feest geven met minder genodigden dan is het beter om te kiezen voor de kleinere uitvoeringen van de bruiloft bundels. Iedereen is het er mee eens dat bloemen en planten niet mogen missen tijdens een bruiloft. Mooie bloemen en planten creëren meteen een romantische sfeer en ze zijn mogelijk in elke gewenste kleur.",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "bruiloft-bundels",
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Je bruiloft decoreren met bloemen en planten",
+        "paragraphs": [
+          "Het decoreren van je trouw locatie is erg belangrijk voor de sfeer van je bruiloft en een instrument om een unieke beleving te creëren voor jullie gasten. Met dit idee hebben wij ook de bruiloft bundels samengesteld, de bruiloft bundels zijn samengesteld om een onvergetelijke dag te realiseren. Bruiloft decoratie bloemen zijn een belangrijk instrument om je bruiloft sfeer, frisheid en levendigheid te geven. En het draagt bij aan de beleving van je gasten, wees dus niet bang om uit te pakken en maak indruk op je gasten door de mooiste bloemen en planten te kiezen voor de bruiloft.",
+          "Vaak gaan bloemen en kleuren in de decoratie van een bruiloft gepaard met de kledingkeuze van de bruid en de bruidegom. Een volledig witte bruiloft is altijd enorm populair tijdens bruiloften, maar wij bieden ook de mogelijkheid met onze bruiloft bundels om wat kleur te geven aan je bruiloft. Dit kan een hele grote rol spelen in de sfeer en uitstraling! Het is belangrijk dat je de juiste bloemen als decoratie kiest."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Goede kwaliteit",
+        "paragraphs": [
+          "Een perfecte bruiloft hebben perfecte bloemen nodig. Bij Bloemen van De Gier zorgen we ervoor dat we alleen met topkwaliteit bloemen werken. Deze bloemen kopen we zelf in en slaan wij op in ons magazijn. Wij staan garant voor echte kwaliteit. Onze bloemisten maken hiervan de mooiste bruiloft bundels die rechtstreeks vanuit ons magazijn op je bruiloft worden geleverd. Doordat we niet werken met tussenpersonen, komen de bloemen super vers aan op je bruiloft.",
+          "Daarom mag je van ons verwachten dat wij bloemen leveren die uw bruiloft een op een geschikte manier kleur geven. Zorg voor een onvergetelijke dag!"
+        ]
+      }
+    ]
+  },
+  "olijfbomen": {
+    "handle": "olijfbomen",
+    "title": "Olijfbomen",
+    "heading": "Ontdek de pracht van olijfbomen bij Bloemen van de Gier",
+    "intro": "Een olijfboom brengt direct een mediterrane sfeer in uw tuin of op uw terras. Met hun robuuste stammen en zilvergroene bladeren zijn olijfbomen een stijlvolle aanvulling op elke buitenruimte. Bij Bloemen van de Gier vindt u een prachtig assortiment olijfbomen te koop van goede kwaliteit. Of u nu een olijfboom in pot zoekt voor op uw balkon of een grote blikvanger in uw tuin wilt plaatsen, wij helpen u graag bij het vinden van de perfecte boom. Bekijk ons assortiment olijfboom en ontdek de mogelijkheden!",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "olijfbomen",
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Waarom een olijfboom kopen?",
+        "paragraphs": [
+          "Een olijfboom kopen is niet alleen een investering in schoonheid, maar ook in sfeer en karakter. De olijfboom staat bekend om zijn lange levensduur en prachtige uitstraling. Zelfs in ons Nederlandse klimaat kan een olijfboom goed gedijen, mits u kiest voor een boom van goede kwaliteit en deze met de juiste zorg behandelt.",
+          "Bij Bloemen van de Gier bieden wij soorten olijfbomen die speciaal geselecteerd zijn op hun weerbestendigheid en groeikracht. Zo bent u verzekerd van een sterke, gezonde boom die jarenlang meegaat."
+        ]
+      },
+      {
+        "level": "2",
+        "title": "De verschillende soorten olijfbomen",
+        "paragraphs": [
+          "Niet alle olijfbomen zijn hetzelfde. Bij Bloemen van de Gier kunt u kiezen uit diverse soorten olijfbomen, elk met hun eigen charme. Van jonge olijfbomen in pot tot eeuwenoude exemplaren met karakteristieke stammen."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Olijfboom in pot",
+        "paragraphs": [
+          "Een olijfboom in pot is ideaal voor terrassen, patio’s of balkons. Deze olijfbomen zijn makkelijk te verplaatsen en vragen relatief weinig onderhoud. Plaats ze op een zonnige plek en geniet het hele jaar door van hun unieke uitstraling."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Grote olijfbomen",
+        "paragraphs": [
+          "Bent u op zoek naar een echte eyecatcher? Dan zijn onze grotere olijfbomen te koop precies wat u nodig heeft. Deze indrukwekkende bomen brengen direct sfeer en authenticiteit naar uw tuin."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Olijfboompje",
+        "paragraphs": [
+          "Voor kleinere ruimtes zijn onze olijfbomen in mini-formaat ideaal. Een olijfboompje past perfect in een kleinere tuin of op het balkon en is net zo charmant als zijn grotere soortgenoten."
+        ]
+      },
+      {
+        "level": "2",
+        "title": "Waarop letten bij een olijfboom kopen?",
+        "paragraphs": [
+          "Wanneer u een olijfboom online of in onze winkel koopt, is het belangrijk om op enkele zaken te letten om zeker te zijn van een goede kwaliteit:"
+        ]
+      },
+      {
+        "level": "2",
+        "title": "Olijfbomen verzorgen: Tips voor succes",
+        "paragraphs": [
+          "Een olijfboom nodig? Zorg ervoor dat u ook weet hoe u deze het beste verzorgt. Gelukkig vraagt een olijfboom weinig onderhoud als u enkele basisprincipes volgt."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Olijfboom water geven",
+        "paragraphs": [
+          "Hoewel olijfbomen goed bestand zijn tegen droogte, hebben ze zeker in de groeiperiode voldoende water nodig. Geef in de zomermaanden regelmatig water, maar voorkom natte voeten. Een goede drainage is essentieel om wortelrot te voorkomen.",
+          "Belangrijk: Geef liever één keer per week veel water dan elke dag een beetje."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Standplaats",
+        "paragraphs": [
+          "Plaats de olijfboom op een zonnige, beschutte plek. Olijfbomen houden van warmte en zonlicht. In de winter kunt u de boom beschermen tegen strenge vorst door deze te verplaatsen of af te dekken."
+        ]
+      },
+      {
+        "level": "2",
+        "title": "Olijfbomen online bestellen",
+        "paragraphs": [
+          "Wilt u een olijfboom online bestellen? Bij Bloemen van de Gier is dat eenvoudig én betrouwbaar. Al onze olijfbomen worden met zorg verpakt en geleverd. Zo bent u verzekerd van een prachtige olijfboom die in topconditie aankomt."
+        ]
+      },
+      {
+        "level": "2",
+        "title": "Onze locaties",
+        "paragraphs": [
+          "Wij leveren op diverse andere locaties in Nederland. Bekijk al onze locaties in Nederland en ontdek waar wij actief zijn."
+        ]
+      },
+      {
+        "level": "2",
+        "title": "Bekijk ons assortiment olijfbomen",
+        "paragraphs": [
+          "Een prachtige olijfboom geeft karakter en sfeer aan elke tuin of terras. Bij Bloemen van de Gier vindt u olijfbomen van goede kwaliteit, zorgvuldig geselecteerd en met liefde verzorgd. Bekijk ons assortiment olijfboom online of kom langs op een van onze locaties in Nederland.",
+          "Laat u inspireren door de tijdloze schoonheid van de olijfboom en haal de mediterrane sfeer naar uw eigen tuin!"
+        ]
+      }
+    ]
+  },
+  "droogbloemen": {
+    "handle": "droogbloemen",
+    "title": "Droogbloemen",
+    "heading": "Droogbloemen",
+    "intro": "Bloemsoorten die zijn gedroogd, maar toch mooie kleuren en vormen hebben, worden ook wel droogbloemen genoemd. Hierin zijn verschillende soorten en categorieën te onderscheiden. Zo vallen onder deze categorie onder andere kruiden, granen en (sier)bloemen. Al deze droogbloemen zijn van de hoogste kwaliteit, zodat jij zolang mogelijk kunt genieten van deze prachtige bloemen. De mooie kleuren van deze droogbloemen behouden daarnaast gedurende ten minste een half jaar de fantastische kleuren. Je hebt dus voor een lange periode plezier van deze bloemen en zo hoef je dus niet elke week een nieuw boeket aan te schaffen.",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "droogbloemen",
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "De voordelen van droogbloemen",
+        "paragraphs": [
+          "Droogbloemen zijn ontzettend populair, maar waardoor komt dit? De voornaamste reden is de vele voordelen die deze soort met zich meebrengt. Als allereerst hebben deze bloemen een lange levensduur en zien ze er prachtig uit. De lange levensduur is dus al een groot voordeel ten opzichte van een verse bloem. Daarnaast hebben de droogbloemen ook geen water of zonlicht nodig. In tegen stelling tot verse bloemen, waar dit juist wél heel belangrijk is, is dit dus een groot gemak. Zo kun je zonder moeite zo lang mogelijk genieten van de bloemen. Verder zijn er nog twee andere voordelen te onderscheiden. De droogbloemen behouden hun kleuren namelijk veel langer dan verse bloemen. Daarnaast gaan droogbloemen die zijn geverfd nóg langer mee dan alle andere droogbloemen. Deze behouden dus ook langer hun kleuren."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Onderhouden van droogbloemen",
+        "paragraphs": [
+          "Voor de droogbloemen zijn een aantal onderhoudstips die wij jou willen meegeven. Hieronder zetten wij 4 belangrijke onderhoudstips voor het onderhoud op een rijtje:"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Tips voor jouw droogbloemen",
+        "paragraphs": [
+          "De categorie droogbloemen is ontzettend breed, maar wat kun je er allemaal mee? Binnen elk huishouden is er wel een andere opstelling te bedenken die mooi staat. Als jij de bloemen op een plek plaatst met niet te veel licht, vocht of kou, kun jij tenminste 6 maanden genieten van deze bloemen. Je kunt de verschillende bloemen natuurlijk ook op diverse manier in jouw huis plaatsten. Zo kun je een mooi boeket op een vaas zetten, maar is het ook mogelijk om de bloemen als andere vorm van decoratie te plaatsen."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Droogbloemen bestel je bij Bloemen van de Gier!",
+        "paragraphs": [
+          "Bloemen van de Gier heeft een aanbod van verschillende soorten droogbloemen waar jij uit kunt kiezen. Bekijk ons assortiment in de webshop en bestel deze fantastische droogbloemen nog vandaag! Als jij de bloemen voor 23:59 uur besteld, heb jij ze morgen al in huis. Bestel jij droogbloemen vóór 8:30 uur, dan staan wij diezelfde avond nog bij jou voor de deur. Droogbloemen bestellen, doe je dus bij Bloemen van de Gier!"
+        ]
+      }
+    ]
+  },
+  "pasen": {
+    "handle": "pasen",
+    "title": "Pasen",
+    "heading": "Pasen bij De Gier",
+    "intro": "Het is weer bijna zover, Pasen kom eraan en elk huis wordt versierd met echte paaskleuren en overal zie jij ook dezelfde paasbloemen steeds terugkomen. Elk huishouden heeft een mooi plekje vrij gemaakt voor een grote vaas met bloemen in de prachtigste kleuren. Of mensen kiezen voor een paasboeket, met de mooiste kleuren en de mooiste bloemen. Echt paaskleuren geven een gezellige en echte paassfeer aan de paasdagen, deze 2 dagen zijn vaak volgepland met leuke activiteiten en vooral het samenzijn met familie is heel erg belangrijk in deze tijd. Vaak beginnen de paasdagen met een lekker ontbijtje. Tijdens het paasontbijt ga je heerlijk ontbijten samen met jouw familieleden en daarna gaan de kinderen naar buiten om eieren te zoeken! Maar vaak horen wij de vraag vanuit onze klanten op de markt en ook via de website, wat zijn nou echte paasbloemen? In deze tekst omschrijven wij 3 soorten paasbloemen die altijd goed scoren, bekijk welke jij het mooiste vindt en koop ze meteen bij Bloemen van de Gier.",
+    "layout": "collection",
+    "blocks": [
+      {
+        "title": "Tulpen Bestellen",
+        "url": "/pages/tulpen-bestellen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2025/04/pasen-banner-smal.jpg"
+      }
+    ],
+    "collectionHandle": "pasen",
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Bloemen van de Gier met de mooiste paasbloemen",
+        "paragraphs": [
+          "Iets wat ook bijna altijd gebeurd tijdens de feestdagen is het traditionele familiebezoek. Even bij familieleden op bezoek voor bakje koffie. Of een traditie is ook samen met de familie wandelen of naar de kerk. Dat is natuurlijk heel erg gezellig! Kom tijdens dit bezoek niet met lege handen aan en verras jouw familieleden met paasboeket van De Gier en hoe leuk is het om tijdens Pasen met paasbloemen aan te komen bij jouw familie. Hieronder benoemen wij de populairste paasbloemen. Maar maken wij ook een uitstapje naar de mooiste paastakken."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Nummer 1: Narcissen",
+        "paragraphs": [
+          "Bij het zien van een grasveld vol met narcissen begint het gevoel van de Lente al te kriebelen. Het mooiste aan narcissen vinden wij bij Bloemen van de Gier dat er wel 88 verschillende soorten zijn. In Nederland zien wij het vaakste de knalgele narcissen terugkomen in huishoudens en in grasvelden. Maar naast deze felle kleur zijn er ook narcissen met de mooiste combinaties. Zoek bijvoorbeeld eens witte narcissen gecombineerd met andere kleuren of zalmroze narcissen gecombineerd met een ander kleurtje. Met een narcis zit je niet mis, kies daardoor voor een mooi boeketje vol met narcissen of kies voor de narcis in combinatie met andere bloemen. Bloemen genoeg bij De Gier!"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Nummer 2: Tulpen",
+        "paragraphs": [
+          "Wij vinden deze bloemen echt prachtig en vinden de seizoenen rond Pasen dan ook geweldig. En Nederland staat dan ook bekend om de mooiste tulpen van de wereld. En je ziet deze bloemen het vaakst tijdens Pasen. De symboliek achter tulpen heeft echt een extra waarde gegeven aan de bloemen, de tulp staat voor het nieuwe leven en de liefde. Wanneer de lente aanbreekt zien we ook veel tulpen, in Nederland is het een echte eyecatcher de kleurrijke velden vol met tulpen langs de weg. De vorm van de bloem doet ons ook wel denken aan de vorm van een paasei, zie jij dat ook? Elke kleur tulp staat weer voor een ander symbool, de witte tulp als voorbeeld genomen, staat voor onschuld. Elke kleur staat voor iets anders en wij vinden het fantastisch. De Gier heeft tulpen in veel verschillende kleuren, kies welke kleur bij jou past en hopelijk stralen de tulpen net zo mooi in jouw huis als op de tulpenvelden."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Nummer 3: Hyacinten",
+        "paragraphs": [
+          "De hyacint is echt een ondergewaardeerde bloem. De krullerige bloemetjes met de groene stelen en bladeren, het is echt een bloem die je vaker moet gaan zien op de keukentafel. De Hyacint is in verschillende kleuren te krijgen, de kleuren paars, geel, verschillende roze tinten en wit. De hyacint is een christelijke bloem, het staat voor geluk, liefde en vrede met jezelf. Het leuke aan hyacinten is dat elke kleur weer een andere betekenis heeft. De witte kleur staat voor dat de ontvanger mooi is, en dat er voor hem of haar gebeden wordt. Met de paarse kleur kan je jezelf verontschuldigen bij iemand. Gele hyacinten schenk je liever niet aan iemand want dit is een teken van jaloezie."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Niet te vergeten: de paastakken",
+        "paragraphs": [
+          "Een van de onderdelen die echt niet kan missen tijdens de paasdagen zijn de paastakken. Verkrijgbaar in verschillende groottes en soorten, waardoor jij altijd een tak kan vinden die bij jou past. Het is echt een decoratieve tak die overal in jouw huis geplaatst kan worden. Het is echt de beste manier om jouw huis het gewenste paasgevoel te geven. Het gevoel van Pasen is heel erg bijzonder! Er zijn veel verschillende heesters en bomen die gebruikt kunnen worden bij het maken van paastakken, kijk eens rond bij De Gier voor jouw gewenste paastak."
+        ]
+      }
+    ]
+  },
+  "pioenrozen-bestellen-bij-de-gier": {
+    "handle": "pioenrozen-bestellen-bij-de-gier",
+    "title": "Pioenrozen bestellen bij De Gier",
+    "heading": "Pioenrozen bij De Gier",
+    "intro": "De Pioenroos is wellicht de mooiste rozensoort die er bestaat. Het is een echte seizoensbloem die hoofdzakelijk in mei en juni tot bloei komt. In deze periode kom je deze bloem vooral tegen en veel mensen associëren de Pioenroos dan ook met het betere weer: meer zon en hogere temperaturen. Door de overvloed aan bladeren heeft deze bloem geen extra versiering nodig om een luxe uitstraling te geven. Bij ons kun je gemakkelijk Pioenrozen bestellen en we leveren deze op het door jou gekozen adres. Hierdoor is het ook altijd mogelijk om een bosje pioenrozen te verzenden als cadeau. Verras iemand met de mooiste bloemen van De Gier.",
+    "layout": "products",
+    "blocks": [],
+    "collectionHandle": null,
+    "productHandles": [
+      "pioenrozen-roze",
+      "pioenrozen-toverbal-boeket",
+      "emmer-vol-pioenrozen-20-stuks",
+      "10-pioenrozen-verrassingskleur",
+      "pioenrozen-flamingo-xl"
+    ],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "De pioenroos",
+        "paragraphs": [
+          "Over het algemeen koop je Pioenrozen wanneer de bloem nog volledig in de knop zit. Zodra je de bloem op de vaas hebt staan, hoef je alleen maar te wachten tot de knop opengaat. In slechts enkele dagen komen er talloze bladeren uit de knop tevoorschijn. Binnen de kortste keren transformeer je van kleine knoppen naar een goed gevulde bos bloemen. Door de bloeiperiode en de grote variëteit aan uiterlijkheden ziet een bos Pioenrozen er eigenlijk elke dag een beetje anders uit. Het is een waar kunstwerk om naar te kijken, wat verklaart waarom deze bloem vaak door schilders op doek is vastgelegd. De pioenroos zorgt voor een waar kunstwerk op de tafels of kast waar jij deze plaatst."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Diverse kleuren",
+        "paragraphs": [
+          "Pioenrozen zijn vooral verkrijgbaar in donkerrood, roze, wit en zachtgeel. Omdat de Pioenroos ook staat voor gezondheid, geluk en natuurlijk de liefde, wordt deze bloem vaak gebruikt in bruidsboeketten. Het maakt niet uit waarvoor je deze bloem gebruikt, het zorgt altijd voor een gezellige sfeer dankzij de vrolijke kleuren waarin de Pioenrozen verkrijgbaar zijn. En de bossen ondergaan een hele transformatie wanneer ze op water in de vaas staan bij jou thuis."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Het verhaal achter de pioenroos",
+        "paragraphs": [
+          "De Pioenroos vindt zijn oorsprong in Azië, waar deze vooral werd gekweekt vanwege de zachte, zoete geur. Bovendien werden de wortels gebruikt in de geneeskunde, hierdoor is de pioenroos van grote waarde. En zo wordt deze bloem ook gezien! De bloem kwam voor het eerst in Europa terecht in 1784. Gelukkig is deze bloem tegenwoordig ook beschikbaar in Europa, waar we vooral kunnen genieten van de schoonheid en waar de bloem ongekend populair is."
+        ]
+      }
+    ]
+  },
+  "tulpen-bestellen": {
+    "handle": "tulpen-bestellen",
+    "title": "Tulpen bestellen",
+    "heading": "Tulpen bestellen",
+    "intro": "De tulpen behoren tot één van de populairste bloemsoorten op dit moment. Bij Bloemen van de Gier kun je daarom tulpen bestellen om het voorjaar in huis te halen. Binnen ons assortiment maken wij onderscheid tussen de reguliere tulpen en dubbele tulpen. Je kunt dus zo de tulpen bestellen die jij zoekt! Daarnaast even wij als tip mee om de tulpen op een vaas te zetten om de levensduur te verlengen. Bij ons kun je daarom ook een geschikte vaas bij de tulpen bestellen.",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Tulpen Boeketten",
+        "url": "/collections/tulpen-boeketten",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/01/Tulpen-boeket-zoom-scaled.jpg"
+      },
+      {
+        "title": "Brievenbus Tulpen",
+        "url": "/collections/brievenbus-tulpen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/01/brievenbustulpen-14-scaled.jpg"
+      },
+      {
+        "title": "Enkele Tulpen",
+        "url": "/collections/enkele-tulpen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/01/enkele-tulpen.jpeg"
+      },
+      {
+        "title": "Dubbele Tulpen",
+        "url": "/collections/dubbele-tulpen",
+        "image": "https://www.bloemenvandegier.nl/wp-content/uploads/2023/01/dubbele-tulpen.jpeg"
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "2",
+        "title": "Tulpen bestellen in alle kleuren",
+        "paragraphs": [
+          "In onze webshop kun je tulpen bestellen in veel verschillende kleuren. Zo kun je kiezen voor de klassieke rode tulpen of juist een mooi gemengd boeket aan tulpen met alle verschillende tulpen. Bij elke kleur kun je zelf het aantal kiezen wat jij wil bestellen. Kies bijvoorbeeld voor 30 witte tulpen of een gemengd boeket van 50 tulpen. Naast de reguliere tulpen, kun je ook de dubbele tulpen bestellen in diverse kleuren. Hierbij heb je de keuze tussen flashpoint, een gemengd boeket, warm rood of roze crème."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Tulpen bestellen bij Bloemen van de Gier",
+        "paragraphs": [
+          "Tulpen bestellen doe je uiteraard bij Bloemen van de Gier. Als je bij ons vóór 08:30 besteld op een werkdag, bezorgen wij deze nog dezelfde avond. Daarnaast bezorgen wij elke andere bestelling de volgende werkdag. Zo ben jij er dus van verzekerd dat jij snel de gewenste tulpen in huis hebt. Kijk dus snel rond tussen onze tulpen en bestel ze snel!"
+        ]
+      }
+    ]
+  },
+  "alle-seizoenen-en-feestdagen": {
+    "handle": "alle-seizoenen-en-feestdagen",
+    "title": "Alle seizoenen en feestdagen",
+    "heading": "Alle seizoenen en feestdagen",
+    "intro": "",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Valentijnsdag",
+        "url": "/pages/valentijnsdag",
+        "image": null
+      },
+      {
+        "title": "Internationale Vrouwendag Bloemen",
+        "url": "/pages/internationale-vrouwendag-bloemen",
+        "image": null
+      },
+      {
+        "title": "Pasen",
+        "url": "/collections/pasen",
+        "image": null
+      },
+      {
+        "title": "Suikerfeest Cadeau Bij Bloemen Van De Gier",
+        "url": "/pages/suikerfeest-cadeau-bij-bloemen-van-de-gier",
+        "image": null
+      },
+      {
+        "title": "Bloemen Secretaressedag",
+        "url": "/pages/bloemen-secretaressedag",
+        "image": null
+      },
+      {
+        "title": "Koningsdag",
+        "url": "/pages/koningsdag",
+        "image": null
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": []
+  },
+  "exclusieve-boeketten": {
+    "handle": "exclusieve-boeketten",
+    "title": "Exclusieve boeketten bestellen: dit maakt een boeket écht bijzonder",
+    "heading": "Exclusieve boeketten bestellen: dit maakt een boeket écht bijzonder",
+    "intro": "",
+    "layout": "blocks",
+    "blocks": [
+      {
+        "title": "Pioenrozen Bestellen Bij De Gier",
+        "url": "/pages/pioenrozen-bestellen-bij-de-gier",
+        "image": null
+      },
+      {
+        "title": "Rozen Bestellen Bij De Gier",
+        "url": "/pages/rozen-bestellen-bij-de-gier",
+        "image": null
+      },
+      {
+        "title": "Zakelijk Bloemen Bestellen",
+        "url": "/pages/zakelijk-bloemen-bestellen",
+        "image": null
+      }
+    ],
+    "collectionHandle": null,
+    "productHandles": [],
+    "seoSections": [
+      {
+        "level": "3",
+        "title": "Wat zijn exclusieve boeketten?",
+        "paragraphs": [
+          "Exclusieve boeketten zijn bloemstukken die met extra zorg, volume en oog voor detail worden samengesteld. Ze bestaan uit hoogwaardige, dagverse bloemen in verrassende combinaties van kleur, vorm en structuur. Het zijn geen losse bossen, maar complete creaties die bedoeld zijn om indruk te maken en lang te blijven stralen.",
+          "Het woord exclusief slaat hier niet op een hoog prijskaartje alleen. Het draait om de selectie en de compositie. Een bloembinder kiest bewust voor volle rozen, verfijnde seizoensbloemen en elegante accenten die elkaar versterken. Daardoor krijgt het boeket een eigen karakter. De vijf designs in onze collectie, zoals Powerful Pink, Red Royalty en White Wedding, laten precies die gedachte zien: elk boeket vertelt een eigen verhaal."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Wat maakt een boeket écht exclusief?",
+        "paragraphs": [
+          "Een boeket is exclusief wanneer vakmanschap, versheid en compositie samenkomen in iets dat je niet zomaar overal vindt. Het verschil zit in de keuze van de bloemen, de hand van de bloembinder en de gulheid van de samenstelling. Hieronder lees je de vier elementen die het verschil maken."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Voor welke gelegenheden kies je een exclusief boeket?",
+        "paragraphs": [
+          "Een exclusief boeket past bij elk moment dat om iets extra&#8217;s vraagt. Denk aan momenten met emotionele waarde of situaties waarin je een blijvende indruk wilt achterlaten. Het is het cadeau dat laat zien dat je echt hebt nagedacht, en niet zomaar iets hebt gestuurd."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Exclusief boeket versus standaard boeket: de verschillen",
+        "paragraphs": [
+          "Het grootste verschil tussen een exclusief en een standaard boeket zit in volume, bloemkeuze en houdbaarheid. Een standaard boeket is perfect voor alledaagse attenties. Een exclusief boeket is gemaakt voor de momenten die je niet wilt verprutsen. De onderstaande tabel zet de belangrijkste verschillen overzichtelijk naast elkaar.",
+          "Vergelijking tussen een standaard boeket en een exclusief boeket van De Gier"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Zo houd je een exclusief boeket zo lang mogelijk mooi",
+        "paragraphs": [
+          "Een exclusief boeket blijft met de juiste verzorging zeker 7 dagen prachtig. Bij De Gier krijg je daar zelfs een versgarantie op, omdat we vertrouwen op de kwaliteit van onze dagverse bloemen. Met een paar simpele handelingen verleng je dat plezier nog verder.",
+          "Volg deze stappen voor de langste houdbaarheid:"
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Een exclusief boeket laten bezorgen in heel Nederland",
+        "paragraphs": [
+          "Je laat een exclusief boeket eenvoudig online bestellen en op het door jou gekozen moment bezorgen door heel Nederland. De winkel staat in Zuidwolde in Drenthe, maar dankzij de webshop verras je iemand op vrijwel elk adres. Je krijgt altijd hetzelfde vakmanschap, of de bloemen nu in de buurt of aan de andere kant van het land worden bezorgd.",
+          "Omdat De Gier geen netwerkbloemist is, weet je precies wie je boeket maakt. Geen loterij met wisselende leveranciers, maar één vast team dat verantwoordelijk is voor de kwaliteit. Dat is het verschil tussen hopen dat het goed komt en weten dat het goed komt."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Wat kost een exclusief boeket bij De Gier?",
+        "paragraphs": [
+          "De exclusieve boeketten van De Gier kosten € 95 per stuk. Voor dat bedrag krijg je een royale, vakkundig samengestelde creatie van dagverse bloemen. Omdat De Gier geen commissie afstaat aan een netwerk, gaat het volledige bedrag naar de bloemen zelf. Je krijgt dus merkbaar meer boeket voor je geld."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Hoe lang blijven exclusieve boeketten mooi?",
+        "paragraphs": [
+          "Een exclusief boeket blijft met de juiste verzorging minimaal 7 dagen mooi. De Gier geeft daar een versgarantie op, omdat de bloemen dagelijks vers worden ingekocht. Door de stelen regelmatig bij te snijden en het water te verversen, geniet de ontvanger vaak nog langer van het boeket."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Kan ik een exclusief boeket online bestellen en laten bezorgen?",
+        "paragraphs": [
+          "Ja. Je bestelt eenvoudig online en kiest zelf het bezorgmoment. De Gier bezorgt exclusieve boeketten door heel Nederland, vanuit de winkel in Zuidwolde. Je ontvangt een bevestiging, zodat je precies weet waar je aan toe bent en zeker weet dat je verrassing op tijd aankomt."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Welk exclusief boeket past bij een huwelijk of jubileum?",
+        "paragraphs": [
+          "Voor een huwelijk of huwelijksjubileum kiezen veel mensen een ingetogen, stijlvol boeket zoals White Wedding. Wil je juist uitbundig vieren, dan past een kleurrijke creatie als Powerful Pink of Red Royalty beter. Twijfel je? Een vol, klassiek rozenboeket is altijd een veilige en geliefde keuze."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Wat is het verschil tussen een luxe boeket en een gewoon boeket?",
+        "paragraphs": [
+          "Een luxe of exclusief boeket onderscheidt zich door volume, bloemkeuze en compositie. Het bevat meer stelen, hoogwaardigere bloemen en een doordachte opbouw door een bloembinder. Een gewoon boeket is ideaal voor alledaagse attenties, terwijl een exclusief boeket gemaakt is voor momenten die er echt toe doen."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Kan ik exclusieve boeketten ook zakelijk bestellen?",
+        "paragraphs": [
+          "Zeker. Een exclusief boeket maakt zakelijk een sterke indruk, bijvoorbeeld bij een opening, jubileum of als dankjewel naar een relatie. De Gier verzorgt zowel losse bestellingen als terugkerende zakelijke leveringen, met dezelfde dagverse kwaliteit en betrouwbare bezorging."
+        ]
+      },
+      {
+        "level": "3",
+        "title": "Conclusie",
+        "paragraphs": [
+          "Een exclusief boeket is meer dan een mooi cadeau. Het is een doordachte creatie van dagverse bloemen, gebonden met vakmanschap, gemaakt voor de momenten die je niet wilt verprutsen. De vier elementen die het verschil maken zijn vakmanschap, versheid, een royale samenstelling en het feit dat 100% van je geld naar bloemen gaat.",
+          "De belangrijkste les: exclusief draait niet om duur, maar om waarde en zekerheid. Je krijgt meer bloemen, langere houdbaarheid en de rust dat het goed komt. Voor een groot moment is dat precies wat je zoekt: geen gok, maar een keuze waar je trots op bent.",
+          "Klaar om iemand te verrassen? Bekijk de complete collectie exclusieve boeketten en laat jouw favoriet vandaag nog bezorgen. Maak iemand blij met een boeket dat blijft hangen."
+        ]
+      }
+    ]
+  },
+  "weekdeals": {
+    "handle": "weekdeals",
+    "title": "Weekdeals",
+    "heading": "Weekdeals",
+    "intro": "Alle decoratieve deals van deze week op een rijtje. Voor 23:59 besteld = morgen in huis!",
+    "layout": "collection",
+    "blocks": [],
+    "collectionHandle": "weekdeals",
+    "productHandles": [],
+    "seoSections": []
+  }
+}

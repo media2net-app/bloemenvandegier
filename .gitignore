@@ -36,6 +36,9 @@ next-env.d.ts
 # Cached omzet data
 /data/omzet-2025.json
 
+# Local import staging (MacBook, not committed)
+/data/import/
+
 # Large CSV files
 CSV/*.csv
 CSV/omzet-2025.json

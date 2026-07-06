@@ -30,6 +30,7 @@ import {
   ClipboardList,
   FileEdit,
   Briefcase,
+  ArrowLeftRight,
   DollarSign,
   History
 } from 'lucide-react'
@@ -76,6 +77,7 @@ const implementedPages = [
   '/admin/activity-log',
   '/admin/omzet-generator',
   '/admin/omzet-oude-shop',
+  '/migratie',
 ]
 
 const menuItems: MenuItem[] = [
@@ -92,6 +94,7 @@ const menuItems: MenuItem[] = [
   { name: 'Mailing', href: '/admin/mailing', icon: Mail, isNew: true },
   { name: 'Omzet Generator', href: '/admin/omzet-generator', icon: DollarSign },
   { name: 'Omzet Oude Shop', href: '/admin/omzet-oude-shop', icon: History, badge: 'orange' },
+  { name: 'WC → Shopify', href: '/migratie', icon: ArrowLeftRight, badge: 'green', isNew: true },
   { name: 'Producten', href: '/admin/producten', icon: Package },
   { name: 'Bestellingen', href: '/admin/bestellingen', icon: ShoppingCart },
   { name: 'Order Picker', href: '/admin/order-picker', icon: ClipboardList, isNew: true },

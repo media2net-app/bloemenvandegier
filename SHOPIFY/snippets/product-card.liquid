@@ -1,6 +1,9 @@
 <div class="product-card">
   <a href="{{ product.url }}" class="product-card__link">
     <div class="product-card__image">
+      <div class="product-card__badges">
+        {% render 'product-labels', product: product %}
+      </div>
       {%- if product.featured_image -%}
         <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.featured_image.alt | escape }}" width="400" height="400" loading="lazy">
       {%- else -%}

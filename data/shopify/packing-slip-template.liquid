@@ -1,0 +1,191 @@
+{%- comment -%}
+  Shopify packing slip template — plak in Admin:
+  Settings → Shipping and delivery → Packing slip template
+{%- endcomment -%}
+<div class="packing-slip">
+  <div class="header">
+    <h1>{{ shop.name }}</h1>
+    <p>Pakbon — bestelling {{ order.name }}</p>
+    <p>Datum: {{ order.created_at | date: '%d-%m-%Y %H:%M' }}</p>
+  </div>
+
+  <div class="addresses">
+    <div class="ship-to">
+      <h2>Bezorgadres</h2>
+      <p>
+        {{ order.shipping_address.name }}<br>
+        {{ order.shipping_address.address1 }}<br>
+        {% if order.shipping_address.address2 != blank %}{{ order.shipping_address.address2 }}<br>{% endif %}
+        {{ order.shipping_address.zip }} {{ order.shipping_address.city }}<br>
+        {{ order.shipping_address.country }}
+      </p>
+      {% if order.shipping_address.phone != blank %}
+        <p>Tel: {{ order.shipping_address.phone }}</p>
+      {% endif %}
+    </div>
+    {% if order.billing_address %}
+    <div class="bill-to">
+      <h2>Factuuradres</h2>
+      <p>
+        {{ order.billing_address.name }}<br>
+        {{ order.billing_address.address1 }}<br>
+        {% if order.billing_address.address2 != blank %}{{ order.billing_address.address2 }}<br>{% endif %}
+        {{ order.billing_address.zip }} {{ order.billing_address.city }}
+      </p>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if order.note != blank %}
+  <div class="order-note">
+    <h2>Ordernotitie</h2>
+    <p>{{ order.note }}</p>
+  </div>
+  {% endif %}
+
+  <table class="line-items">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Aantal</th>
+        <th>SKU</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line_item in order.line_items %}
+      <tr>
+        <td>
+          <strong>{{ line_item.title }}</strong>
+          {% if line_item.variant.title != 'Default Title' %}
+            <br><span class="variant">{{ line_item.variant.title }}</span>
+          {% endif %}
+          {% if line_item.properties.size > 0 %}
+            <ul class="properties">
+              {% for property in line_item.properties %}
+                {% assign pfirst = property.first %}
+                {% assign pval = property.last %}
+                {% if pval != blank and pfirst != blank %}
+                  <li><strong>{{ pfirst }}:</strong> {{ pval }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </td>
+        <td>{{ line_item.quantity }}</td>
+        <td>{{ line_item.sku }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="extras-summary">
+    <h2>Toevoegingen</h2>
+    <ul>
+      {% assign has_card = false %}
+      {% assign has_ribbon = false %}
+      {% for line_item in order.line_items %}
+        {% for property in line_item.properties %}
+          {% assign key = property.first | downcase %}
+          {% assign val = property.last %}
+          {% if val != blank %}
+            {% if key contains 'kaartje' %}
+              {% assign has_card = true %}
+              <li><strong>Kaartje:</strong> {{ val }}</li>
+            {% elsif key contains 'lint' %}
+              {% assign has_ribbon = true %}
+              <li><strong>{{ property.first }}:</strong> {{ val }}</li>
+            {% elsif key != blank %}
+              <li><strong>{{ property.first }}:</strong> {{ val }}</li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+      {% unless has_card %}
+        <li>Geen kaartje</li>
+      {% endunless %}
+      {% unless has_ribbon %}
+        <li>Geen lint</li>
+      {% endunless %}
+    </ul>
+  </div>
+
+  {%- comment -%} Losse kaartjes printen (A6, één per pagina) — zie ook data/shopify/kaartje-print-template.liquid {%- endcomment -%}
+  {% assign card_count = 0 %}
+  {% for line_item in order.line_items %}
+    {% for property in line_item.properties %}
+      {% assign key = property.first | downcase %}
+      {% if key contains 'kaartje' and property.last != blank %}
+        {% assign card_count = card_count | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% if card_count > 0 %}
+  <div class="card-prints">
+    <h2 class="card-prints__title">Kaartjes printen ({{ card_count }})</h2>
+    {% for line_item in order.line_items %}
+      {% assign card_text = blank %}
+      {% assign ribbon_color = blank %}
+      {% assign ribbon_text = blank %}
+      {% for property in line_item.properties %}
+        {% assign key = property.first | downcase %}
+        {% if key contains 'kaartje' and property.last != blank %}
+          {% assign card_text = property.last %}
+        {% elsif key == 'lint kleur' %}
+          {% assign ribbon_color = property.last %}
+        {% elsif key == 'lint tekst' %}
+          {% assign ribbon_text = property.last %}
+        {% endif %}
+      {% endfor %}
+      {% if card_text != blank %}
+      <div class="card-print">
+        <div class="card-print__header">
+          <span>{{ shop.name }}</span>
+          <span>{{ order.name }}</span>
+        </div>
+        <p class="card-print__message">{{ card_text }}</p>
+        <div class="card-print__footer">
+          <p>{{ line_item.title }}</p>
+          {% if ribbon_color != blank or ribbon_text != blank %}
+            <p>Lint: {% if ribbon_color != blank %}{{ ribbon_color }}{% endif %}{% if ribbon_text != blank %} — "{{ ribbon_text }}"{% endif %}</p>
+          {% endif %}
+          <p>Voor: {{ order.shipping_address.name }}</p>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <style>
+    .packing-slip { font-family: Arial, sans-serif; font-size: 12px; color: #111; }
+    .header { margin-bottom: 20px; border-bottom: 2px solid #059669; padding-bottom: 10px; }
+    .header h1 { margin: 0 0 4px; font-size: 20px; }
+    .addresses { display: flex; gap: 40px; margin-bottom: 20px; }
+    .addresses h2 { font-size: 13px; margin: 0 0 6px; text-transform: uppercase; color: #059669; }
+    .order-note { margin-bottom: 20px; padding: 10px; background: #f9fafb; border: 1px solid #e5e7eb; }
+    table.line-items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    table.line-items th, table.line-items td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; vertical-align: top; }
+    table.line-items th { background: #f3f4f6; }
+    .properties { margin: 8px 0 0; padding-left: 16px; }
+    .properties li { margin-bottom: 4px; }
+    .extras-summary { padding: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; }
+    .extras-summary h2 { margin: 0 0 8px; font-size: 14px; color: #047857; }
+    .extras-summary ul { margin: 0; padding-left: 18px; }
+    .card-prints { margin-top: 24px; }
+    .card-prints__title { font-size: 14px; color: #047857; margin: 0 0 12px; page-break-before: always; }
+    .card-print {
+      width: 105mm; min-height: 130mm; margin: 0 auto 16px; padding: 10mm;
+      border: 1.5px solid #d1d5db; border-radius: 4mm; page-break-after: always;
+      font-family: Georgia, serif; text-align: center;
+    }
+    .card-print__header {
+      display: flex; justify-content: space-between; font-family: Arial, sans-serif;
+      font-size: 9px; color: #6b7280; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 12px;
+    }
+    .card-print__message { font-size: 16px; line-height: 1.5; margin: 20px 0; white-space: pre-wrap; }
+    .card-print__footer { font-family: Arial, sans-serif; font-size: 9px; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 8px; text-align: left; }
+    .card-print__footer p { margin: 0 0 4px; }
+    @page { margin: 10mm; }
+  </style>
+</div>

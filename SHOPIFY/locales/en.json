@@ -31,6 +31,7 @@
     "categories": "Categories",
     "occasions": "Occasions",
     "faq": "FAQ",
+    "track_order": "Track your order",
     "business": "Business orders",
     "shipping": "Shipping costs",
     "contact": "Contact",
@@ -57,6 +58,10 @@
     "description": "Description",
     "read_more": "Read more",
     "related": "Related products",
+    "related_from_collection": "More from {{ collection }}",
+    "view_collection": "View all {{ collection }}",
+    "carousel_prev": "Previous products",
+    "carousel_next": "Next products",
     "reviews": "Reviews",
     "no_reviews": "No reviews yet.",
     "out_of_stock": "Out of stock"
@@ -84,6 +89,18 @@
     "subtext": "This page could not be found.",
     "back": "Back to home"
   },
+  "track": {
+    "order_title": "View order status",
+    "order_text": "Log in to your account to view your order history and open order status.",
+    "order_button": "Go to my account",
+    "courier_title": "Track delivery",
+    "courier_text": "Received a tracking number by email? Enter it below to track your delivery.",
+    "courier_label": "Tracking number",
+    "courier_placeholder": "e.g. 3SBOL123456789",
+    "courier_button": "Track delivery",
+    "courier_empty": "Please enter a tracking number.",
+    "courier_pending": "Courier integration is being set up. Contact us if you have questions."
+  },
   "cart": {
     "title": "Cart",
     "quantity": "Quantity",
@@ -95,5 +112,23 @@
   },
   "breadcrumb": {
     "home": "Home"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search flowers, bouquets...",
+    "submit": "Search",
+    "loading": "Searching...",
+    "no_results": "No products found",
+    "no_results_for": "No results for \"{{ terms }}\"",
+    "results_count": "{{ count }} results for \"{{ terms }}\"",
+    "results_count_one": "1 result for \"{{ terms }}\"",
+    "view_all": "View all results",
+    "results_dropdown": "Search suggestions",
+    "intro": "Type at least 3 characters to see products instantly, or try a popular search below.",
+    "popular": "Popular searches",
+    "empty_help": "Try a different search term or browse our categories.",
+    "suggestion_bouquets": "Bouquets",
+    "suggestion_roses": "Roses",
+    "suggestion_all": "All bouquets"
   }
 }

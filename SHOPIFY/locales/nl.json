@@ -31,6 +31,7 @@
     "categories": "Categorieën",
     "occasions": "Gelegenheden",
     "faq": "Veelgestelde vragen",
+    "track_order": "Volg je bestelling",
     "business": "Zakelijk bestellen",
     "shipping": "Verzendkosten",
     "contact": "Contact",
@@ -57,6 +58,10 @@
     "description": "Beschrijving",
     "read_more": "Lees meer",
     "related": "Gerelateerde producten",
+    "related_from_collection": "Meer uit {{ collection }}",
+    "view_collection": "Bekijk alle {{ collection }}",
+    "carousel_prev": "Vorige producten",
+    "carousel_next": "Volgende producten",
     "reviews": "Reviews",
     "no_reviews": "Nog geen reviews beschikbaar.",
     "out_of_stock": "Niet op voorraad"
@@ -84,6 +89,18 @@
     "subtext": "Deze pagina kon niet worden gevonden.",
     "back": "Terug naar home"
   },
+  "track": {
+    "order_title": "Bestelstatus bekijken",
+    "order_text": "Log in op je account om je bestelgeschiedenis en de status van openstaande bestellingen te bekijken.",
+    "order_button": "Naar mijn account",
+    "courier_title": "Bezorging volgen",
+    "courier_text": "Heb je een trackingnummer ontvangen per e-mail? Vul het hieronder in om je bezorging te volgen.",
+    "courier_label": "Trackingnummer",
+    "courier_placeholder": "Bijv. 3SBOL123456789",
+    "courier_button": "Volg bezorging",
+    "courier_empty": "Vul een trackingnummer in.",
+    "courier_pending": "Koerier-koppeling wordt nog ingesteld. Neem bij vragen contact met ons op."
+  },
   "cart": {
     "title": "Winkelwagen",
     "quantity": "Aantal",
@@ -95,5 +112,23 @@
   },
   "breadcrumb": {
     "home": "Home"
+  },
+  "search": {
+    "title": "Zoeken",
+    "placeholder": "Zoek bloemen, boeketten...",
+    "submit": "Zoeken",
+    "loading": "Zoeken...",
+    "no_results": "Geen producten gevonden",
+    "no_results_for": "Geen resultaten voor \"{{ terms }}\"",
+    "results_count": "{{ count }} resultaten voor \"{{ terms }}\"",
+    "results_count_one": "1 resultaat voor \"{{ terms }}\"",
+    "view_all": "Alle resultaten bekijken",
+    "results_dropdown": "Zoeksuggesties",
+    "intro": "Typ minimaal 3 tekens om direct producten te zien, of gebruik de populaire zoektermen hieronder.",
+    "popular": "Populaire zoekopdrachten",
+    "empty_help": "Probeer een andere zoekterm of bekijk onze categorieën.",
+    "suggestion_bouquets": "Boeketten",
+    "suggestion_roses": "Rozen",
+    "suggestion_all": "Alle boeketten"
   }
 }
