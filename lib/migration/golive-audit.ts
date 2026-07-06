@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { readMigrationSnapshot } from './snapshot'
 
 const ROOT = process.cwd()
 
@@ -26,12 +27,14 @@ export interface GoliveAuditReport {
 
 export function readGoliveAudit(): GoliveAuditReport | null {
   const file = path.join(ROOT, 'data/import/shopify-golive-audit.json')
-  if (!fs.existsSync(file)) return null
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf-8')) as GoliveAuditReport
-  } catch {
-    return null
+  if (fs.existsSync(file)) {
+    try {
+      return JSON.parse(fs.readFileSync(file, 'utf-8')) as GoliveAuditReport
+    } catch {
+      return null
+    }
   }
+  return readMigrationSnapshot()?.goliveAudit ?? null
 }
 
 export function isPaymentConfigured(audit: GoliveAuditReport | null): boolean {

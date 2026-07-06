@@ -45,7 +45,8 @@
     "fix:internal-links": "node --env-file=.env scripts/shopify-fix-internal-links.js",
     "audit:handles": "node scripts/verify-handles.js",
     "audit:golive": "node --env-file=.env scripts/shopify-golive-audit.js",
-    "print:kaartje": "node --env-file=.env scripts/shopify-print-kaartje.js"
+    "print:kaartje": "node --env-file=.env scripts/shopify-print-kaartje.js",
+    "migration:snapshot": "npx tsx scripts/generate-migration-snapshot.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

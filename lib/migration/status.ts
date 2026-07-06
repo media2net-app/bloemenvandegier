@@ -8,6 +8,11 @@ import {
   isGiftCardsEnabled,
   isDomainLive,
 } from './golive-audit'
+import {
+  applySnapshotOverlay,
+  readMigrationSnapshot,
+  shouldUseMigrationSnapshot,
+} from './snapshot'
 
 export type { ShopifyCliStatus }
 
@@ -1121,7 +1126,30 @@ export function getMigrationStatus(): MigrationStatus {
     goliveAudit: readGoliveAudit(),
   }
 
-  const tasks = buildTasks(detect)
+  const baseStats: MigrationStats = {
+    wcProducts: wcStats.total,
+    wcProductsWithImages: wcStats.withImages,
+    wcProductsWithoutImages: wcStats.withoutImages,
+    shopifyImported: importStats.imported,
+    shopifyPublished: importStats.published,
+    shopifyFailed: importStats.failed,
+    redirectCount: countCsvRows('shopify-redirects.csv'),
+    collectionCount: countCsvRows('data/import/shopify-collections.csv'),
+    shopifyStore: 'xn68xb-0f.myshopify.com',
+    wcStore: 'bloemenvandegier.nl',
+    lastImportAt: detect.lastImportAt,
+  }
+
+  let tasks = buildTasks(detect)
+  let stats = baseStats
+
+  if (shouldUseMigrationSnapshot()) {
+    const snapshot = readMigrationSnapshot()!
+    const overlaid = applySnapshotOverlay(tasks, stats, snapshot)
+    tasks = overlaid.tasks
+    stats = overlaid.stats
+  }
+
   const doneCount = tasks.filter((task) => task.status === 'done').length
   const overallProgress = Math.round((doneCount / tasks.length) * 100)
 
@@ -1130,19 +1158,7 @@ export function getMigrationStatus(): MigrationStatus {
     phases: PHASES,
     tasks,
     shopifyCli: getShopifyCliStatus(),
-    stats: {
-      wcProducts: wcStats.total,
-      wcProductsWithImages: wcStats.withImages,
-      wcProductsWithoutImages: wcStats.withoutImages,
-      shopifyImported: importStats.imported,
-      shopifyPublished: importStats.published,
-      shopifyFailed: importStats.failed,
-      redirectCount: countCsvRows('shopify-redirects.csv'),
-      collectionCount: countCsvRows('data/import/shopify-collections.csv'),
-      shopifyStore: 'xn68xb-0f.myshopify.com',
-      wcStore: 'bloemenvandegier.nl',
-      lastImportAt: detect.lastImportAt,
-    },
+    stats,
     updatedAt: new Date().toISOString(),
   }
 }

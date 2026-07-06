@@ -24,6 +24,10 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    outputFileTracingIncludes: {
+      '/api/migratie/status': ['./data/migration-snapshot.json'],
+      '/api/migratie/golive-audit': ['./data/migration-snapshot.json'],
+    },
   },
 }
 

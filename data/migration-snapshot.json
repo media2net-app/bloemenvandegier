@@ -1,0 +1,332 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-06T06:53:33.590Z",
+  "tasks": [
+    {
+      "id": "migratie-1to1",
+      "status": "done"
+    },
+    {
+      "id": "wc-api-fetch",
+      "status": "done"
+    },
+    {
+      "id": "wc-export",
+      "status": "done",
+      "completedAt": "2026-07-04"
+    },
+    {
+      "id": "import-plan",
+      "status": "done"
+    },
+    {
+      "id": "shopify-cli",
+      "status": "done"
+    },
+    {
+      "id": "api-app",
+      "status": "done"
+    },
+    {
+      "id": "wc-to-shopify-csv",
+      "status": "done"
+    },
+    {
+      "id": "collections-csv",
+      "status": "done"
+    },
+    {
+      "id": "redirects-csv",
+      "status": "done"
+    },
+    {
+      "id": "import-scripts",
+      "status": "done"
+    },
+    {
+      "id": "test-import",
+      "status": "done"
+    },
+    {
+      "id": "full-import",
+      "status": "done",
+      "completedAt": "2026-07-04T20:06:52.598Z"
+    },
+    {
+      "id": "publish-online-store",
+      "status": "done"
+    },
+    {
+      "id": "variant-price-fix",
+      "status": "done"
+    },
+    {
+      "id": "upload-redirects",
+      "status": "done"
+    },
+    {
+      "id": "create-collections",
+      "status": "done"
+    },
+    {
+      "id": "cleanup-duplicates",
+      "status": "done"
+    },
+    {
+      "id": "blog-migration",
+      "status": "done"
+    },
+    {
+      "id": "pages-migration",
+      "status": "done",
+      "completedAt": "2026-07-06"
+    },
+    {
+      "id": "page-parity-audit",
+      "status": "done",
+      "completedAt": "2026-07-06"
+    },
+    {
+      "id": "shopify-header-menu",
+      "status": "done",
+      "completedAt": "2026-07-04"
+    },
+    {
+      "id": "hub-page-redirects",
+      "status": "done",
+      "completedAt": "2026-07-04"
+    },
+    {
+      "id": "hub-page-styling",
+      "status": "done"
+    },
+    {
+      "id": "internal-links-fix",
+      "status": "done"
+    },
+    {
+      "id": "content-1to1",
+      "status": "done"
+    },
+    {
+      "id": "collection-seo-texts",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "handles-verify",
+      "status": "done"
+    },
+    {
+      "id": "assign-collections",
+      "status": "done"
+    },
+    {
+      "id": "homepage-parity",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "product-page-options",
+      "status": "in_progress"
+    },
+    {
+      "id": "structured-data",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "tulpen-landing",
+      "status": "done",
+      "completedAt": "2026-07-04"
+    },
+    {
+      "id": "order-picker-dashboard",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-1-courier",
+      "status": "todo"
+    },
+    {
+      "id": "sam-2-fulfillment-system",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-3-trace-link",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-4-customer-account",
+      "status": "todo"
+    },
+    {
+      "id": "sam-5-business-account",
+      "status": "todo"
+    },
+    {
+      "id": "sam-6-subscriptions",
+      "status": "todo"
+    },
+    {
+      "id": "sam-7-product-labels",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "sam-8-ribbon",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-9-delivery-limit",
+      "status": "todo"
+    },
+    {
+      "id": "sam-10-rose-inventory",
+      "status": "todo"
+    },
+    {
+      "id": "sam-11-inventory-by-date",
+      "status": "todo"
+    },
+    {
+      "id": "sam-12-weekdeal",
+      "status": "done",
+      "completedAt": "2026-07-04"
+    },
+    {
+      "id": "sam-13-address-check",
+      "status": "todo"
+    },
+    {
+      "id": "sam-14-collection-sort",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-15-packing-slip",
+      "status": "in_progress"
+    },
+    {
+      "id": "sam-16-gift-cards",
+      "status": "done"
+    },
+    {
+      "id": "sam-17-card-emojis",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "sam-18-social-media",
+      "status": "todo"
+    },
+    {
+      "id": "sam-19-usp-slider",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "seo-meta",
+      "status": "todo"
+    },
+    {
+      "id": "redirect-steekproef",
+      "status": "done",
+      "completedAt": "2026-07-05"
+    },
+    {
+      "id": "image-url-redirects",
+      "status": "in_progress"
+    },
+    {
+      "id": "shop-oplevering",
+      "status": "in_progress"
+    },
+    {
+      "id": "payment-shipping",
+      "status": "in_progress"
+    },
+    {
+      "id": "domain-switch",
+      "status": "todo"
+    },
+    {
+      "id": "search-console",
+      "status": "todo"
+    },
+    {
+      "id": "golive-checklist",
+      "status": "todo"
+    },
+    {
+      "id": "wc-decommission",
+      "status": "todo"
+    }
+  ],
+  "stats": {
+    "wcProducts": 421,
+    "wcProductsWithImages": 415,
+    "wcProductsWithoutImages": 6,
+    "shopifyImported": 421,
+    "shopifyPublished": 421,
+    "shopifyFailed": 0,
+    "redirectCount": 1944,
+    "collectionCount": 89,
+    "shopifyStore": "xn68xb-0f.myshopify.com",
+    "wcStore": "bloemenvandegier.nl",
+    "lastImportAt": "2026-07-04T20:06:52.598Z"
+  },
+  "goliveAudit": {
+    "generatedAt": "2026-07-06T05:21:33.311Z",
+    "shop": {
+      "name": "Mijn winkel",
+      "myshopifyDomain": "xn68xb-0f.myshopify.com",
+      "primaryDomain": {
+        "host": "xn68xb-0f.myshopify.com",
+        "url": "https://xn68xb-0f.myshopify.com",
+        "sslEnabled": true
+      },
+      "plan": "Basic",
+      "currency": "EUR"
+    },
+    "checks": [
+      {
+        "id": "shopify-payments",
+        "label": "Shopify Payments geactiveerd",
+        "passed": false,
+        "detail": "Nog niet geactiveerd — Sam moet instellen",
+        "owner": "sam"
+      },
+      {
+        "id": "gift-cards",
+        "label": "Gift Cards ingeschakeld",
+        "passed": true,
+        "detail": "Ingeschakeld",
+        "owner": "sam"
+      },
+      {
+        "id": "shipping-nl",
+        "label": "Verzending naar Nederland",
+        "passed": true,
+        "detail": "3 verzendmethode(s), zones: NL, AT, BE, BG, HR, CY, CZ, DE, DK, EE, FI, FR, GR, HU, IE, IT, LV, LT, LU, MT, PL, PT, RO, SK, SI, ES, SE, AE, AU, CA, CH, GB, HK, IL, JP, KR, MY, NO, NZ, SG, US",
+        "owner": "sam"
+      },
+      {
+        "id": "custom-domain",
+        "label": "Primair domein bloemenvandegier.nl",
+        "passed": false,
+        "detail": "Nog xn68xb-0f.myshopify.com — domeinwissel nog niet gedaan",
+        "owner": "sam"
+      },
+      {
+        "id": "ssl",
+        "label": "SSL op primair domein",
+        "passed": true,
+        "detail": "SSL actief",
+        "owner": "sam"
+      }
+    ],
+    "passed": 3,
+    "total": 5,
+    "readyForDomainSwitch": false
+  }
+}
