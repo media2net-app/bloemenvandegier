@@ -24,7 +24,7 @@ export default function LoginPage() {
     try {
       const success = await login(email, password)
       if (success) {
-        router.push('/migratie')
+        router.push('/kiezen')
       } else {
         setError('Inloggen mislukt. Probeer het opnieuw.')
       }
@@ -53,8 +53,8 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Migratie dashboard</h1>
-          <p className="text-gray-600 mb-6">Log in om het WC → Shopify migratie-overzicht te openen</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Inloggen</h1>
+          <p className="text-gray-600 mb-6">Log in om het migratie- of order-dashboard te openen</p>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -138,14 +138,14 @@ export default function LoginPage() {
           {/* Demo Info */}
           <div className="mt-6 p-4 bg-primary-50 rounded-lg">
             <p className="text-sm text-gray-700">
-              <strong>Demo account:</strong> Gegevens staan al ingevuld. Na inloggen ga je naar{' '}
-              <strong>/migratie</strong>.
+              <strong>Demo account:</strong> Gegevens staan al ingevuld. Na inloggen kies je tussen migratie
+              of order-dashboard.
             </p>
           </div>
 
           <div className="mt-4 text-center">
-            <Link href="/migratie" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-              Direct naar migratie dashboard →
+            <Link href="/kiezen" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+              Direct naar keuze →
             </Link>
           </div>
 

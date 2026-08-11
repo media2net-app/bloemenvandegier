@@ -20,17 +20,25 @@ export default function ConditionalLayout({
   const isCustomerLogin = pathname === '/login'
   const isAdminDashboard = pathname?.startsWith('/admin') && !isAdminLogin
   const isMigratie = pathname?.startsWith('/migratie')
+  const isKiezen = pathname === '/kiezen'
+  const isOrderDashboard = pathname?.startsWith('/order-dashboard')
   const isMiddelbareScholenLogin = pathname?.startsWith('/middelbare-scholen/login')
   const isMiddelbareScholenValentijn = pathname?.startsWith('/middelbare-scholen/valentijn')
 
-  if (isAdminLogin || isCustomerLogin || isMiddelbareScholenLogin || isMiddelbareScholenValentijn) {
+  if (
+    isAdminLogin ||
+    isCustomerLogin ||
+    isKiezen ||
+    isMiddelbareScholenLogin ||
+    isMiddelbareScholenValentijn
+  ) {
     // Admin login page, middelbare scholen login, or middelbare scholen valentijn - no header, footer, trustbar, or help widget
     // Return children directly without wrapper to avoid CSS conflicts
     return <>{children}</>
   }
 
-  if (isAdminDashboard || isMigratie) {
-    // Admin dashboard / migratie - no trustbar, footer, or help widget
+  if (isAdminDashboard || isMigratie || isOrderDashboard) {
+    // Admin dashboard / migratie / order-dashboard - no trustbar, footer, or help widget
     return <>{children}</>
   }
 
