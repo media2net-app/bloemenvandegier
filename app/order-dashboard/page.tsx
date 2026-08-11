@@ -12,6 +12,7 @@ import {
   Printer,
   Receipt,
   Tag,
+  Package,
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -306,7 +307,13 @@ export default function OrderDashboardPage() {
         applyResult(result, false)
       } catch (e) {
         if ((e as Error)?.name === 'AbortError') return
-        setError(e instanceof Error ? e.message : 'Laden mislukt')
+        const msg = e instanceof Error ? e.message : 'Laden mislukt'
+        // Safari/WebKit: "Load failed" bij kapotte .next / HTML 500-responses
+        setError(
+          /load failed|failed to fetch|networkerror/i.test(msg)
+            ? 'Orders laden mislukt. Vernieuw de pagina of klik Vernieuwen.'
+            : msg
+        )
         setOrders([])
       } finally {
         if (!signal?.aborted) setLoading(false)
@@ -398,27 +405,24 @@ export default function OrderDashboardPage() {
       return
     }
 
-    if (printKaartje || printPakbon || printFactuur) {
-      const docs = [
-        printKaartje ? 'kaartje' : null,
-        printPakbon ? 'pakbon' : null,
-        printFactuur ? 'factuur' : null,
-      ]
-        .filter(Boolean)
-        .join(',')
-      const idList = Array.from(selected)
-      const known = idList
-        .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
-        .filter(Boolean) as WcOrder[]
-      const jobId = stashPrintJob(idList, known)
+    // Aparte PDF/tab per documenttype → 3 printers (A4 / A6 / 62×100)
+    const idList = Array.from(selected)
+    const known = idList
+      .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
+      .filter(Boolean) as WcOrder[]
+    const jobId = stashPrintJob(idList, known)
+
+    const docTypes: string[] = []
+    if (printKaartje) docTypes.push('kaartje')
+    if (printPakbon) docTypes.push('pakbon')
+    if (printFactuur) docTypes.push('factuur')
+    if (printLabels) docTypes.push('label')
+
+    for (const doc of docTypes) {
       window.open(
-        `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=${encodeURIComponent(docs)}&job=${encodeURIComponent(jobId)}`,
+        `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=${encodeURIComponent(doc)}&job=${encodeURIComponent(jobId)}`,
         '_blank'
       )
-    }
-
-    if (printLabels) {
-      void openBulkLabels(false)
     }
   }
 
@@ -435,7 +439,7 @@ export default function OrderDashboardPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         const missingHint = !createMissing
-          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner?'
+          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner?\n(Let op: testmodus blokkeert aanmaken.)'
           : ''
         const msg = (data.error || 'Labels laden mislukt') + missingHint
         if (!createMissing && confirm(msg)) {
@@ -715,19 +719,24 @@ export default function OrderDashboardPage() {
                           >
                             <Receipt className="h-4 w-4" />
                           </DocIcon>
+                          <DocIcon
+                            href={`/order-dashboard/${order.id}/print/label`}
+                            label="Label 62×100 mm"
+                          >
+                            <Tag className="h-4 w-4" />
+                          </DocIcon>
                           <button
                             type="button"
                             onClick={() => openOrderLabel(order)}
-                            aria-label="Pakketpartner label"
-                            className="group relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-100"
+                            aria-label="Pakketpartner verzendlabel"
+                            className="group relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100"
                           >
-                            <Tag className="h-4 w-4" />
+                            <Package className="h-4 w-4" />
                             <span
                               role="tooltip"
-                              className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100"
+                              className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-[11px] text-white opacity-0 transition group-hover:opacity-100"
                             >
-                              Verzendlabel
-                              <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                              Pakketpartner PDF
                             </span>
                           </button>
                         </div>
@@ -827,14 +836,23 @@ export default function OrderDashboardPage() {
                   onChange={(e) => setPrintLabels(e.target.checked)}
                 />
                 <Tag className="h-4 w-4 text-primary-600" />
-                Verzendlabels
+                Label 62×100
               </label>
               <Button variant="outline" size="sm" onClick={() => setSelected(new Set())}>
                 Deselecteren
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => void openBulkLabels(false)}
+                disabled={labelsBusy || !selected.size}
+              >
+                <Package className="mr-2 h-4 w-4" />
+                {labelsBusy ? 'PP laden…' : 'Pakketpartner PDF'}
+              </Button>
               <Button size="sm" onClick={openBulkPrint} disabled={labelsBusy}>
                 <Printer className="mr-2 h-4 w-4" />
-                {labelsBusy ? 'Labels laden…' : 'Print selectie'}
+                Print selectie
               </Button>
             </div>
           </div>

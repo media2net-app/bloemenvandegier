@@ -17,14 +17,22 @@ const menuItems = [
   { name: 'Overzicht', href: '/order-dashboard', icon: LayoutDashboard, exact: true },
 ]
 
-export default function OrderDashboardSidebar() {
+export default function OrderDashboardSidebar({
+  testMode = false,
+}: {
+  testMode?: boolean
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const logout = useAuthStore((s) => s.logout)
   const user = useAuthStore((s) => s.user)
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-primary-800 text-white">
+    <aside
+      className={`fixed left-0 z-40 flex w-64 flex-col bg-primary-800 text-white ${
+        testMode ? 'top-10 h-[calc(100vh-2.5rem)]' : 'top-0 h-screen'
+      }`}
+    >
       <div className="border-b border-primary-700 p-6">
         <Link href="/kiezen" className="mb-4 block no-underline">
           <Image
@@ -38,7 +46,13 @@ export default function OrderDashboardSidebar() {
         </Link>
         <div>
           <p className="text-sm font-semibold leading-tight text-white">Order dashboard</p>
-          <p className="text-xs text-primary-200">Live WooCommerce</p>
+          {testMode ? (
+            <p className="mt-1 inline-flex rounded bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-950">
+              Testmodus
+            </p>
+          ) : (
+            <p className="text-xs text-primary-200">Live WooCommerce</p>
+          )}
           {user?.email && (
             <p className="mt-1 truncate text-xs text-primary-300">{user.email}</p>
           )}

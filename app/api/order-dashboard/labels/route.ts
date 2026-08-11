@@ -5,6 +5,10 @@ import {
   resolveLabelsPdf,
 } from '@/lib/pakketpartner/shipments'
 import { PakketpartnerApiError } from '@/lib/pakketpartner/client'
+import {
+  isOrderDashboardTestMode,
+  TEST_MODE_BLOCK_MESSAGE,
+} from '@/lib/order-dashboard/test-mode'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,6 +94,16 @@ export async function POST(request: Request) {
 
     if (!orderIds.length && !orderNumbers.length) {
       return NextResponse.json({ error: 'Geen orders opgegeven' }, { status: 400 })
+    }
+
+    if (body.createMissing === true && isOrderDashboardTestMode()) {
+      return NextResponse.json(
+        {
+          error: TEST_MODE_BLOCK_MESSAGE,
+          testMode: true,
+        },
+        { status: 403 }
+      )
     }
 
     const orders = []

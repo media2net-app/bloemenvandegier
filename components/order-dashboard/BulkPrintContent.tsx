@@ -10,6 +10,7 @@ import {
 import {
   FactuurDocument,
   KaartjeDocuments,
+  LabelDocument,
   PakbonDocument,
 } from '@/components/order-dashboard/PrintDocuments'
 import type { WcOrder } from '@/lib/woocommerce/orders'
@@ -21,7 +22,7 @@ import {
   rememberOrders,
 } from '@/lib/woocommerce/order-list-cache'
 
-type DocType = 'kaartje' | 'pakbon' | 'factuur'
+type DocType = 'kaartje' | 'pakbon' | 'factuur' | 'label'
 
 type LogEntry = {
   id: number
@@ -65,6 +66,7 @@ export default function BulkPrintContent() {
       kaartje: set.has('kaartje'),
       pakbon: set.has('pakbon'),
       factuur: set.has('factuur'),
+      label: set.has('label'),
     }
   }, [docsParam])
 
@@ -270,10 +272,24 @@ export default function BulkPrintContent() {
   }
 
   const docLabels = [
-    docs.kaartje ? 'kaartjes' : null,
-    docs.pakbon ? 'pakbonnen' : null,
-    docs.factuur ? 'facturen' : null,
+    docs.kaartje ? 'kaartjes A6' : null,
+    docs.pakbon ? 'pakbonnen A4' : null,
+    docs.factuur ? 'facturen A4' : null,
+    docs.label ? 'labels 62×100' : null,
   ].filter(Boolean)
+
+  const onlyKaartje = docs.kaartje && !docs.pakbon && !docs.factuur && !docs.label
+  const onlyLabel = docs.label && !docs.kaartje && !docs.pakbon && !docs.factuur
+  const onlyA4 =
+    (docs.pakbon || docs.factuur) && !docs.kaartje && !docs.label
+
+  const pageCss = onlyKaartje
+    ? `@page { size: 148mm 105mm; margin: 0; }`
+    : onlyLabel
+      ? `@page { size: 62mm 100mm; margin: 0; }`
+      : onlyA4
+        ? `@page { size: A4; margin: 12mm; }`
+        : `@page { size: A4; margin: 12mm; }`
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -282,7 +298,8 @@ export default function BulkPrintContent() {
           .no-print { display: none !important; }
           .print-sheet { page-break-after: always; }
           .card-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
-          @page { margin: 10mm; }
+          .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
+          ${pageCss}
         }
       `}</style>
       <PrintToolbar
@@ -291,9 +308,9 @@ export default function BulkPrintContent() {
         }`}
       />
 
-      {!docs.kaartje && !docs.pakbon && !docs.factuur && (
+      {!docs.kaartje && !docs.pakbon && !docs.factuur && !docs.label && (
         <div className="p-8 text-center text-red-700">
-          Selecteer minstens één documenttype (kaartje, pakbon of factuur).
+          Selecteer minstens één documenttype (kaartje, pakbon, factuur of label).
         </div>
       )}
 
@@ -302,6 +319,7 @@ export default function BulkPrintContent() {
           {docs.kaartje && orderHasKaartje(order) && <KaartjeDocuments order={order} />}
           {docs.pakbon && <PakbonDocument order={order} />}
           {docs.factuur && <FactuurDocument order={order} />}
+          {docs.label && <LabelDocument order={order} />}
         </div>
       ))}
     </div>

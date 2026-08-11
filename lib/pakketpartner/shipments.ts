@@ -130,6 +130,11 @@ export async function createShipmentForOrder(
   order: WcOrder,
   opts?: { print?: boolean; carrierService?: string }
 ): Promise<PpShipment> {
+  const { assertOrderDashboardWritesAllowed } = await import(
+    '@/lib/order-dashboard/test-mode'
+  )
+  assertOrderDashboardWritesAllowed()
+
   const deliveryYmd = getDeliveryDateYmd(order)
   const body: Record<string, unknown> = {
     order_reference: String(order.number),
@@ -191,17 +196,20 @@ export async function resolveLabelsPdf(options: {
   const stillMissing = [...missing]
 
   if (options.createMissing && stillMissing.length) {
-    const byNumber = new Map(options.orders.map((o) => [String(o.number), o]))
-    for (const num of [...stillMissing]) {
-      const order = byNumber.get(num)
-      if (!order) continue
-      try {
-        const shipment = await createShipmentForOrder(order, { print: true })
-        shipmentIds.push(shipment.id)
-        created.push(num)
-        stillMissing.splice(stillMissing.indexOf(num), 1)
-      } catch {
-        // laat in missing staan
+    const { isOrderDashboardTestMode } = await import('@/lib/order-dashboard/test-mode')
+    if (!isOrderDashboardTestMode()) {
+      const byNumber = new Map(options.orders.map((o) => [String(o.number), o]))
+      for (const num of [...stillMissing]) {
+        const order = byNumber.get(num)
+        if (!order) continue
+        try {
+          const shipment = await createShipmentForOrder(order, { print: true })
+          shipmentIds.push(shipment.id)
+          created.push(num)
+          stillMissing.splice(stillMissing.indexOf(num), 1)
+        } catch {
+          // laat in missing staan
+        }
       }
     }
   }

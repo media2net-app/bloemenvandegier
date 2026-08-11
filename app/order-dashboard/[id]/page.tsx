@@ -10,6 +10,7 @@ import {
   Receipt,
   MessageSquare,
   RefreshCw,
+  Tag,
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -109,7 +110,7 @@ export default function OrderDetailPage() {
           <a href={`/order-dashboard/${order.id}/print/pakbon`} target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm">
               <Printer className="mr-2 h-4 w-4" />
-              Pakbon
+              Pakbon A4
             </Button>
           </a>
           <a href={`/order-dashboard/${order.id}/print/factuur`} target="_blank" rel="noreferrer">
@@ -121,7 +122,13 @@ export default function OrderDetailPage() {
           <a href={`/order-dashboard/${order.id}/print/kaartje`} target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm">
               <MessageSquare className="mr-2 h-4 w-4" />
-              Kaartje
+              Kaartje A6
+            </Button>
+          </a>
+          <a href={`/order-dashboard/${order.id}/print/label`} target="_blank" rel="noreferrer">
+            <Button variant="outline" size="sm">
+              <Tag className="mr-2 h-4 w-4" />
+              Label 62×100
             </Button>
           </a>
         </div>

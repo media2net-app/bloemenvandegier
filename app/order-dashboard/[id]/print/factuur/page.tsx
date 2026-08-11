@@ -22,7 +22,8 @@ export default function PrintFactuurPage() {
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          @page { margin: 12mm; }
+          @page { size: A4; margin: 12mm; }
+          .print-sheet { page-break-after: always; }
         }
       `}</style>
       <PrintToolbar title={`Factuur #${order.number}`} />

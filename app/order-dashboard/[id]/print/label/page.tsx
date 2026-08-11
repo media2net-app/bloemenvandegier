@@ -7,9 +7,9 @@ import {
   PrintToolbar,
   usePrintOrder,
 } from '@/components/order-dashboard/print-helpers'
-import { PakbonDocument } from '@/components/order-dashboard/PrintDocuments'
+import { LabelDocument } from '@/components/order-dashboard/PrintDocuments'
 
-export default function PrintPakbonPage() {
+export default function PrintLabelPage() {
   const params = useParams()
   const id = String(params?.id || '')
   const { order, loading, error } = usePrintOrder(id)
@@ -23,12 +23,12 @@ export default function PrintPakbonPage() {
         @media print {
           .no-print { display: none !important; }
           body { margin: 0; }
-          @page { size: A4; margin: 12mm; }
-          .print-sheet { page-break-after: always; }
+          @page { size: 62mm 100mm; margin: 0; }
+          .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
         }
       `}</style>
-      <PrintToolbar title={`Pakbon #${order.number} · A4`} />
-      <PakbonDocument order={order} />
+      <PrintToolbar title={`Label #${order.number} · 62×100 mm`} />
+      <LabelDocument order={order} />
     </div>
   )
 }

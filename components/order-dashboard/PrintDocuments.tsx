@@ -213,6 +213,7 @@ export function FactuurDocument({ order }: { order: WcOrder }) {
   )
 }
 
+/** A6 liggend (148 × 105 mm) — dubbelgevouwen kaartje, zelfde formaat als Order Printer. */
 export function KaartjeDocuments({ order }: { order: WcOrder }) {
   const cards = getKaartjeTexts(order)
   if (!cards.length) return null
@@ -221,7 +222,7 @@ export function KaartjeDocuments({ order }: { order: WcOrder }) {
       {cards.map((card, index) => (
         <div
           key={`${order.id}-${index}`}
-          className="print-sheet card-sheet mx-auto my-6 flex min-h-[148mm] w-[105mm] flex-col items-center justify-center border border-gray-200 p-8"
+          className="print-sheet card-sheet mx-auto my-6 flex h-[105mm] w-[148mm] flex-col items-center justify-center border border-gray-200 p-8"
           style={{ fontFamily: 'Georgia, serif' }}
         >
           <p className="whitespace-pre-wrap text-center text-lg leading-relaxed text-gray-800">
@@ -230,5 +231,42 @@ export function KaartjeDocuments({ order }: { order: WcOrder }) {
         </div>
       ))}
     </>
+  )
+}
+
+/** Verzendlabel 62 × 100 mm voor de labprinter. */
+export function LabelDocument({ order }: { order: WcOrder }) {
+  const delivery = getDeliveryInfo(order)
+  const shipMethod = order.shipping_lines?.[0]?.method_title || ''
+  return (
+    <article
+      className="print-sheet label-sheet mx-auto my-4 box-border flex h-[100mm] w-[62mm] flex-col justify-between overflow-hidden border border-gray-300 p-2"
+      style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}
+    >
+      <div>
+        <p className="text-[9px] font-bold uppercase tracking-wide text-gray-500">
+          Bloemen van De Gier
+        </p>
+        <p className="mt-0.5 text-base font-bold leading-tight">#{order.number}</p>
+        {delivery.date && (
+          <p className="mt-1 text-[11px] font-semibold text-gray-800">
+            Bezorg: {delivery.date}
+            {delivery.time ? ` · ${delivery.time}` : ''}
+          </p>
+        )}
+        {shipMethod && <p className="mt-0.5 text-[10px] text-gray-600">{shipMethod}</p>}
+      </div>
+      <pre className="whitespace-pre-wrap font-sans text-[11px] leading-snug text-gray-900">
+        {formatAddress(order.shipping) || '—'}
+      </pre>
+      {order.shipping?.phone && (
+        <p className="text-[10px] text-gray-700">Tel: {order.shipping.phone}</p>
+      )}
+      {order.customer_note && (
+        <p className="line-clamp-3 text-[9px] text-amber-800">
+          {order.customer_note}
+        </p>
+      )}
+    </article>
   )
 }
