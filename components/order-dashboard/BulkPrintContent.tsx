@@ -112,33 +112,25 @@ export default function BulkPrintContent() {
 
     ;(async () => {
       try {
-        // 0) Job uit opener-tab (meest betrouwbaar bij window.open)
-        if (jobId) {
-          const job = readPrintJob(jobId)
-          if (job?.orders?.length) {
-            for (const order of job.orders) byId.set(order.id, order)
-          }
-        }
+        // Altijd verse volledige orders ophalen voor print (cache is gestript → mist PEWC/kaartje)
+        const missing = [...ids]
+        let cursor = 0
 
-        // 1) Cache / job hits eerst (instant)
-        const missing: number[] = []
+        // Toon cache alleen als snelle preview terwijl we laden
         for (const id of ids) {
-          const hit = byId.get(id) || getCachedOrderById(id)
+          const hit = getCachedOrderById(id)
           if (hit) {
             byId.set(id, hit)
             updateEntry(id, {
               label: `#${hit.number || id}`,
-              status: 'cache',
-              detail: 'uit cache',
+              status: 'laden',
+              detail: 'verversen…',
             })
-            bumpDone()
           } else {
-            missing.push(id)
+            updateEntry(id, { status: 'laden', detail: 'ophalen…' })
           }
         }
 
-        // 2) Ontbrekende orders parallel (max CONCURRENCY), met voortgang
-        let cursor = 0
         async function worker() {
           while (cursor < missing.length) {
             if (controller.signal.aborted || runId !== runIdRef.current) return
@@ -156,21 +148,33 @@ export default function BulkPrintContent() {
               })
             } catch (e) {
               if ((e as Error)?.name === 'AbortError') return
-              updateEntry(id, {
-                status: 'fout',
-                detail: e instanceof Error ? e.message : 'mislukt',
-              })
+              // Fallback: job/cache als API faalt
+              const fallback =
+                byId.get(id) ||
+                getCachedOrderById(id) ||
+                (jobId ? readPrintJob(jobId)?.orders?.find((o) => o.id === id) : undefined)
+              if (fallback) {
+                byId.set(id, fallback)
+                updateEntry(id, {
+                  label: `#${fallback.number || id}`,
+                  status: 'cache',
+                  detail: 'cache (API faalde)',
+                })
+              } else {
+                updateEntry(id, {
+                  status: 'fout',
+                  detail: e instanceof Error ? e.message : 'mislukt',
+                })
+              }
             } finally {
               bumpDone()
             }
           }
         }
 
-        if (missing.length) {
-          await Promise.all(
-            Array.from({ length: Math.min(CONCURRENCY, missing.length) }, () => worker())
-          )
-        }
+        await Promise.all(
+          Array.from({ length: Math.min(CONCURRENCY, missing.length) }, () => worker())
+        )
 
         if (controller.signal.aborted || runId !== runIdRef.current) return
 

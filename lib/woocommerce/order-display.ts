@@ -311,36 +311,70 @@ const HIDDEN_META_KEYS = new Set([
   '_reduced_stock',
 ])
 
+const HIDDEN_META_PREFIXES = ['_pewc_', '_wcpdf', '_reduced', '_woosea', '_ywgc']
+
 /**
  * Leesbare product-extras (PEWC e.d.) voor orderdetail / pakbon.
  * Parst `product_extras.groups` i.p.v. `[object Object]`.
+ * PEWC zet zichtbare velden vaak als `_Label` + display_key.
  */
 export function getLineItemExtras(item: WcLineItem): LineItemExtra[] {
   const extras: LineItemExtra[] = []
   const seen = new Set<string>()
+  const seenLabels = new Set<string>()
 
   const push = (label: string, value: string) => {
     const key = `${label.toLowerCase()}|${value.toLowerCase()}`
     if (!label || !value || seen.has(key)) return
     seen.add(key)
+    seenLabels.add(label.toLowerCase())
     extras.push({ label, value })
   }
 
-  for (const m of item.meta_data || []) {
+  const meta = item.meta_data || []
+  for (const m of meta) {
     const key = String(m.key || '')
-    if (!key) continue
     if (key === 'product_extras' || key === '_product_extras') {
       for (const extra of extractPewcExtras(m.value)) {
         push(extra.label, extra.value)
       }
-      continue
     }
-    if (key.startsWith('_')) continue
+  }
+
+  for (const m of meta) {
+    const key = String(m.key || '')
+    if (!key) continue
+    if (key === 'product_extras' || key === '_product_extras') continue
     if (HIDDEN_META_KEYS.has(key)) continue
+    if (HIDDEN_META_PREFIXES.some((p) => key.toLowerCase().startsWith(p))) continue
+
+    const isPewcVisible =
+      key.startsWith('_') &&
+      Boolean(m.display_key || /^_[A-ZÀ-ÿ]/.test(key) || key.toLowerCase().includes('kaartje'))
+
+    if (key.startsWith('_') && !isPewcVisible) continue
     if (typeof m.value === 'object' && m.value !== null) continue
-    const value = formatMetaDisplayValue(m.value)
-    if (value) push(key, value)
+
+    const label = cleanKaartjeText(
+      String(m.display_key || key.replace(/^_/, '') || key)
+    ).trim()
+    // Al uit product_extras → skip dubbele underscore-meta
+    if (seenLabels.has(label.toLowerCase())) continue
+
+    const value = formatMetaDisplayValue(
+      typeof m.display_value === 'string' && m.display_value
+        ? m.display_value
+        : m.value
+    )
+    if (value) push(label, value)
   }
 
   return extras
+}
+
+/** Extra's die geen kaartjetekst zijn — voor “globale toevoegingen” op de pakbon. */
+export function getLineItemAdditions(item: WcLineItem): LineItemExtra[] {
+  return getLineItemExtras(item).filter(
+    (e) => !/kaartje/i.test(e.label) && !/kaartje/i.test(e.value)
+  )
 }

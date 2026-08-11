@@ -469,11 +469,11 @@ function OrderDashboardPageContent() {
   function openBulkPrint() {
     if (!selected.size) return
     if (!printKaartje && !printPakbon && !printFactuur && !printLabels) {
-      alert('Kies minstens één document: kaartje, pakbon, factuur of labels.')
+      alert('Kies minstens één document: kaartje, pakbon, factuur of verzendlabels.')
       return
     }
 
-    // Aparte PDF/tab per documenttype → 3 printers (A4 / A6 / 62×100)
+    // Aparte PDF/tab per documenttype → aparte printers
     const idList = Array.from(selected)
     const known = idList
       .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
@@ -484,13 +484,17 @@ function OrderDashboardPageContent() {
     if (printKaartje) docTypes.push('kaartje')
     if (printPakbon) docTypes.push('pakbon')
     if (printFactuur) docTypes.push('factuur')
-    if (printLabels) docTypes.push('label')
 
     for (const doc of docTypes) {
       window.open(
         `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=${encodeURIComponent(doc)}&job=${encodeURIComponent(jobId)}`,
         '_blank'
       )
+    }
+
+    // Verzendlabels = Pakketpartner PDF (bestaande labels; aanmaken blokkeert testmodus)
+    if (printLabels) {
+      void openBulkLabels(false)
     }
   }
 
@@ -904,23 +908,14 @@ function OrderDashboardPageContent() {
                   onChange={(e) => setPrintLabels(e.target.checked)}
                 />
                 <Tag className="h-4 w-4 text-primary-600" />
-                Label 62×100
+                Verzendlabels (Pakketpartner)
               </label>
               <Button variant="outline" size="sm" onClick={() => setSelected(new Set())}>
                 Deselecteren
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => void openBulkLabels(false)}
-                disabled={labelsBusy || !selected.size}
-              >
-                <Package className="mr-2 h-4 w-4" />
-                {labelsBusy ? 'PP laden…' : 'Pakketpartner PDF'}
-              </Button>
               <Button size="sm" onClick={openBulkPrint} disabled={labelsBusy}>
                 <Printer className="mr-2 h-4 w-4" />
-                Print selectie
+                {labelsBusy ? 'Labels laden…' : 'Print selectie'}
               </Button>
             </div>
           </div>

@@ -1,4 +1,10 @@
-export type WcMeta = { id?: number; key: string; value: unknown }
+export type WcMeta = {
+  id?: number
+  key: string
+  value: unknown
+  display_key?: string
+  display_value?: string
+}
 
 export type WcAddress = {
   first_name: string
@@ -255,7 +261,14 @@ export function slimOrderForList(order: WcOrder): WcOrder {
         key.includes('bezorg') ||
         key.includes('delivery') ||
         key.includes('kaartje') ||
-        key.includes('iconic')
+        key.includes('iconic') ||
+        key === 'product_extras' ||
+        key === '_product_extras' ||
+        // PEWC zichtbare velden beginnen vaak met _ + Label
+        (/^_[a-zà-ÿ]/i.test(String(m.key || '')) &&
+          !key.startsWith('_pewc_') &&
+          !key.startsWith('_wcpdf') &&
+          !key.startsWith('_reduced'))
       )
     })
 

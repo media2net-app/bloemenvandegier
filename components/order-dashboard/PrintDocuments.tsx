@@ -27,6 +27,9 @@ function formatDate(iso: string | null) {
 
 export function PakbonDocument({ order }: { order: WcOrder }) {
   const delivery = getDeliveryInfo(order)
+  const cards = getKaartjeTexts(order)
+  const feeLines = order.fee_lines || []
+
   return (
     <article className="print-sheet mx-auto max-w-3xl px-6 py-8">
       <header className="mb-8 border-b border-gray-300 pb-4">
@@ -59,40 +62,85 @@ export function PakbonDocument({ order }: { order: WcOrder }) {
         </div>
       </div>
 
-      {order.customer_note && (
-        <div className="mb-6 rounded border border-amber-300 bg-amber-50 p-3 text-sm">
-          <strong>Notitie:</strong> {order.customer_note}
+      {order.customer_note?.trim() && (
+        <div className="mb-4 rounded border-2 border-amber-400 bg-amber-50 p-3 text-sm">
+          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-amber-800">
+            Opmerking klant
+          </h2>
+          <p className="whitespace-pre-wrap text-amber-950">{order.customer_note}</p>
+        </div>
+      )}
+
+      {cards.length > 0 && (
+        <div className="mb-4 rounded border-2 border-emerald-400 bg-emerald-50 p-3 text-sm">
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-emerald-800">
+            Kaartjetekst
+          </h2>
+          <ul className="space-y-3">
+            {cards.map((card, i) => (
+              <li key={`${order.id}-card-${i}`}>
+                <p className="text-xs font-medium text-emerald-700">{card.product}</p>
+                <p className="whitespace-pre-wrap text-emerald-950">
+                  {cleanKaartjeText(card.text)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {feeLines.length > 0 && (
+        <div className="mb-4 rounded border border-gray-300 bg-gray-50 p-3 text-sm">
+          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-gray-500">
+            Globale toevoegingen
+          </h2>
+          <ul className="space-y-1">
+            {feeLines.map((f) => (
+              <li key={f.id}>
+                <strong>{f.name}</strong>
+                {f.total && Number.parseFloat(f.total) !== 0 && (
+                  <span className="text-gray-600">
+                    {' '}
+                    ({formatMoney(f.total, order.currency)})
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b-2 border-gray-900 text-left">
-            <th className="py-2 pr-2">Product</th>
+            <th className="py-2 pr-2">Product / toevoegingen</th>
             <th className="w-16 px-2 py-2">Aantal</th>
             <th className="w-28 py-2 pl-2">SKU</th>
           </tr>
         </thead>
         <tbody>
           {order.line_items.map((item) => {
-            const extras = getLineItemExtras(item)
+            const extras = getLineItemExtras(item).filter(
+              (e) => !/kaartje/i.test(e.label)
+            )
             return (
-            <tr key={item.id} className="border-b border-gray-200 align-top">
-              <td className="py-3 pr-2">
-                <strong>{item.name}</strong>
-                {extras.length > 0 && (
-                  <ul className="mt-1 text-xs text-gray-600">
-                    {extras.map((extra) => (
-                      <li key={`${item.id}-${extra.label}`}>
-                        <span className="font-medium">{extra.label}:</span> {extra.value}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </td>
-              <td className="px-2 py-3">{item.quantity}</td>
-              <td className="py-3 pl-2">{item.sku || '—'}</td>
-            </tr>
+              <tr key={item.id} className="border-b border-gray-200 align-top">
+                <td className="py-3 pr-2">
+                  <strong>{item.name}</strong>
+                  {extras.length > 0 && (
+                    <ul className="mt-1 space-y-0.5 text-xs text-gray-700">
+                      {extras.map((extra) => (
+                        <li key={`${item.id}-${extra.label}`}>
+                          <span className="font-semibold text-gray-900">{extra.label}:</span>{' '}
+                          {extra.value}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </td>
+                <td className="px-2 py-3">{item.quantity}</td>
+                <td className="py-3 pl-2">{item.sku || '—'}</td>
+              </tr>
             )
           })}
         </tbody>
