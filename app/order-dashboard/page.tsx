@@ -1,7 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, Suspense } from 'react'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Search,
   RefreshCw,
@@ -38,6 +39,12 @@ import {
   stashPrintJob,
   type OrderListResult,
 } from '@/lib/woocommerce/order-list-cache'
+import {
+  filtersToSearchParams,
+  persistFiltersToSession,
+  resolveInitialFilters,
+  type OrderDashboardFilters,
+} from '@/lib/order-dashboard/filters'
 import { cn } from '@/lib/utils/cn'
 
 const PER_PAGE = 500
@@ -152,16 +159,41 @@ function formatDate(iso: string) {
 }
 
 export default function OrderDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center gap-2 py-24 text-gray-500">
+          <RefreshCw className="h-4 w-4 animate-spin" />
+          Laden…
+        </div>
+      }
+    >
+      <OrderDashboardPageContent />
+    </Suspense>
+  )
+}
+
+function OrderDashboardPageContent() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const initial = useMemo(
+    () => resolveInitialFilters(new URLSearchParams(searchParams.toString())),
+    // Alleen bij eerste mount — daarna houden we state zelf bij
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
   const [orders, setOrders] = useState<WcOrder[]>([])
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(initial.page)
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
-  const [status, setStatus] = useState('processing')
-  const [shippingSlot, setShippingSlot] = useState('any')
-  const [deliveryDate, setDeliveryDate] = useState('')
-  const [sort, setSort] = useState<'pakketpartner' | 'newest'>('newest')
-  const [search, setSearch] = useState('')
-  const [searchInput, setSearchInput] = useState('')
+  const [status, setStatus] = useState(initial.status)
+  const [shippingSlot, setShippingSlot] = useState(initial.shippingSlot)
+  const [deliveryDate, setDeliveryDate] = useState(initial.deliveryDate)
+  const [sort, setSort] = useState<'pakketpartner' | 'newest'>(initial.sort)
+  const [search, setSearch] = useState(initial.search)
+  const [searchInput, setSearchInput] = useState(initial.search)
   const [loading, setLoading] = useState(true)
   const [fromCache, setFromCache] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -171,13 +203,44 @@ export default function OrderDashboardPage() {
   const [printFactuur, setPrintFactuur] = useState(false)
   const [printLabels, setPrintLabels] = useState(false)
   const [labelsBusy, setLabelsBusy] = useState(false)
+  const skipNextUrlWrite = useRef(true)
+  const fetchGen = useRef(0)
+
+  const currentFilters: OrderDashboardFilters = useMemo(
+    () => ({ page, status, shippingSlot, deliveryDate, sort, search }),
+    [page, status, shippingSlot, deliveryDate, sort, search]
+  )
+
+  // Bewaar filters in URL + sessionStorage (overleeft print-tabs / terug / remount)
+  useEffect(() => {
+    persistFiltersToSession(currentFilters)
+    if (skipNextUrlWrite.current) {
+      skipNextUrlWrite.current = false
+      const desired = filtersToSearchParams(currentFilters).toString()
+      const current = searchParams.toString()
+      if (desired && desired !== current) {
+        router.replace(`${pathname}?${desired}`, { scroll: false })
+      }
+      return
+    }
+    const qs = filtersToSearchParams(currentFilters).toString()
+    const next = qs ? `${pathname}?${qs}` : pathname
+    const current = searchParams.toString()
+    if (qs !== current) {
+      router.replace(next, { scroll: false })
+    }
+  }, [currentFilters, pathname, router, searchParams])
+
+  // Selectie wissen alleen bij filter/zoek/pagina-wissel — niet bij elke herlaad
+  useEffect(() => {
+    setSelected(new Set())
+  }, [page, status, search, shippingSlot, deliveryDate, sort])
 
   const applyResult = useCallback((result: OrderListResult, cached: boolean) => {
     setOrders(result.orders)
     setTotal(result.total)
     setTotalPages(result.totalPages)
     setFromCache(cached)
-    setSelected(new Set())
   }, [])
 
   const fetchList = useCallback(
@@ -350,13 +413,18 @@ export default function OrderDashboardPage() {
     }
   }, [searchInput, search, status, deliveryDate, shippingSlot])
 
-  // Officiële load bij page/filters/search
+  // Officiële load bij page/filters/search — geen auto-refresh op de achtergrond
   useEffect(() => {
     const controller = new AbortController()
-    fetchList(
-      { page, status, search, shippingSlot, deliveryDate, sort },
-      controller.signal
-    )
+    const gen = ++fetchGen.current
+    ;(async () => {
+      await fetchList(
+        { page, status, search, shippingSlot, deliveryDate, sort },
+        controller.signal
+      )
+      // Negeer verouderde responses als er al een nieuwere fetch loopt
+      if (gen !== fetchGen.current) return
+    })()
     return () => controller.abort()
   }, [page, status, search, shippingSlot, deliveryDate, sort, fetchList])
 
@@ -590,8 +658,8 @@ export default function OrderDashboardPage() {
           </div>
         </div>
         <p className="mt-2 text-xs text-gray-500">
-          Bezorgdatum = Iconic leverdatum (niet besteldatum). Met bezorgdatum/verzending: filter over
-          max. 500 orders, gesorteerd als in Pakketpartner (ordernummer ↑).
+          Bezorgdatum = Iconic leverdatum (niet besteldatum). Filters blijven bewaard als je
+          pakbonnen/kaartjes opent of even wegklikt. Alleen handmatig Vernieuwen haalt nieuwe data.
         </p>
       </Card>
 

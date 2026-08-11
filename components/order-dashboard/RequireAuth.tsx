@@ -7,21 +7,34 @@ import { useAuthStore } from '@/lib/auth/store'
 export default function RequireAuth({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  const [ready, setReady] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    setReady(true)
+    const finish = () => setHydrated(true)
+    if (useAuthStore.persist.hasHydrated()) {
+      finish()
+      return
+    }
+    return useAuthStore.persist.onFinishHydration(finish)
   }, [])
 
   useEffect(() => {
-    if (!ready) return
+    if (!hydrated) return
     if (!isAuthenticated) router.replace('/login')
-  }, [ready, isAuthenticated, router])
+  }, [hydrated, isAuthenticated, router])
 
-  if (!ready || !isAuthenticated) {
+  if (!hydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-gray-500">{!ready ? 'Laden…' : 'Doorsturen naar login…'}</p>
+        <p className="text-gray-500">Laden…</p>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <p className="text-gray-500">Doorsturen naar login…</p>
       </div>
     )
   }
