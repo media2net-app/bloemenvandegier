@@ -296,11 +296,36 @@ export default function BulkPrintContent() {
         : `@page { size: A4; margin: 12mm; }`
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-black">
       <style>{`
         @media print {
+          html, body {
+            background: #fff !important;
+            color: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
           .no-print { display: none !important; }
-          .print-sheet { page-break-after: always; }
+          .print-sheet {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            color: #000 !important;
+            page-break-after: always;
+            break-after: page;
+            page-break-inside: avoid;
+          }
+          .print-sheet:last-child {
+            page-break-after: auto;
+            break-after: auto;
+          }
+          .print-sheet, .print-sheet * {
+            color: #000 !important;
+            visibility: visible !important;
+          }
           .card-sheet {
             page-break-after: always;
             border: none !important;
@@ -316,6 +341,11 @@ export default function BulkPrintContent() {
         title={`Bulk print · ${orders.length} orders · ${docLabels.join(', ') || 'geen documenten'}${
           errorCount ? ` · ${errorCount} overgeslagen` : ''
         }`}
+        hint={
+          docs.pakbon || docs.factuur
+            ? 'Tip (Safari/macOS): kies “Alle pagina’s”, niet “Selectie” — anders zie je lege pagina’s. 1 order = 1 pagina.'
+            : undefined
+        }
       />
 
       {!docs.kaartje && !docs.pakbon && !docs.factuur && !docs.label && (
@@ -324,10 +354,16 @@ export default function BulkPrintContent() {
         </div>
       )}
 
-      {orders.map((order) => (
+      {orders.map((order, index) => (
         <div key={order.id}>
           {docs.kaartje && orderHasKaartje(order) && <KaartjeDocuments order={order} />}
-          {docs.pakbon && <PakbonDocument order={order} />}
+          {docs.pakbon && (
+            <PakbonDocument
+              order={order}
+              pageIndex={index + 1}
+              pageTotal={orders.length}
+            />
+          )}
           {docs.factuur && <FactuurDocument order={order} />}
           {docs.label && <LabelDocument order={order} />}
         </div>

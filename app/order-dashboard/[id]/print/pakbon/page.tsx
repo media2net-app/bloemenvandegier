@@ -22,13 +22,17 @@ export default function PrintPakbonPage() {
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { margin: 0; }
+          html, body { background: #fff !important; color: #000 !important; }
+          .print-sheet, .print-sheet * { color: #000 !important; visibility: visible !important; }
           @page { size: A4; margin: 12mm; }
-          .print-sheet { page-break-after: always; }
+          .print-sheet { page-break-after: always; break-after: page; }
         }
       `}</style>
-      <PrintToolbar title={`Pakbon #${order.number} · A4`} />
-      <PakbonDocument order={order} />
+      <PrintToolbar
+        title={`Pakbon #${order.number} · A4`}
+        hint="Tip (Safari/macOS): kies “Alle pagina’s”, niet “Selectie”."
+      />
+      <PakbonDocument order={order} pageIndex={1} pageTotal={1} />
     </div>
   )
 }

@@ -65,18 +65,27 @@ export function usePrintOrder(id: string) {
   return { order, loading, error }
 }
 
-export function PrintToolbar({ title }: { title: string }) {
+export function PrintToolbar({
+  title,
+  hint,
+}: {
+  title: string
+  hint?: string
+}) {
   return (
-    <div className="no-print sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
-      <p className="text-sm font-medium text-gray-700">{title}</p>
-      <button
-        type="button"
-        onClick={() => window.print()}
-        className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
-      >
-        <Printer className="h-4 w-4" />
-        Printen
-      </button>
+    <div className="no-print sticky top-0 z-10 border-b border-gray-200 bg-white px-4 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-gray-700">{title}</p>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+        >
+          <Printer className="h-4 w-4" />
+          Printen
+        </button>
+      </div>
+      {hint && <p className="mt-2 text-xs text-amber-800">{hint}</p>}
     </div>
   )
 }

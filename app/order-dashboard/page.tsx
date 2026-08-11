@@ -45,6 +45,7 @@ import {
   resolveInitialFilters,
   type OrderDashboardFilters,
 } from '@/lib/order-dashboard/filters'
+import { isOrderDashboardTestMode } from '@/lib/order-dashboard/test-mode'
 import { cn } from '@/lib/utils/cn'
 
 const PER_PAGE = 500
@@ -510,8 +511,30 @@ function OrderDashboardPageContent() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
+        const testMode = isOrderDashboardTestMode() || data.testMode === true
+
+        // Testmodus: geen nieuwe PP-shipments → adreslabels printen zodat testen mogelijk is
+        if (testMode) {
+          const useAddress = confirm(
+            `${data.error || 'Geen Pakketpartner-labels gevonden.'}\n\n` +
+              `Testmodus staat aan: er worden geen labels aangemaakt in Pakketpartner.\n\n` +
+              `Wil je wél de adreslabels (62×100 mm) openen om te testen?`
+          )
+          if (useAddress) {
+            const known = idList
+              .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
+              .filter(Boolean) as WcOrder[]
+            const jobId = stashPrintJob(idList, known)
+            window.open(
+              `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=label&job=${encodeURIComponent(jobId)}`,
+              '_blank'
+            )
+          }
+          return
+        }
+
         const missingHint = !createMissing
-          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner?\n(Let op: testmodus blokkeert aanmaken.)'
+          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner?'
           : ''
         const msg = (data.error || 'Labels laden mislukt') + missingHint
         if (!createMissing && confirm(msg)) {
@@ -524,7 +547,6 @@ function OrderDashboardPageContent() {
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       window.open(url, '_blank')
-      // revoke later
       window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
     } catch (e) {
       alert(e instanceof Error ? e.message : 'Labels laden mislukt')

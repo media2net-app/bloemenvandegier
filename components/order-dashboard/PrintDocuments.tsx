@@ -25,64 +25,79 @@ function formatDate(iso: string | null) {
   }
 }
 
-export function PakbonDocument({ order }: { order: WcOrder }) {
+export function PakbonDocument({
+  order,
+  pageIndex,
+  pageTotal,
+}: {
+  order: WcOrder
+  pageIndex?: number
+  pageTotal?: number
+}) {
   const delivery = getDeliveryInfo(order)
   const cards = getKaartjeTexts(order)
   const feeLines = order.fee_lines || []
+  const pageLabel =
+    pageIndex != null && pageTotal != null
+      ? ` · pagina ${pageIndex}/${pageTotal}`
+      : ''
 
   return (
-    <article className="print-sheet mx-auto max-w-3xl px-6 py-8">
-      <header className="mb-8 border-b border-gray-300 pb-4">
-        <h1 className="text-2xl font-bold">Bloemen van De Gier</h1>
-        <p className="text-sm text-gray-600">Pakbon — bestelling #{order.number}</p>
-        <p className="text-sm text-gray-600">Datum: {formatDate(order.date_created)}</p>
+    <article
+      className="print-sheet mx-auto max-w-3xl bg-white px-6 py-8 text-black"
+      style={{ color: '#111', breakAfter: 'page', pageBreakAfter: 'always' }}
+    >
+      <header className="mb-6 border-b border-black pb-3">
+        <h1 className="text-2xl font-bold text-black">Bloemen van De Gier</h1>
+        <p className="text-sm text-black">
+          Pakbon — bestelling #{order.number}
+          {pageLabel}
+        </p>
+        <p className="text-sm text-black">Datum: {formatDate(order.date_created)}</p>
       </header>
 
-      <div className="mb-6 grid gap-6 sm:grid-cols-2">
-        <div>
-          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-gray-500">
-            Bezorgadres
-          </h2>
-          <pre className="whitespace-pre-wrap font-sans text-sm">
-            {formatAddress(order.shipping) || '—'}
-          </pre>
-          {order.shipping?.phone && (
-            <p className="mt-1 text-sm">Tel: {order.shipping.phone}</p>
-          )}
-        </div>
-        <div>
-          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-gray-500">
-            Bezorginfo
-          </h2>
-          <p className="text-sm">Datum: {delivery.date || '—'}</p>
-          <p className="text-sm">Tijd: {delivery.time || '—'}</p>
-          {order.shipping_lines?.[0] && (
-            <p className="text-sm">Methode: {order.shipping_lines[0].method_title}</p>
-          )}
-        </div>
-      </div>
+      {/* Geen CSS-grid: Safari print laat grids soms leeg */}
+      <table className="mb-6 w-full border-collapse text-sm text-black">
+        <tbody>
+          <tr>
+            <td className="w-1/2 align-top pr-4">
+              <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">Bezorgadres</h2>
+              <pre className="whitespace-pre-wrap font-sans text-sm text-black">
+                {formatAddress(order.shipping) || '—'}
+              </pre>
+              {order.shipping?.phone && (
+                <p className="mt-1 text-sm text-black">Tel: {order.shipping.phone}</p>
+              )}
+            </td>
+            <td className="w-1/2 align-top pl-4">
+              <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">Bezorginfo</h2>
+              <p className="text-sm text-black">Datum: {delivery.date || '—'}</p>
+              <p className="text-sm text-black">Tijd: {delivery.time || '—'}</p>
+              {order.shipping_lines?.[0] && (
+                <p className="text-sm text-black">
+                  Methode: {order.shipping_lines[0].method_title}
+                </p>
+              )}
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       {order.customer_note?.trim() && (
-        <div className="mb-4 rounded border-2 border-amber-400 bg-amber-50 p-3 text-sm">
-          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-amber-800">
-            Opmerking klant
-          </h2>
-          <p className="whitespace-pre-wrap text-amber-950">{order.customer_note}</p>
+        <div className="mb-4 border-2 border-black p-3 text-sm text-black">
+          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">Opmerking klant</h2>
+          <p className="whitespace-pre-wrap">{order.customer_note}</p>
         </div>
       )}
 
       {cards.length > 0 && (
-        <div className="mb-4 rounded border-2 border-emerald-400 bg-emerald-50 p-3 text-sm">
-          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-emerald-800">
-            Kaartjetekst
-          </h2>
+        <div className="mb-4 border-2 border-black p-3 text-sm text-black">
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide">Kaartjetekst</h2>
           <ul className="space-y-3">
             {cards.map((card, i) => (
               <li key={`${order.id}-card-${i}`}>
-                <p className="text-xs font-medium text-emerald-700">{card.product}</p>
-                <p className="whitespace-pre-wrap text-emerald-950">
-                  {cleanKaartjeText(card.text)}
-                </p>
+                <p className="text-xs font-medium">{card.product}</p>
+                <p className="whitespace-pre-wrap">{cleanKaartjeText(card.text)}</p>
               </li>
             ))}
           </ul>
@@ -90,8 +105,8 @@ export function PakbonDocument({ order }: { order: WcOrder }) {
       )}
 
       {feeLines.length > 0 && (
-        <div className="mb-4 rounded border border-gray-300 bg-gray-50 p-3 text-sm">
-          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide text-gray-500">
+        <div className="mb-4 border border-black p-3 text-sm text-black">
+          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">
             Globale toevoegingen
           </h2>
           <ul className="space-y-1">
@@ -99,10 +114,7 @@ export function PakbonDocument({ order }: { order: WcOrder }) {
               <li key={f.id}>
                 <strong>{f.name}</strong>
                 {f.total && Number.parseFloat(f.total) !== 0 && (
-                  <span className="text-gray-600">
-                    {' '}
-                    ({formatMoney(f.total, order.currency)})
-                  </span>
+                  <span> ({formatMoney(f.total, order.currency)})</span>
                 )}
               </li>
             ))}
@@ -110,9 +122,9 @@ export function PakbonDocument({ order }: { order: WcOrder }) {
         </div>
       )}
 
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse text-sm text-black">
         <thead>
-          <tr className="border-b-2 border-gray-900 text-left">
+          <tr className="border-b-2 border-black text-left">
             <th className="py-2 pr-2">Product / toevoegingen</th>
             <th className="w-16 px-2 py-2">Aantal</th>
             <th className="w-28 py-2 pl-2">SKU</th>
@@ -124,15 +136,14 @@ export function PakbonDocument({ order }: { order: WcOrder }) {
               (e) => !/kaartje/i.test(e.label)
             )
             return (
-              <tr key={item.id} className="border-b border-gray-200 align-top">
+              <tr key={item.id} className="border-b border-gray-400 align-top">
                 <td className="py-3 pr-2">
                   <strong>{item.name}</strong>
                   {extras.length > 0 && (
-                    <ul className="mt-1 space-y-0.5 text-xs text-gray-700">
+                    <ul className="mt-1 space-y-0.5 text-xs">
                       {extras.map((extra) => (
                         <li key={`${item.id}-${extra.label}`}>
-                          <span className="font-semibold text-gray-900">{extra.label}:</span>{' '}
-                          {extra.value}
+                          <span className="font-semibold">{extra.label}:</span> {extra.value}
                         </li>
                       ))}
                     </ul>
