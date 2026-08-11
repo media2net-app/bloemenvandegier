@@ -26,10 +26,16 @@ export default function PrintKaartjePage() {
         @media print {
           .no-print { display: none !important; }
           @page { size: 148mm 105mm; margin: 0; }
-          .card-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
+          .card-sheet {
+            page-break-after: always;
+            border: none !important;
+            margin: 0 !important;
+            width: 148mm !important;
+            height: 105mm !important;
+          }
         }
       `}</style>
-      <PrintToolbar title={`Kaartje #${order.number} · A6 dubbelgevouwen`} />
+      <PrintToolbar title={`Kaartje #${order.number} · A6 dubbelgevouwen (tekst rechts)`} />
 
       {cards.length === 0 ? (
         <div className="mx-auto max-w-md px-6 py-16 text-center">

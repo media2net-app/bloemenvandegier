@@ -297,7 +297,13 @@ export default function BulkPrintContent() {
         @media print {
           .no-print { display: none !important; }
           .print-sheet { page-break-after: always; }
-          .card-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
+          .card-sheet {
+            page-break-after: always;
+            border: none !important;
+            margin: 0 !important;
+            width: 148mm !important;
+            height: 105mm !important;
+          }
           .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
           ${pageCss}
         }

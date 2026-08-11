@@ -213,7 +213,7 @@ export function FactuurDocument({ order }: { order: WcOrder }) {
   )
 }
 
-/** A6 liggend (148 × 105 mm) — dubbelgevouwen kaartje, zelfde formaat als Order Printer. */
+/** A6 liggend (148 × 105 mm) — dubbelgevouwen: tekst rechts van de vouw. */
 export function KaartjeDocuments({ order }: { order: WcOrder }) {
   const cards = getKaartjeTexts(order)
   if (!cards.length) return null
@@ -222,12 +222,20 @@ export function KaartjeDocuments({ order }: { order: WcOrder }) {
       {cards.map((card, index) => (
         <div
           key={`${order.id}-${index}`}
-          className="print-sheet card-sheet mx-auto my-6 flex h-[105mm] w-[148mm] flex-col items-center justify-center border border-gray-200 p-8"
+          className="print-sheet card-sheet relative mx-auto my-6 box-border flex h-[105mm] w-[148mm] overflow-hidden border border-gray-200 bg-white"
           style={{ fontFamily: 'Georgia, serif' }}
         >
-          <p className="whitespace-pre-wrap text-center text-lg leading-relaxed text-gray-800">
-            {cleanKaartjeText(card.text)}
-          </p>
+          {/* Vouwhulp alleen op scherm */}
+          <div
+            className="no-print pointer-events-none absolute inset-y-0 left-1/2 z-10 w-px -translate-x-1/2 bg-emerald-500/70"
+            aria-hidden
+          />
+          <div className="box-border h-full w-1/2 shrink-0" aria-hidden />
+          <div className="box-border flex h-full w-1/2 flex-col items-center justify-center px-5 py-6">
+            <p className="whitespace-pre-wrap text-center text-[15px] leading-relaxed text-gray-800">
+              {cleanKaartjeText(card.text)}
+            </p>
+          </div>
         </div>
       ))}
     </>
