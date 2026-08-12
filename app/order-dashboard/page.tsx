@@ -45,7 +45,6 @@ import {
   resolveInitialFilters,
   type OrderDashboardFilters,
 } from '@/lib/order-dashboard/filters'
-import { isOrderDashboardTestMode } from '@/lib/order-dashboard/test-mode'
 import { cn } from '@/lib/utils/cn'
 
 const PER_PAGE = 500
@@ -211,8 +210,7 @@ function OrderDashboardPageContent() {
   const [printKaartje, setPrintKaartje] = useState(true)
   const [printPakbon, setPrintPakbon] = useState(true)
   const [printFactuur, setPrintFactuur] = useState(false)
-  const [printAdreslabel, setPrintAdreslabel] = useState(true)
-  const [printLabels, setPrintLabels] = useState(false)
+  const [printLabels, setPrintLabels] = useState(true)
   const [labelsBusy, setLabelsBusy] = useState(false)
   const [carrierService, setCarrierService] = useState('')
   const [carrierOptions, setCarrierOptions] = useState<Array<{ id: string; label: string }>>([])
@@ -517,18 +515,12 @@ function OrderDashboardPageContent() {
 
   function openBulkPrint() {
     if (!selected.size) return
-    if (
-      !printKaartje &&
-      !printPakbon &&
-      !printFactuur &&
-      !printAdreslabel &&
-      !printLabels
-    ) {
-      alert('Kies minstens één document: kaartje, pakbon, adreslabel of verzendlabels.')
+    if (!printKaartje && !printPakbon && !printFactuur && !printLabels) {
+      alert('Kies minstens één document: kaartje, pakbon, labels of factuur.')
       return
     }
 
-    // Aparte PDF/tab per documenttype → aparte printers
+    // Aparte tab per documenttype → juiste printer / PDF
     const idList = Array.from(selected)
     const known = idList
       .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
@@ -539,7 +531,6 @@ function OrderDashboardPageContent() {
     if (printKaartje) docTypes.push('kaartje')
     if (printPakbon) docTypes.push('pakbon')
     if (printFactuur) docTypes.push('factuur')
-    if (printAdreslabel) docTypes.push('label')
 
     for (const doc of docTypes) {
       window.open(
@@ -548,9 +539,8 @@ function OrderDashboardPageContent() {
       )
     }
 
-    // Optioneel: Pakketpartner verzendlabels
     if (printLabels) {
-      void openBulkLabels(false)
+      void openBulkLabels(true)
     }
   }
 
@@ -570,32 +560,8 @@ function OrderDashboardPageContent() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        const testMode = isOrderDashboardTestMode() || data.testMode === true
-
-        if (testMode) {
-          const useAddress = confirm(
-            `${data.error || 'Geen Pakketpartner-labels gevonden.'}\n\n` +
-              `Testmodus staat aan: er worden geen labels aangemaakt in Pakketpartner.\n\n` +
-              `Wil je wél de adreslabels (62×100 mm) openen om te testen?`
-          )
-          if (useAddress) {
-            const known = idList
-              .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
-              .filter(Boolean) as WcOrder[]
-            const jobId = stashPrintJob(idList, known)
-            window.open(
-              `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=label&job=${encodeURIComponent(jobId)}`,
-              '_blank'
-            )
-          }
-          return
-        }
-
-        const missingHint = !createMissing
-          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner met de gekozen vervoerder?'
-          : ''
-        const msg = (data.error || 'Labels laden mislukt') + missingHint
-        if (!createMissing && confirm(msg)) {
+        // Nog eens proberen met aanmaken als dat nog niet gebeurde
+        if (!createMissing) {
           await openBulkLabels(true)
           return
         }
@@ -982,11 +948,11 @@ function OrderDashboardPageContent() {
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-primary-600"
-                  checked={printAdreslabel}
-                  onChange={(e) => setPrintAdreslabel(e.target.checked)}
+                  checked={printLabels}
+                  onChange={(e) => setPrintLabels(e.target.checked)}
                 />
                 <Tag className="h-4 w-4 text-primary-600" />
-                Adreslabel 62×100
+                Labels
               </label>
               <label className="inline-flex items-center gap-2 text-sm text-gray-700">
                 <input
@@ -998,21 +964,11 @@ function OrderDashboardPageContent() {
                 <Receipt className="h-4 w-4 text-primary-600" />
                 Factuur
               </label>
-              <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-primary-600"
-                  checked={printLabels}
-                  onChange={(e) => setPrintLabels(e.target.checked)}
-                />
-                <Package className="h-4 w-4 text-primary-600" />
-                Verzendlabels (PP)
-              </label>
               {printLabels && (
                 <label className="inline-flex items-center gap-2 text-sm text-gray-700">
                   <span className="whitespace-nowrap text-xs text-gray-500">Vervoerder</span>
                   <select
-                    className="max-w-[220px] rounded-lg border border-gray-300 px-2 py-1.5 text-xs"
+                    className="max-w-[240px] rounded-lg border border-gray-300 px-2 py-1.5 text-xs"
                     value={carrierService}
                     onChange={(e) => setCarrierService(e.target.value)}
                   >
@@ -1027,6 +983,18 @@ function OrderDashboardPageContent() {
                   </select>
                 </label>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setPrintKaartje(true)
+                  setPrintPakbon(true)
+                  setPrintLabels(true)
+                  setPrintFactuur(false)
+                }}
+              >
+                Alles (kaartje+pakbon+labels)
+              </Button>
               <Button variant="outline" size="sm" onClick={() => setSelected(new Set())}>
                 Deselecteren
               </Button>
