@@ -46,7 +46,13 @@ export const PACKS_TIME_SLOT_SERVICES = [
   },
 ] as const
 
+export const AUTO_CARRIER_OPTION = {
+  id: '',
+  label: 'Automatisch (avond → Trunkrs, overdag → Packs)',
+} as const
+
 export const DEFAULT_CARRIER_OPTIONS: Array<{ id: string; label: string }> = [
+  AUTO_CARRIER_OPTION,
   { id: 'acsr_Lpz10eFIPukQuPEA', label: 'Trunkrs Same Day (avond)' },
   ...PACKS_TIME_SLOT_SERVICES.map((s) => ({ id: s.id, label: s.label })),
   { id: 'acsr_9MfvkbuPW1BQezYQ', label: 'Packs MailPack' },
@@ -75,10 +81,68 @@ export function pickCarrierServiceForOrder(order: WcOrder): string {
   return getCarrierServiceOverdag()
 }
 
+/** Carrier voor één order: expliciete keuze uit UI, anders automatisch per order. */
+export function resolveCarrierServiceForOrder(order: WcOrder, override?: string): string {
+  const trimmed = override?.trim()
+  if (trimmed) return trimmed
+  return pickCarrierServiceForOrder(order)
+}
+
+export function isTrunkrsCarrierServiceId(id: string): boolean {
+  return id === getCarrierServiceAvond() || /trunkrs/i.test(id)
+}
+
+export function isPacksCarrierServiceId(id: string): boolean {
+  if (isTrunkrsCarrierServiceId(id)) return false
+  return PACKS_TIME_SLOT_SERVICES.some((s) => s.id === id) || /packs|p2|mailpack/i.test(id)
+}
+
+/** Bestaand Pakketpartner-label past bij order (avond=Trunkrs, overdag=Packs). */
+export function shipmentMatchesOrderCarrier(
+  order: WcOrder,
+  shipment: { carrier_service?: string; carrier?: { key?: string; name?: string } | null },
+  overrideCarrierId?: string
+): boolean {
+  const expected = resolveCarrierServiceForOrder(order, overrideCarrierId)
+  const shipmentServiceId = (shipment.carrier_service || '').trim()
+
+  if (shipmentServiceId && shipmentServiceId === expected) return true
+
+  const carrierKey = (shipment.carrier?.key || '').toLowerCase()
+  const carrierName = (shipment.carrier?.name || '').toLowerCase()
+  const slot = getShippingSlot(order)
+
+  if (overrideCarrierId?.trim()) {
+    if (shipmentServiceId) return shipmentServiceId === overrideCarrierId.trim()
+    if (isTrunkrsCarrierServiceId(overrideCarrierId)) {
+      return /trunkrs/.test(carrierKey) || /trunkrs/.test(carrierName)
+    }
+    return /packs/.test(carrierKey) || /packs/.test(carrierName)
+  }
+
+  if (slot === 'avond') {
+    return (
+      shipmentServiceId === getCarrierServiceAvond() ||
+      /trunkrs/.test(carrierKey) ||
+      /trunkrs/.test(carrierName)
+    )
+  }
+  if (slot === 'overdag') {
+    return (
+      isPacksCarrierServiceId(shipmentServiceId) ||
+      /packs/.test(carrierKey) ||
+      /packs/.test(carrierName)
+    )
+  }
+
+  return true
+}
+
 export function carrierOptionsFromApi(services: PpCarrierService[]) {
   if (!services.length) return DEFAULT_CARRIER_OPTIONS
-  return services.map((s) => ({
+  const fromApi = services.map((s) => ({
     id: s.id,
     label: `${s.carrier_name} · ${s.carrier_service_name}`,
   }))
+  return [AUTO_CARRIER_OPTION, ...fromApi]
 }

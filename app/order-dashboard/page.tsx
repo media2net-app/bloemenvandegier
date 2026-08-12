@@ -264,14 +264,9 @@ function OrderDashboardPageContent() {
         if (cancelled) return
         const options = Array.isArray(data.options) ? data.options : []
         setCarrierOptions(options)
-        if (!carrierService && options[0]?.id) {
-          // default: Packs P2 standaard of eerste optie
-          const packs =
-            options.find((o: { id: string; label: string }) =>
-              /packs.*standaard|packs.*p2(?!.*tijd|08|13)/i.test(o.label)
-            ) ||
-            options.find((o: { id: string; label: string }) => /packs.*p2/i.test(o.label))
-          setCarrierService(packs?.id || options[0].id)
+        // Standaard: automatisch per order (avond=Trunkrs, overdag=Packs)
+        if (!carrierService) {
+          setCarrierService('')
         }
       } catch {
         // defaults in API
@@ -659,7 +654,7 @@ function OrderDashboardPageContent() {
           orderIds: idList,
           orderNumbers,
           createMissing,
-          carrierService: carrierService || undefined,
+          carrierService: carrierService.trim() ? carrierService : undefined,
         }),
       })
       if (!res.ok) {
@@ -704,7 +699,7 @@ function OrderDashboardPageContent() {
         body: JSON.stringify({
           orderIds: [order.id],
           createMissing: true,
-          carrierService: carrierService || undefined,
+          carrierService: carrierService.trim() ? carrierService : undefined,
         }),
       })
       if (!res.ok) {

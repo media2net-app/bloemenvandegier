@@ -1,6 +1,10 @@
 import type { WcOrder } from '@/lib/woocommerce/orders'
 import { getDeliveryDateYmd, ymdToIsoDate } from '@/lib/woocommerce/order-display'
-import { pickCarrierServiceForOrder } from '@/lib/pakketpartner/carriers'
+import {
+  pickCarrierServiceForOrder,
+  resolveCarrierServiceForOrder,
+  shipmentMatchesOrderCarrier,
+} from '@/lib/pakketpartner/carriers'
 import {
   getPakketpartnerSenderHash,
   ppFetchJson,
@@ -193,7 +197,7 @@ export async function createShipmentForOrder(
   const body: Record<string, unknown> = {
     order_reference: String(order.number),
     sender_hash: getPakketpartnerSenderHash(),
-    carrier_service: opts?.carrierService || pickCarrierServiceForOrder(order),
+    carrier_service: resolveCarrierServiceForOrder(order, opts?.carrierService),
     recipient: buildRecipientFromOrder(order),
     packages: [{ weight: 2000 }],
     print: opts?.print !== false,
@@ -244,16 +248,28 @@ export async function resolveLabelsPdf(options: {
   missing: string[]
 }> {
   const refs = options.orders.map((o) => String(o.number))
+  const byNumber = new Map(options.orders.map((o) => [String(o.number), o]))
   const { found, missing } = await findShipmentsByOrderNumbers(refs)
 
-  const shipmentIds = found.map((f) => f.shipment.id)
+  const shipmentIds: string[] = []
   const created: string[] = []
   const stillMissing = [...missing]
+
+  for (const { orderNumber, shipment } of found) {
+    const order = byNumber.get(orderNumber)
+    if (
+      order &&
+      !shipmentMatchesOrderCarrier(order, shipment, options.carrierService)
+    ) {
+      if (!stillMissing.includes(orderNumber)) stillMissing.push(orderNumber)
+      continue
+    }
+    shipmentIds.push(shipment.id)
+  }
 
   if (options.createMissing && stillMissing.length) {
     const { isOrderDashboardTestMode } = await import('@/lib/order-dashboard/test-mode')
     if (!isOrderDashboardTestMode()) {
-      const byNumber = new Map(options.orders.map((o) => [String(o.number), o]))
       const createResults = await Promise.all(
         stillMissing.map(async (num) => {
           const order = byNumber.get(num)
