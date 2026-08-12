@@ -15,12 +15,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Geen orders opgegeven' }, { status: 400 })
     }
 
-    const orders = []
-    for (const id of orderIds) {
-      try {
-        orders.push(await getWcOrder(id))
-      } catch {
-        // skip
+    // WooCommerce fetch is de bottleneck bij grote selecties.
+    // Met beperkte parallelheid blijven we onder controle en versnellen we bulk.
+    const concurrency = 10
+    const orders: Awaited<ReturnType<typeof getWcOrder>>[] = []
+
+    for (let i = 0; i < orderIds.length; i += concurrency) {
+      const chunk = orderIds.slice(i, i + concurrency)
+      const results = await Promise.all(
+        chunk.map(async (id) => {
+          try {
+            return await getWcOrder(id)
+          } catch {
+            return null
+          }
+        })
+      )
+      for (const r of results) {
+        if (r) orders.push(r)
       }
     }
 
