@@ -611,7 +611,9 @@ function OrderDashboardPageContent() {
       void fillKaartjesPdf(idList, kaartjeWin)
     }
     if (printLabels && labelsWin) {
-      void fillBulkLabels(idList, labelsWin, true)
+      // Eerst snelle route: alleen bestaande labels ophalen.
+      // Alleen als labels ontbreken, fallbacken we naar aanmaken.
+      void fillBulkLabels(idList, labelsWin, false)
     }
   }
 

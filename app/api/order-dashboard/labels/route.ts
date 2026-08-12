@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getWcOrder, markOrdersCompleted } from '@/lib/woocommerce/orders'
-import { resolveLabelsPdf } from '@/lib/pakketpartner/shipments'
+import { fetchLabelsPdf, findShipmentsByOrderNumbers, resolveLabelsPdf } from '@/lib/pakketpartner/shipments'
 import { PakketpartnerApiError } from '@/lib/pakketpartner/client'
 import {
   isOrderDashboardTestMode,
@@ -124,6 +124,31 @@ export async function POST(request: Request) {
         },
         { status: 403 }
       )
+    }
+
+    // Snelle route: alleen bestaande labels ophalen (geen create, geen Woo-fetch).
+    if (!createMissing && orderNumbers.length) {
+      const { found, missing } = await findShipmentsByOrderNumbers(orderNumbers)
+      if (!found.length) {
+        return NextResponse.json(
+          {
+            error: `Geen Pakketpartner-label gevonden voor ${orderNumbers.slice(0, 10).join(', ')}`,
+            missing,
+          },
+          { status: 404 }
+        )
+      }
+      const pdf = await fetchLabelsPdf(found.map((f) => f.shipment.id))
+      return new NextResponse(new Uint8Array(pdf), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `inline; filename="pakketpartner-labels.pdf"`,
+          'Cache-Control': 'no-store',
+          'X-Labels-Missing': missing.join(','),
+          'X-Shipments': found.map((f) => f.shipment.id).join(','),
+        },
+      })
     }
 
     const orders: WcOrder[] = []

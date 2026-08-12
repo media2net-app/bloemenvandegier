@@ -108,9 +108,10 @@ export async function findShipmentsByOrderNumbers(
     }
   }
 
-  // Parallel per-order lookup (meestal 1 API-call per order)
-  const lookupTargets = [...stillMissing]
-  if (lookupTargets.length) {
+  // Voor grote batches vermijden we per-order lookups (te veel API-calls / 429).
+  const usePerOrderLookup = stillMissing.size > 0 && wanted.length <= 25
+  if (usePerOrderLookup) {
+    const lookupTargets = [...stillMissing]
     const lookups = await Promise.all(
       lookupTargets.map(async (num) => {
         const shipment = await findShipmentByOrderNumber(num)
@@ -270,27 +271,32 @@ export async function resolveLabelsPdf(options: {
   if (options.createMissing && stillMissing.length) {
     const { isOrderDashboardTestMode } = await import('@/lib/order-dashboard/test-mode')
     if (!isOrderDashboardTestMode()) {
-      const createResults = await Promise.all(
-        stillMissing.map(async (num) => {
-          const order = byNumber.get(num)
-          if (!order) return { num, shipment: null as PpShipment | null }
-          try {
-            const shipment = await createShipmentForOrder(order, {
-              print: true,
-              carrierService: options.carrierService,
-            })
-            return { num, shipment }
-          } catch {
-            return { num, shipment: null }
-          }
-        })
-      )
-      for (const { num, shipment } of createResults) {
-        if (!shipment) continue
-        shipmentIds.push(shipment.id)
-        created.push(num)
-        const idx = stillMissing.indexOf(num)
-        if (idx >= 0) stillMissing.splice(idx, 1)
+      // Pakketpartner rate limit: 60 req/min. Te veel parallel geeft 429.
+      const createConcurrency = 4
+      for (let i = 0; i < stillMissing.length; i += createConcurrency) {
+        const chunk = stillMissing.slice(i, i + createConcurrency)
+        const createResults = await Promise.all(
+          chunk.map(async (num) => {
+            const order = byNumber.get(num)
+            if (!order) return { num, shipment: null as PpShipment | null }
+            try {
+              const shipment = await createShipmentForOrder(order, {
+                print: true,
+                carrierService: options.carrierService,
+              })
+              return { num, shipment }
+            } catch {
+              return { num, shipment: null }
+            }
+          })
+        )
+        for (const { num, shipment } of createResults) {
+          if (!shipment) continue
+          shipmentIds.push(shipment.id)
+          created.push(num)
+          const idx = stillMissing.indexOf(num)
+          if (idx >= 0) stillMissing.splice(idx, 1)
+        }
       }
     }
   }
