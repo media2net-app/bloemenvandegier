@@ -8,6 +8,7 @@ import { isOrderDashboardTestMode } from '@/lib/order-dashboard/test-mode'
 
 const PAGE_TITLES: Record<string, string> = {
   '/order-dashboard': 'Orders',
+  '/order-dashboard/order-formulier': 'Order formulier',
 }
 
 export default function OrderDashboardShell({ children }: { children: React.ReactNode }) {

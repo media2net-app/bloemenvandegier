@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
+  FileText,
   LayoutGrid,
   LogOut,
   ExternalLink,
@@ -15,6 +16,7 @@ import { useAuthStore } from '@/lib/auth/store'
 
 const menuItems = [
   { name: 'Overzicht', href: '/order-dashboard', icon: LayoutDashboard, exact: true },
+  { name: 'Order formulier', href: '/order-dashboard/order-formulier', icon: FileText },
 ]
 
 export default function OrderDashboardSidebar({
