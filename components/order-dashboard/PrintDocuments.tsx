@@ -9,6 +9,7 @@ import {
   getKaartjeTexts,
   getLineItemExtras,
 } from '@/lib/woocommerce/order-display'
+import { cn } from '@/lib/utils/cn'
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'
@@ -129,30 +130,40 @@ export function PakbonDocument({
         </div>
       )}
 
-      <table className="w-full border-collapse text-sm text-black">
+      <table className="w-full border-collapse text-sm text-black pakbon-products">
         <thead>
           <tr className="border-b-2 border-black text-left">
-            <th className="py-2 pr-2">Product / toevoegingen</th>
-            <th className="w-20 px-2 py-2 text-right">Aantal</th>
+            <th className="py-2 pr-4">Product / toevoegingen</th>
+            <th className="w-14 py-2 pl-2 text-left">Aantal</th>
           </tr>
         </thead>
         <tbody>
-          {order.line_items.map((item) => {
+          {order.line_items.map((item, itemIndex) => {
             const extras = getLineItemExtras(item).filter(
               (e) => !/kaartje/i.test(e.label)
             )
             const highlight = extras.filter((e) => isHighlightPakbonExtra(e.label))
             const other = extras.filter((e) => !isHighlightPakbonExtra(e.label))
+            const isLastItem = itemIndex === order.line_items.length - 1
             return (
-              <tr key={item.id} className="border-b border-gray-400 align-top">
-                <td className="py-2.5 pr-2">
-                  <strong className="text-base">{item.name}</strong>
+              <tr
+                key={item.id}
+                className={cn(
+                  'pakbon-product-row align-top',
+                  !isLastItem && 'pakbon-product-row-sep'
+                )}
+              >
+                <td className="py-3 pr-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-gray-600">
+                    Product {itemIndex + 1}
+                  </p>
+                  <strong className="mt-0.5 block text-base leading-snug">{item.name}</strong>
                   {highlight.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {highlight.map((extra) => (
                         <div
                           key={`${item.id}-${extra.label}`}
-                          className="border border-black px-3 py-2"
+                          className="pakbon-extra-highlight border-l-[3px] border-black pl-3"
                         >
                           <p className="text-[11px] font-bold uppercase tracking-wide">
                             {extra.label}
@@ -174,7 +185,7 @@ export function PakbonDocument({
                     </ul>
                   )}
                 </td>
-                <td className="px-2 py-2.5 text-right text-base font-semibold">
+                <td className="w-14 py-3 pl-2 text-left text-base font-semibold tabular-nums">
                   {item.quantity}
                 </td>
               </tr>

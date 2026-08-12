@@ -33,9 +33,51 @@ async function fetchShipmentPage(page: number): Promise<{ data: PpShipment[]; to
   }
 }
 
+function cacheShipment(shipment: PpShipment) {
+  const ref = normalizeRef(shipment.order_reference || '')
+  if (!ref) return
+  if (!shipmentIndex) shipmentIndex = new Map()
+  shipmentIndex.set(ref, shipment)
+  shipmentIndexAt = Date.now()
+}
+
+/** Probeer één shipment via cache of API-filter (sneller dan volledige scan). */
+export async function findShipmentByOrderNumber(orderNumber: string): Promise<PpShipment | null> {
+  const ref = normalizeRef(orderNumber)
+  if (!ref) return null
+
+  if (shipmentIndex && Date.now() - shipmentIndexAt < INDEX_TTL_MS) {
+    const cached = shipmentIndex.get(ref)
+    if (cached) return cached
+  }
+
+  const queries = [
+    `shipments?order_reference=${encodeURIComponent(ref)}`,
+    `shipments?filter[order_reference]=${encodeURIComponent(ref)}`,
+    `shipments?search=${encodeURIComponent(ref)}`,
+  ]
+
+  for (const query of queries) {
+    try {
+      const res = await ppFetchJson<{ data: PpShipment[] }>(query)
+      const match = (res.data || []).find(
+        (s) => normalizeRef(s.order_reference || '') === ref
+      )
+      if (match) {
+        cacheShipment(match)
+        return match
+      }
+    } catch {
+      // probeer volgende query-variant
+    }
+  }
+
+  return null
+}
+
 /**
  * Zoek shipments op ordernummer (order_reference).
- * Scant recente pages tot alles gevonden is of maxPages bereikt.
+ * Eerst parallel per order; daarna alleen nog pagina's scannen voor restanten.
  */
 export async function findShipmentsByOrderNumbers(
   orderNumbers: Array<string | number>,
@@ -47,39 +89,56 @@ export async function findShipmentsByOrderNumbers(
   const wanted = [...new Set(orderNumbers.map(normalizeRef).filter(Boolean))]
   if (!wanted.length) return { found: [], missing: [] }
 
-  const maxPages = opts?.maxPages ?? 30
-  const index =
-    shipmentIndex && Date.now() - shipmentIndexAt < INDEX_TTL_MS
-      ? shipmentIndex
-      : new Map<string, PpShipment>()
-
+  const maxPages = opts?.maxPages ?? 15
   const foundMap = new Map<string, PpShipment>()
   const stillMissing = new Set(wanted)
 
-  for (const num of wanted) {
-    const hit = index.get(num)
-    if (hit) {
-      foundMap.set(num, hit)
-      stillMissing.delete(num)
-    }
-  }
-
-  for (let page = 1; page <= maxPages && stillMissing.size > 0; page++) {
-    const { data } = await fetchShipmentPage(page)
-    for (const shipment of data) {
-      const ref = normalizeRef(shipment.order_reference || '')
-      if (!ref) continue
-      if (!index.has(ref)) index.set(ref, shipment)
-      if (stillMissing.has(ref)) {
-        foundMap.set(ref, shipment)
-        stillMissing.delete(ref)
+  // Cache hits
+  if (shipmentIndex && Date.now() - shipmentIndexAt < INDEX_TTL_MS) {
+    for (const num of wanted) {
+      const hit = shipmentIndex.get(num)
+      if (hit) {
+        foundMap.set(num, hit)
+        stillMissing.delete(num)
       }
     }
-    if (!data.length) break
   }
 
-  shipmentIndex = index
-  shipmentIndexAt = Date.now()
+  // Parallel per-order lookup (meestal 1 API-call per order)
+  const lookupTargets = [...stillMissing]
+  if (lookupTargets.length) {
+    const lookups = await Promise.all(
+      lookupTargets.map(async (num) => {
+        const shipment = await findShipmentByOrderNumber(num)
+        return shipment ? { num, shipment } : null
+      })
+    )
+    for (const hit of lookups) {
+      if (!hit) continue
+      foundMap.set(hit.num, hit.shipment)
+      stillMissing.delete(hit.num)
+    }
+  }
+
+  // Fallback: scan recente pagina's voor restanten
+  if (stillMissing.size > 0) {
+    const index = shipmentIndex ?? new Map<string, PpShipment>()
+    for (let page = 1; page <= maxPages && stillMissing.size > 0; page++) {
+      const { data } = await fetchShipmentPage(page)
+      for (const shipment of data) {
+        const ref = normalizeRef(shipment.order_reference || '')
+        if (!ref) continue
+        if (!index.has(ref)) index.set(ref, shipment)
+        if (stillMissing.has(ref)) {
+          foundMap.set(ref, shipment)
+          stillMissing.delete(ref)
+        }
+      }
+      if (!data.length) break
+    }
+    shipmentIndex = index
+    shipmentIndexAt = Date.now()
+  }
 
   return {
     found: wanted
@@ -195,20 +254,27 @@ export async function resolveLabelsPdf(options: {
     const { isOrderDashboardTestMode } = await import('@/lib/order-dashboard/test-mode')
     if (!isOrderDashboardTestMode()) {
       const byNumber = new Map(options.orders.map((o) => [String(o.number), o]))
-      for (const num of [...stillMissing]) {
-        const order = byNumber.get(num)
-        if (!order) continue
-        try {
-          const shipment = await createShipmentForOrder(order, {
-            print: true,
-            carrierService: options.carrierService,
-          })
-          shipmentIds.push(shipment.id)
-          created.push(num)
-          stillMissing.splice(stillMissing.indexOf(num), 1)
-        } catch {
-          // laat in missing staan
-        }
+      const createResults = await Promise.all(
+        stillMissing.map(async (num) => {
+          const order = byNumber.get(num)
+          if (!order) return { num, shipment: null as PpShipment | null }
+          try {
+            const shipment = await createShipmentForOrder(order, {
+              print: true,
+              carrierService: options.carrierService,
+            })
+            return { num, shipment }
+          } catch {
+            return { num, shipment: null }
+          }
+        })
+      )
+      for (const { num, shipment } of createResults) {
+        if (!shipment) continue
+        shipmentIds.push(shipment.id)
+        created.push(num)
+        const idx = stillMissing.indexOf(num)
+        if (idx >= 0) stillMissing.splice(idx, 1)
       }
     }
   }

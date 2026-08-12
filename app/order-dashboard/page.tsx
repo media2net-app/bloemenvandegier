@@ -645,11 +645,19 @@ function OrderDashboardPageContent() {
   async function fillBulkLabels(idList: number[], win: Window, createMissing: boolean) {
     setLabelsBusy(true)
     try {
+      const orderNumbers = idList
+        .map((id) => {
+          const o = getCachedOrderById(id) || orders.find((x) => x.id === id)
+          return o ? String(o.number) : null
+        })
+        .filter(Boolean) as string[]
+
       const res = await fetch('/api/order-dashboard/labels', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderIds: idList,
+          orderNumbers,
           createMissing,
           carrierService: carrierService || undefined,
         }),

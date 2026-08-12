@@ -36,6 +36,14 @@ export default function PrintPakbonPage() {
           }
           .print-sheet-break { page-break-after: always; break-after: page; }
           .print-sheet-last { page-break-after: auto !important; break-after: auto !important; }
+          .pakbon-products { border-collapse: collapse !important; }
+          .pakbon-product-row-sep td {
+            border-bottom: 2px solid #000 !important;
+            padding-bottom: 12px !important;
+          }
+          .pakbon-extra-highlight {
+            border-left: 3px solid #000 !important;
+          }
         }
       `}</style>
       <PrintToolbar

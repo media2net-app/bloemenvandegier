@@ -14,7 +14,6 @@ function toPdfSafeText(input: string): string {
     .replace(/\u2013|\u2014/g, '-')
     .replace(/\u2026/g, '...')
     .replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, '') // WinAnsi / Latin-1
-    .trim()
 }
 
 function wrapText(
@@ -52,7 +51,6 @@ export async function buildKaartjesPdf(orders: WcOrder[]): Promise<Uint8Array> {
   const font = await pdf.embedFont(StandardFonts.TimesRoman)
   const fontSize = 12
   const lineHeight = 16
-  const rightMargin = 14 * MM
   const leftOfRightPanel = PAGE_W / 2 + 10 * MM
   const textMaxWidth = PAGE_W / 2 - 20 * MM
 
@@ -61,18 +59,11 @@ export async function buildKaartjesPdf(orders: WcOrder[]): Promise<Uint8Array> {
   for (const order of orders) {
     const cards = getKaartjeTexts(order)
     for (const card of cards) {
-      const text = toPdfSafeText(card.text)
+      const text = toPdfSafeText(card.text).trim()
       if (!text) continue
 
       const page = pdf.addPage([PAGE_W, PAGE_H])
       pagesAdded++
-
-      page.drawLine({
-        start: { x: PAGE_W / 2, y: 8 * MM },
-        end: { x: PAGE_W / 2, y: PAGE_H - 8 * MM },
-        thickness: 0.4,
-        color: rgb(0.75, 0.75, 0.75),
-      })
 
       const lines = wrapText(text, font, fontSize, textMaxWidth)
       const blockHeight = Math.max(lines.length, 1) * lineHeight
@@ -94,17 +85,6 @@ export async function buildKaartjesPdf(orders: WcOrder[]): Promise<Uint8Array> {
         })
         y -= lineHeight
       }
-
-      const meta = `#${order.number}`
-      const metaSize = 7
-      const metaW = font.widthOfTextAtSize(meta, metaSize)
-      page.drawText(meta, {
-        x: PAGE_W - rightMargin - metaW,
-        y: 5 * MM,
-        size: metaSize,
-        font,
-        color: rgb(0.55, 0.55, 0.55),
-      })
     }
   }
 

@@ -452,21 +452,29 @@ export async function markOrdersCompleted(orders: WcOrder[]): Promise<{
 
   const skipStatuses = new Set(['completed', 'cancelled', 'refunded', 'failed', 'trash'])
 
-  for (const order of orders) {
-    const num = String(order.number)
-    if (skipStatuses.has(order.status)) {
-      skipped.push(num)
-      continue
-    }
-    try {
-      await updateWcOrderStatus(order.id, 'completed')
-      updated.push(num)
-    } catch (e) {
-      failed.push({
-        number: num,
-        error: e instanceof Error ? e.message : 'Update mislukt',
-      })
-    }
+  const results = await Promise.all(
+    orders.map(async (order) => {
+      const num = String(order.number)
+      if (skipStatuses.has(order.status)) {
+        return { type: 'skipped' as const, num }
+      }
+      try {
+        await updateWcOrderStatus(order.id, 'completed')
+        return { type: 'updated' as const, num }
+      } catch (e) {
+        return {
+          type: 'failed' as const,
+          num,
+          error: e instanceof Error ? e.message : 'Update mislukt',
+        }
+      }
+    })
+  )
+
+  for (const r of results) {
+    if (r.type === 'skipped') skipped.push(r.num)
+    else if (r.type === 'updated') updated.push(r.num)
+    else failed.push({ number: r.num, error: r.error })
   }
 
   return { updated, skipped, failed }

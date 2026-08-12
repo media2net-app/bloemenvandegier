@@ -42,9 +42,14 @@ export function findMetaByKeys(meta: WcMeta[] | undefined, keys: string[]): stri
   return ''
 }
 
-/** Schoon kaartjetekst: HTML eraf, prijs-addon (bijv. &euro; 0,50) weg. */
+/** Schoon kaartjetekst: HTML eraf, prijs-addon (bijv. &euro; 0,50) weg. Behoud enters van klant. */
 export function cleanKaartjeText(value: string): string {
   let text = value
+    // Block-/line-breaks vóór tag-stripping → enters blijven behouden
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p\s*>/gi, '\n')
+    .replace(/<\/div\s*>/gi, '\n')
+    .replace(/<\/li\s*>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
     // Eerst entities decoderen, anders blijft &amp;euro; staan
     .replace(/&amp;/gi, '&')

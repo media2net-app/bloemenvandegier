@@ -1,16 +1,27 @@
 import { NextResponse } from 'next/server'
 import { getWcOrder, markOrdersCompleted } from '@/lib/woocommerce/orders'
-import {
-  findShipmentsByOrderNumbers,
-  resolveLabelsPdf,
-} from '@/lib/pakketpartner/shipments'
+import { resolveLabelsPdf } from '@/lib/pakketpartner/shipments'
 import { PakketpartnerApiError } from '@/lib/pakketpartner/client'
 import {
   isOrderDashboardTestMode,
   TEST_MODE_BLOCK_MESSAGE,
 } from '@/lib/order-dashboard/test-mode'
+import type { WcOrder } from '@/lib/woocommerce/orders'
 
 export const dynamic = 'force-dynamic'
+
+async function loadOrdersByIds(orderIds: number[]): Promise<WcOrder[]> {
+  const results = await Promise.all(
+    orderIds.map(async (id) => {
+      try {
+        return await getWcOrder(id)
+      } catch {
+        return null
+      }
+    })
+  )
+  return results.filter(Boolean) as WcOrder[]
+}
 
 /**
  * GET ?numbers=209645,209647 → JSON status van labels
@@ -30,6 +41,7 @@ export async function GET(request: Request) {
     }
 
     const wantPdf = searchParams.get('pdf') === '1' || searchParams.get('format') === 'pdf'
+    const { findShipmentsByOrderNumbers } = await import('@/lib/pakketpartner/shipments')
     const { found, missing } = await findShipmentsByOrderNumbers(numbers)
 
     if (wantPdf) {
@@ -98,12 +110,13 @@ export async function POST(request: Request) {
         ? body.carrierService.trim()
         : undefined
     const markCompleted = body.markCompleted !== false
+    const createMissing = body.createMissing === true
 
     if (!orderIds.length && !orderNumbers.length) {
       return NextResponse.json({ error: 'Geen orders opgegeven' }, { status: 400 })
     }
 
-    if (body.createMissing === true && isOrderDashboardTestMode()) {
+    if (createMissing && isOrderDashboardTestMode()) {
       return NextResponse.json(
         {
           error: TEST_MODE_BLOCK_MESSAGE,
@@ -113,9 +126,9 @@ export async function POST(request: Request) {
       )
     }
 
-    const orders = []
-    for (const id of orderIds) {
-      orders.push(await getWcOrder(id))
+    const orders: WcOrder[] = []
+    if (orderIds.length) {
+      orders.push(...(await loadOrdersByIds(orderIds)))
     }
     for (const num of orderNumbers) {
       if (orders.some((o) => String(o.number) === String(num))) continue
@@ -132,11 +145,10 @@ export async function POST(request: Request) {
 
     const result = await resolveLabelsPdf({
       orders,
-      createMissing: body.createMissing === true,
+      createMissing,
       carrierService,
     })
 
-    // Orders met een label → status afgerond in WooCommerce
     let completed: string[] = []
     let completedFailed: string[] = []
     if (markCompleted && !isOrderDashboardTestMode()) {

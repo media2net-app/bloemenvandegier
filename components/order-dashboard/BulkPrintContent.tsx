@@ -343,6 +343,14 @@ export default function BulkPrintContent() {
             page-break-after: auto;
           }
           .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
+          .pakbon-products { border-collapse: collapse !important; }
+          .pakbon-product-row-sep td {
+            border-bottom: 2px solid #000 !important;
+            padding-bottom: 12px !important;
+          }
+          .pakbon-extra-highlight {
+            border-left: 3px solid #000 !important;
+          }
           ${pageCss}
         }
       `}</style>
