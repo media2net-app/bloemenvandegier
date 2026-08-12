@@ -1,8 +1,7 @@
 import type { WcOrder } from '@/lib/woocommerce/orders'
-import { getDeliveryDateYmd, getShippingSlot, ymdToIsoDate } from '@/lib/woocommerce/order-display'
+import { getDeliveryDateYmd, ymdToIsoDate } from '@/lib/woocommerce/order-display'
+import { pickCarrierServiceForOrder } from '@/lib/pakketpartner/carriers'
 import {
-  getCarrierServiceAvond,
-  getCarrierServiceOverdag,
   getPakketpartnerSenderHash,
   ppFetchJson,
   ppFetchPdf,
@@ -90,11 +89,7 @@ export async function findShipmentsByOrderNumbers(
   }
 }
 
-export function pickCarrierServiceForOrder(order: WcOrder): string {
-  const slot = getShippingSlot(order)
-  if (slot === 'overdag') return getCarrierServiceOverdag()
-  return getCarrierServiceAvond()
-}
+export { pickCarrierServiceForOrder } from '@/lib/pakketpartner/carriers'
 
 function buildRecipientFromOrder(order: WcOrder) {
   const ship = order.shipping || order.billing
@@ -182,6 +177,7 @@ export async function fetchLabelsPdf(shipmentIds: string[]): Promise<Buffer> {
 export async function resolveLabelsPdf(options: {
   orders: WcOrder[]
   createMissing?: boolean
+  carrierService?: string
 }): Promise<{
   pdf: Buffer
   shipmentIds: string[]
@@ -203,7 +199,10 @@ export async function resolveLabelsPdf(options: {
         const order = byNumber.get(num)
         if (!order) continue
         try {
-          const shipment = await createShipmentForOrder(order, { print: true })
+          const shipment = await createShipmentForOrder(order, {
+            print: true,
+            carrierService: options.carrierService,
+          })
           shipmentIds.push(shipment.id)
           created.push(num)
           stillMissing.splice(stillMissing.indexOf(num), 1)

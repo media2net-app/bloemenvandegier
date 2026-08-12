@@ -81,6 +81,15 @@ function todayIsoDate() {
   return `${y}-${m}-${day}`
 }
 
+function tomorrowIsoDate() {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function statusBadge(status: string) {
   const map: Record<string, string> = {
     processing: 'bg-blue-50 text-blue-800',
@@ -202,10 +211,41 @@ function OrderDashboardPageContent() {
   const [printKaartje, setPrintKaartje] = useState(true)
   const [printPakbon, setPrintPakbon] = useState(true)
   const [printFactuur, setPrintFactuur] = useState(false)
+  const [printAdreslabel, setPrintAdreslabel] = useState(true)
   const [printLabels, setPrintLabels] = useState(false)
   const [labelsBusy, setLabelsBusy] = useState(false)
+  const [carrierService, setCarrierService] = useState('')
+  const [carrierOptions, setCarrierOptions] = useState<Array<{ id: string; label: string }>>([])
   const skipNextUrlWrite = useRef(true)
   const fetchGen = useRef(0)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/order-dashboard/carrier-services')
+        const data = await res.json()
+        if (cancelled) return
+        const options = Array.isArray(data.options) ? data.options : []
+        setCarrierOptions(options)
+        if (!carrierService && options[0]?.id) {
+          // default: Packs P2 standaard of eerste optie
+          const packs =
+            options.find((o: { id: string; label: string }) =>
+              /packs.*standaard|packs.*p2(?!.*tijd|08|13)/i.test(o.label)
+            ) ||
+            options.find((o: { id: string; label: string }) => /packs.*p2/i.test(o.label))
+          setCarrierService(packs?.id || options[0].id)
+        }
+      } catch {
+        // defaults in API
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const currentFilters: OrderDashboardFilters = useMemo(
     () => ({ page, status, shippingSlot, deliveryDate, sort, search }),
@@ -442,6 +482,14 @@ function OrderDashboardPageContent() {
     setSort('pakketpartner')
   }
 
+  function resetFiltersToTomorrowDay() {
+    setPage(1)
+    setStatus('any')
+    setShippingSlot('overdag')
+    setDeliveryDate(tomorrowIsoDate())
+    setSort('pakketpartner')
+  }
+
   const pageIds = useMemo(() => orders.map((o) => o.id), [orders])
   const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id))
   const somePageSelected = pageIds.some((id) => selected.has(id))
@@ -469,8 +517,14 @@ function OrderDashboardPageContent() {
 
   function openBulkPrint() {
     if (!selected.size) return
-    if (!printKaartje && !printPakbon && !printFactuur && !printLabels) {
-      alert('Kies minstens één document: kaartje, pakbon, factuur of verzendlabels.')
+    if (
+      !printKaartje &&
+      !printPakbon &&
+      !printFactuur &&
+      !printAdreslabel &&
+      !printLabels
+    ) {
+      alert('Kies minstens één document: kaartje, pakbon, adreslabel of verzendlabels.')
       return
     }
 
@@ -485,6 +539,7 @@ function OrderDashboardPageContent() {
     if (printKaartje) docTypes.push('kaartje')
     if (printPakbon) docTypes.push('pakbon')
     if (printFactuur) docTypes.push('factuur')
+    if (printAdreslabel) docTypes.push('label')
 
     for (const doc of docTypes) {
       window.open(
@@ -493,7 +548,7 @@ function OrderDashboardPageContent() {
       )
     }
 
-    // Verzendlabels = Pakketpartner PDF (bestaande labels; aanmaken blokkeert testmodus)
+    // Optioneel: Pakketpartner verzendlabels
     if (printLabels) {
       void openBulkLabels(false)
     }
@@ -507,13 +562,16 @@ function OrderDashboardPageContent() {
       const res = await fetch('/api/order-dashboard/labels', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderIds: idList, createMissing }),
+        body: JSON.stringify({
+          orderIds: idList,
+          createMissing,
+          carrierService: carrierService || undefined,
+        }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
         const testMode = isOrderDashboardTestMode() || data.testMode === true
 
-        // Testmodus: geen nieuwe PP-shipments → adreslabels printen zodat testen mogelijk is
         if (testMode) {
           const useAddress = confirm(
             `${data.error || 'Geen Pakketpartner-labels gevonden.'}\n\n` +
@@ -534,7 +592,7 @@ function OrderDashboardPageContent() {
         }
 
         const missingHint = !createMissing
-          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner?'
+          ? '\n\nWil je ontbrekende labels nu aanmaken in Pakketpartner met de gekozen vervoerder?'
           : ''
         const msg = (data.error || 'Labels laden mislukt') + missingHint
         if (!createMissing && confirm(msg)) {
@@ -665,6 +723,14 @@ function OrderDashboardPageContent() {
                 onClick={resetFiltersToTodayEvening}
               >
                 Vandaag avond
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                onClick={resetFiltersToTomorrowDay}
+              >
+                Morgen overdag
               </Button>
               {(deliveryDate || shippingSlot !== 'any') && (
                 <Button
@@ -916,6 +982,16 @@ function OrderDashboardPageContent() {
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  checked={printAdreslabel}
+                  onChange={(e) => setPrintAdreslabel(e.target.checked)}
+                />
+                <Tag className="h-4 w-4 text-primary-600" />
+                Adreslabel 62×100
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600"
                   checked={printFactuur}
                   onChange={(e) => setPrintFactuur(e.target.checked)}
                 />
@@ -929,9 +1005,28 @@ function OrderDashboardPageContent() {
                   checked={printLabels}
                   onChange={(e) => setPrintLabels(e.target.checked)}
                 />
-                <Tag className="h-4 w-4 text-primary-600" />
-                Verzendlabels (Pakketpartner)
+                <Package className="h-4 w-4 text-primary-600" />
+                Verzendlabels (PP)
               </label>
+              {printLabels && (
+                <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                  <span className="whitespace-nowrap text-xs text-gray-500">Vervoerder</span>
+                  <select
+                    className="max-w-[220px] rounded-lg border border-gray-300 px-2 py-1.5 text-xs"
+                    value={carrierService}
+                    onChange={(e) => setCarrierService(e.target.value)}
+                  >
+                    {(carrierOptions.length
+                      ? carrierOptions
+                      : [{ id: '', label: 'Laden…' }]
+                    ).map((o) => (
+                      <option key={o.id || 'x'} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <Button variant="outline" size="sm" onClick={() => setSelected(new Set())}>
                 Deselecteren
               </Button>

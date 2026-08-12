@@ -87,10 +87,15 @@ export async function POST(request: Request) {
       orderIds?: number[]
       orderNumbers?: Array<string | number>
       createMissing?: boolean
+      carrierService?: string
     }
 
     const orderIds = Array.isArray(body.orderIds) ? body.orderIds : []
     const orderNumbers = Array.isArray(body.orderNumbers) ? body.orderNumbers.map(String) : []
+    const carrierService =
+      typeof body.carrierService === 'string' && body.carrierService.trim()
+        ? body.carrierService.trim()
+        : undefined
 
     if (!orderIds.length && !orderNumbers.length) {
       return NextResponse.json({ error: 'Geen orders opgegeven' }, { status: 400 })
@@ -127,6 +132,7 @@ export async function POST(request: Request) {
     const result = await resolveLabelsPdf({
       orders,
       createMissing: body.createMissing === true,
+      carrierService,
     })
 
     return new NextResponse(new Uint8Array(result.pdf), {

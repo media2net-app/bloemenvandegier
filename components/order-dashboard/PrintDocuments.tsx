@@ -36,7 +36,7 @@ export function PakbonDocument({
 }) {
   const delivery = getDeliveryInfo(order)
   const cards = getKaartjeTexts(order)
-  const feeLines = order.fee_lines || []
+  const feeLines = (order.fee_lines || []).filter((f) => !isGatewayFee(f.name))
   const pageLabel =
     pageIndex != null && pageTotal != null
       ? ` · pagina ${pageIndex}/${pageTotal}`
@@ -97,7 +97,9 @@ export function PakbonDocument({
             {cards.map((card, i) => (
               <li key={`${order.id}-card-${i}`}>
                 <p className="text-xs font-medium">{card.product}</p>
-                <p className="whitespace-pre-wrap">{cleanKaartjeText(card.text)}</p>
+                <p className="whitespace-pre-wrap text-base leading-relaxed">
+                  {cleanKaartjeText(card.text)}
+                </p>
               </li>
             ))}
           </ul>
@@ -126,8 +128,7 @@ export function PakbonDocument({
         <thead>
           <tr className="border-b-2 border-black text-left">
             <th className="py-2 pr-2">Product / toevoegingen</th>
-            <th className="w-16 px-2 py-2">Aantal</th>
-            <th className="w-28 py-2 pl-2">SKU</th>
+            <th className="w-20 px-2 py-2 text-right">Aantal</th>
           </tr>
         </thead>
         <tbody>
@@ -135,13 +136,32 @@ export function PakbonDocument({
             const extras = getLineItemExtras(item).filter(
               (e) => !/kaartje/i.test(e.label)
             )
+            const highlight = extras.filter((e) => isHighlightPakbonExtra(e.label))
+            const other = extras.filter((e) => !isHighlightPakbonExtra(e.label))
             return (
               <tr key={item.id} className="border-b border-gray-400 align-top">
-                <td className="py-3 pr-2">
-                  <strong>{item.name}</strong>
-                  {extras.length > 0 && (
-                    <ul className="mt-1 space-y-0.5 text-xs">
-                      {extras.map((extra) => (
+                <td className="py-4 pr-2">
+                  <strong className="text-base">{item.name}</strong>
+                  {highlight.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {highlight.map((extra) => (
+                        <div
+                          key={`${item.id}-${extra.label}`}
+                          className="border border-black px-3 py-2"
+                        >
+                          <p className="text-[11px] font-bold uppercase tracking-wide">
+                            {extra.label}
+                          </p>
+                          <p className="mt-0.5 text-base font-semibold leading-snug">
+                            {extra.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {other.length > 0 && (
+                    <ul className="mt-2 space-y-0.5 text-xs">
+                      {other.map((extra) => (
                         <li key={`${item.id}-${extra.label}`}>
                           <span className="font-semibold">{extra.label}:</span> {extra.value}
                         </li>
@@ -149,8 +169,7 @@ export function PakbonDocument({
                     </ul>
                   )}
                 </td>
-                <td className="px-2 py-3">{item.quantity}</td>
-                <td className="py-3 pl-2">{item.sku || '—'}</td>
+                <td className="px-2 py-4 text-right text-base font-semibold">{item.quantity}</td>
               </tr>
             )
           })}
@@ -158,6 +177,16 @@ export function PakbonDocument({
       </table>
     </article>
   )
+}
+
+function isGatewayFee(name: string) {
+  return /gateway|mollie|ideal|bancontact|paypal|betaalkosten|transactie|payment\s*fee|vergoeding|stripe|adyen/i.test(
+    name
+  )
+}
+
+function isHighlightPakbonExtra(label: string) {
+  return /extra speciaal|aantal rozen|aantal tulpen/i.test(label)
 }
 
 export function FactuurDocument({ order }: { order: WcOrder }) {

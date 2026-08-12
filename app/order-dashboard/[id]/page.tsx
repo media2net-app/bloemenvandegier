@@ -11,6 +11,7 @@ import {
   MessageSquare,
   RefreshCw,
   Tag,
+  ExternalLink,
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
@@ -131,8 +132,27 @@ export default function OrderDetailPage() {
               Label 62×100
             </Button>
           </a>
+          <a
+            href={`https://www.bloemenvandegier.nl/wp-admin/post.php?post=${order.id}&action=edit`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline" size="sm">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Wijzig in WooCommerce
+            </Button>
+          </a>
         </div>
       </div>
+
+      <Card className="border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+        <p className="font-semibold">Adres, kaartjetekst of bezorgdatum wijzigen?</p>
+        <p className="mt-1">
+          Doe dat in WooCommerce (knop hierboven). Pas shipping-adres, orderregel-meta
+          (kaartje/toevoegingen) of Iconic bezorgdatum aan, daarna hier vernieuwen/printen.
+          Dit portaal is in testmodus read-only.
+        </p>
+      </Card>
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
