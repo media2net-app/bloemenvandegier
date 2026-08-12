@@ -572,6 +572,17 @@ function OrderDashboardPageContent() {
       const url = URL.createObjectURL(blob)
       window.open(url, '_blank')
       window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+      // Orders staan nu op afgerond in WC — lijst verversen
+      invalidateOrderListCache()
+      void fetchList({
+        page,
+        status,
+        search,
+        shippingSlot,
+        deliveryDate,
+        sort,
+        force: true,
+      })
     } catch (e) {
       alert(e instanceof Error ? e.message : 'Labels laden mislukt')
     } finally {
@@ -579,11 +590,43 @@ function OrderDashboardPageContent() {
     }
   }
 
-  function openOrderLabel(order: WcOrder) {
-    window.open(
-      `/api/order-dashboard/labels?pdf=1&numbers=${encodeURIComponent(String(order.number))}`,
-      '_blank'
-    )
+  async function openOrderLabel(order: WcOrder) {
+    setLabelsBusy(true)
+    try {
+      const res = await fetch('/api/order-dashboard/labels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderIds: [order.id],
+          createMissing: true,
+          carrierService: carrierService || undefined,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error || 'Label laden mislukt')
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+      // Status is server-side op completed gezet — lijst verversen
+      invalidateOrderListCache()
+      void fetchList({
+        page,
+        status,
+        search,
+        shippingSlot,
+        deliveryDate,
+        sort,
+        force: true,
+      })
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Label laden mislukt')
+    } finally {
+      setLabelsBusy(false)
+    }
   }
 
   return (
@@ -922,8 +965,9 @@ function OrderDashboardPageContent() {
                 {selected.size} order{selected.size === 1 ? '' : 's'} geselecteerd
               </p>
               <p className="text-xs text-gray-500">
-                Standaard: kaartje + pakbon + labels. Elke soort opent in een aparte tab om te
-                printen. Labels = Pakketpartner (ontbrekende worden automatisch aangemaakt).
+                Standaard: kaartje + pakbon + labels. Elke soort opent in een aparte tab.
+                Labels = Pakketpartner (ontbrekende worden aangemaakt; orderstatus → afgerond in
+                WooCommerce).
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">

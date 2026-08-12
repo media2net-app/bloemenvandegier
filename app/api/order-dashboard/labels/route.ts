@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getWcOrder } from '@/lib/woocommerce/orders'
+import { getWcOrder, markOrdersCompleted } from '@/lib/woocommerce/orders'
 import {
   findShipmentsByOrderNumbers,
   resolveLabelsPdf,
@@ -78,8 +78,8 @@ export async function GET(request: Request) {
 }
 
 /**
- * POST { orderIds: number[], createMissing?: boolean }
- * → PDF met labels (maakt ontbrekende shipments aan indien createMissing)
+ * POST { orderIds, createMissing?, carrierService?, markCompleted? }
+ * → PDF met labels; zet orders met geslaagd label op WC-status "completed" (afgerond)
  */
 export async function POST(request: Request) {
   try {
@@ -88,6 +88,7 @@ export async function POST(request: Request) {
       orderNumbers?: Array<string | number>
       createMissing?: boolean
       carrierService?: string
+      markCompleted?: boolean
     }
 
     const orderIds = Array.isArray(body.orderIds) ? body.orderIds : []
@@ -96,6 +97,7 @@ export async function POST(request: Request) {
       typeof body.carrierService === 'string' && body.carrierService.trim()
         ? body.carrierService.trim()
         : undefined
+    const markCompleted = body.markCompleted !== false
 
     if (!orderIds.length && !orderNumbers.length) {
       return NextResponse.json({ error: 'Geen orders opgegeven' }, { status: 400 })
@@ -115,7 +117,6 @@ export async function POST(request: Request) {
     for (const id of orderIds) {
       orders.push(await getWcOrder(id))
     }
-    // orderNumbers zonder id: zoek via WC order id = number (vaak gelijk bij hen)
     for (const num of orderNumbers) {
       if (orders.some((o) => String(o.number) === String(num))) continue
       try {
@@ -135,6 +136,19 @@ export async function POST(request: Request) {
       carrierService,
     })
 
+    // Orders met een label → status afgerond in WooCommerce
+    let completed: string[] = []
+    let completedFailed: string[] = []
+    if (markCompleted && !isOrderDashboardTestMode()) {
+      const labeledNumbers = new Set(
+        orders.map((o) => String(o.number)).filter((n) => !result.missing.includes(n))
+      )
+      const toComplete = orders.filter((o) => labeledNumbers.has(String(o.number)))
+      const statusResult = await markOrdersCompleted(toComplete)
+      completed = statusResult.updated
+      completedFailed = statusResult.failed.map((f) => f.number)
+    }
+
     return new NextResponse(new Uint8Array(result.pdf), {
       status: 200,
       headers: {
@@ -144,6 +158,8 @@ export async function POST(request: Request) {
         'X-Labels-Created': result.created.join(','),
         'X-Labels-Missing': result.missing.join(','),
         'X-Shipments': result.shipmentIds.join(','),
+        'X-Orders-Completed': completed.join(','),
+        'X-Orders-Complete-Failed': completedFailed.join(','),
       },
     })
   } catch (error) {

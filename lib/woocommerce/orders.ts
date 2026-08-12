@@ -408,6 +408,70 @@ export async function getWcOrder(id: string | number) {
   return result.data
 }
 
+/** Update WooCommerce order status (bijv. completed na label). */
+export async function updateWcOrderStatus(
+  id: string | number,
+  status: string
+): Promise<WcOrder> {
+  const { assertOrderDashboardWritesAllowed } = await import(
+    '@/lib/order-dashboard/test-mode'
+  )
+  assertOrderDashboardWritesAllowed()
+
+  const url = buildUrl(`orders/${id}`)
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`WooCommerce status update ${response.status}: ${text.slice(0, 300)}`)
+  }
+
+  return (await response.json()) as WcOrder
+}
+
+/**
+ * Zet orders op "completed" (afgerond) nadat er een label is.
+ * Slaat orders over die al completed/cancelled/refunded zijn.
+ */
+export async function markOrdersCompleted(orders: WcOrder[]): Promise<{
+  updated: string[]
+  skipped: string[]
+  failed: Array<{ number: string; error: string }>
+}> {
+  const updated: string[] = []
+  const skipped: string[] = []
+  const failed: Array<{ number: string; error: string }> = []
+
+  const skipStatuses = new Set(['completed', 'cancelled', 'refunded', 'failed', 'trash'])
+
+  for (const order of orders) {
+    const num = String(order.number)
+    if (skipStatuses.has(order.status)) {
+      skipped.push(num)
+      continue
+    }
+    try {
+      await updateWcOrderStatus(order.id, 'completed')
+      updated.push(num)
+    } catch (e) {
+      failed.push({
+        number: num,
+        error: e instanceof Error ? e.message : 'Update mislukt',
+      })
+    }
+  }
+
+  return { updated, skipped, failed }
+}
+
 export {
   formatAddress,
   formatMoney,
