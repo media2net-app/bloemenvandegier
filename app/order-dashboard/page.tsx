@@ -512,7 +512,7 @@ function OrderDashboardPageContent() {
 
   function resetFiltersToTodayEvening() {
     setPage(1)
-    setStatus('any')
+    setStatus('processing')
     setShippingSlot('avond')
     setDeliveryDate(todayIsoDate())
     setSort('pakketpartner')
@@ -520,11 +520,27 @@ function OrderDashboardPageContent() {
 
   function resetFiltersToTomorrowDay() {
     setPage(1)
-    setStatus('any')
+    setStatus('processing')
     setShippingSlot('overdag')
     setDeliveryDate(tomorrowIsoDate())
     setSort('pakketpartner')
   }
+
+  function clearShortcutFilters() {
+    setPage(1)
+    setDeliveryDate('')
+    setShippingSlot('any')
+  }
+
+  const todayEveningActive =
+    status === 'processing' &&
+    shippingSlot === 'avond' &&
+    deliveryDate === todayIsoDate()
+  const tomorrowDayActive =
+    status === 'processing' &&
+    shippingSlot === 'overdag' &&
+    deliveryDate === tomorrowIsoDate()
+  const hasShortcutFilters = Boolean(deliveryDate) || shippingSlot !== 'any'
 
   const pageIds = useMemo(() => orders.map((o) => o.id), [orders])
   const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id))
@@ -732,7 +748,7 @@ function OrderDashboardPageContent() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
               Orderstatus
               <select
@@ -801,44 +817,51 @@ function OrderDashboardPageContent() {
                 ))}
               </select>
             </label>
+          </div>
 
-            <div className="flex flex-col justify-end gap-2 sm:flex-row sm:items-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full sm:w-auto"
-                onClick={resetFiltersToTodayEvening}
-              >
-                Vandaag avond
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full sm:w-auto"
-                onClick={resetFiltersToTomorrowDay}
-              >
-                Morgen overdag
-              </Button>
-              {(deliveryDate || shippingSlot !== 'any') && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full sm:w-auto"
-                  onClick={() => {
-                    setPage(1)
-                    setDeliveryDate('')
-                    setShippingSlot('any')
-                  }}
-                >
-                  Wis filters
-                </Button>
+          <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3">
+            <span className="mr-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+              Snel
+            </span>
+            <button
+              type="button"
+              onClick={resetFiltersToTodayEvening}
+              className={cn(
+                'inline-flex h-9 items-center whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-colors',
+                todayEveningActive
+                  ? 'border-primary-600 bg-primary-600 text-white'
+                  : 'border-gray-300 bg-white text-gray-800 hover:border-primary-400 hover:bg-primary-50'
               )}
-            </div>
+            >
+              Vandaag avond
+            </button>
+            <button
+              type="button"
+              onClick={resetFiltersToTomorrowDay}
+              className={cn(
+                'inline-flex h-9 items-center whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-colors',
+                tomorrowDayActive
+                  ? 'border-primary-600 bg-primary-600 text-white'
+                  : 'border-gray-300 bg-white text-gray-800 hover:border-primary-400 hover:bg-primary-50'
+              )}
+            >
+              Morgen overdag
+            </button>
+            {hasShortcutFilters && (
+              <button
+                type="button"
+                onClick={clearShortcutFilters}
+                className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-transparent px-3 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+              >
+                Wis filters
+              </button>
+            )}
           </div>
         </div>
         <p className="mt-2 text-xs text-gray-500">
-          Bezorgdatum = Iconic leverdatum (niet besteldatum). Filters blijven bewaard als je
-          pakbonnen/kaartjes opent of even wegklikt. Alleen handmatig Vernieuwen haalt nieuwe data.
+          Bezorgdatum = Iconic leverdatum (niet besteldatum). Snelknoppen zetten status op In
+          behandeling. Filters blijven bewaard als je pakbonnen/kaartjes opent of even wegklikt.
+          Alleen handmatig Vernieuwen haalt nieuwe data.
         </p>
       </Card>
 
