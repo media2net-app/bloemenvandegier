@@ -89,21 +89,14 @@ export function PakbonDocument({
         </tbody>
       </table>
 
-      {order.customer_note?.trim() && (
-        <div className="mb-3 border-2 border-black p-2.5 text-sm text-black">
-          <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">Opmerking klant</h2>
-          <p className="whitespace-pre-wrap">{order.customer_note}</p>
-        </div>
-      )}
-
       {cards.length > 0 && (
-        <div className="mb-3 border-2 border-black p-2.5 text-sm text-black">
-          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide">Kaartjetekst</h2>
-          <ul className="space-y-2">
+        <div className="mb-3 border border-black p-2 text-[11px] leading-snug text-black">
+          <h2 className="mb-1 text-[10px] font-bold uppercase tracking-wide">Kaartjetekst</h2>
+          <ul className="space-y-1.5">
             {cards.map((card, i) => (
               <li key={`${order.id}-card-${i}`}>
-                <p className="text-xs font-medium">{card.product}</p>
-                <p className="whitespace-pre-wrap text-base leading-relaxed">
+                <p className="text-[10px] font-medium opacity-80">{card.product}</p>
+                <p className="whitespace-pre-wrap text-[11px] leading-snug">
                   {cleanKaartjeText(card.text)}
                 </p>
               </li>
@@ -193,6 +186,13 @@ export function PakbonDocument({
           })}
         </tbody>
       </table>
+
+      {order.customer_note?.trim() && (
+        <div className="mt-4 border border-black p-2 text-[11px] leading-snug text-black">
+          <h2 className="mb-1 text-[10px] font-bold uppercase tracking-wide">Opmerking klant</h2>
+          <p className="whitespace-pre-wrap">{order.customer_note}</p>
+        </div>
+      )}
     </article>
   )
 }
