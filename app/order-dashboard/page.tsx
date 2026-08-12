@@ -921,7 +921,10 @@ function OrderDashboardPageContent() {
               <p className="text-sm font-semibold text-gray-900">
                 {selected.size} order{selected.size === 1 ? '' : 's'} geselecteerd
               </p>
-              <p className="text-xs text-gray-500">Kies wat je wilt printen en open de printpagina.</p>
+              <p className="text-xs text-gray-500">
+                Standaard: kaartje + pakbon + labels. Elke soort opent in een aparte tab om te
+                printen. Labels = Pakketpartner (ontbrekende worden automatisch aangemaakt).
+              </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <label className="inline-flex items-center gap-2 text-sm text-gray-700">
