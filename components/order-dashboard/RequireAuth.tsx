@@ -25,7 +25,7 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
   if (!hydrated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <p className="text-gray-500">Laden…</p>
       </div>
     )
@@ -33,7 +33,7 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <p className="text-gray-500">Doorsturen naar login…</p>
       </div>
     )

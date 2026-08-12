@@ -284,28 +284,41 @@ export default function BulkPrintContent() {
 
   const onlyKaartje = docs.kaartje && !docs.pakbon && !docs.factuur && !docs.label
   const onlyLabel = docs.label && !docs.kaartje && !docs.pakbon && !docs.factuur
-  const onlyA4 =
-    (docs.pakbon || docs.factuur) && !docs.kaartje && !docs.label
 
   const pageCss = onlyKaartje
     ? `@page { size: 148mm 105mm; margin: 0; }`
     : onlyLabel
       ? `@page { size: 62mm 100mm; margin: 0; }`
-      : onlyA4
-        ? `@page { size: A4; margin: 12mm; }`
-        : `@page { size: A4; margin: 12mm; }`
+      : `@page { size: A4; margin: 10mm; }`
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-white text-black" style={{ backgroundColor: '#fff' }}>
       <style>{`
         @media print {
-          html, body, .min-h-screen {
-            background: #fff !important;
-            color: #000 !important;
+          html, body {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
             min-height: 0 !important;
             height: auto !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body > *,
+          #__next,
+          .min-h-screen {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+            min-height: 0 !important;
+            height: auto !important;
+            box-shadow: none !important;
           }
           .no-print { display: none !important; }
           .print-sheet {
@@ -313,13 +326,14 @@ export default function BulkPrintContent() {
             width: 100% !important;
             max-width: none !important;
             margin: 0 !important;
-            padding: 4mm 0 !important;
-            background: #fff !important;
-            color: #000 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: none !important;
             page-break-inside: auto;
             break-inside: auto;
           }
-          /* Alleen tussen orders een nieuwe pagina — niet na de laatste (geen lege pagina) */
           .print-sheet-break {
             page-break-after: always;
             break-after: page;
@@ -329,8 +343,14 @@ export default function BulkPrintContent() {
             break-after: auto !important;
           }
           .print-sheet, .print-sheet * {
-            color: #000 !important;
+            color: #000000 !important;
             visibility: visible !important;
+            box-shadow: none !important;
+          }
+          .print-sheet [class*="bg-"],
+          .min-h-screen [class*="bg-"] {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
           }
           .card-sheet {
             page-break-after: always;
@@ -338,18 +358,20 @@ export default function BulkPrintContent() {
             margin: 0 !important;
             width: 148mm !important;
             height: 105mm !important;
+            max-width: none !important;
           }
           .card-sheet:last-child {
             page-break-after: auto;
           }
           .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
-          .pakbon-products { border-collapse: collapse !important; }
+          .pakbon-products { border-collapse: collapse !important; width: 100% !important; }
           .pakbon-product-row-sep td {
             border-bottom: 2px solid #000 !important;
             padding-bottom: 12px !important;
           }
           .pakbon-extra-highlight {
             border-left: 3px solid #000 !important;
+            background: transparent !important;
           }
           ${pageCss}
         }

@@ -48,10 +48,10 @@ export function PakbonDocument({
 
   return (
     <article
-      className={`print-sheet mx-auto max-w-3xl bg-white px-5 py-5 text-black ${
+      className={`print-sheet w-full bg-white px-5 py-5 text-black ${
         isLast ? 'print-sheet-last' : 'print-sheet-break'
       }`}
-      style={{ color: '#111' }}
+      style={{ color: '#000', backgroundColor: '#fff' }}
     >
       <header className="mb-4 border-b border-black pb-2">
         <h1 className="text-xl font-bold text-black">Bloemen van De Gier</h1>
@@ -154,7 +154,7 @@ export function PakbonDocument({
                 )}
               >
                 <td className="py-3 pr-4">
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-gray-600">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-black">
                     Product {itemIndex + 1}
                   </p>
                   <strong className="mt-0.5 block text-base leading-snug">{item.name}</strong>
@@ -209,7 +209,10 @@ function isHighlightPakbonExtra(label: string) {
 
 export function FactuurDocument({ order }: { order: WcOrder }) {
   return (
-    <article className="print-sheet mx-auto max-w-3xl px-6 py-8">
+    <article
+      className="print-sheet w-full bg-white px-6 py-8 text-black"
+      style={{ color: '#000', backgroundColor: '#fff' }}
+    >
       <header className="mb-8 flex items-start justify-between gap-4 border-b border-gray-300 pb-4">
         <div>
           <h1 className="text-2xl font-bold">Bloemen van De Gier</h1>
