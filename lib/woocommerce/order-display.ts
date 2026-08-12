@@ -68,7 +68,7 @@ export function cleanKaartjeText(value: string): string {
     .replace(/\bEUR\s*[\d]+(?:[.,][\d]+)?/gi, '')
     // Trailing losse prijsresten
     .replace(/\s+[€]\s*$/g, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(/[^\S\n]{2,}/g, ' ')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
