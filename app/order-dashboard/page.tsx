@@ -48,6 +48,44 @@ import {
 import { cn } from '@/lib/utils/cn'
 
 const PER_PAGE = 500
+
+/** Open een tab meteen (binnen user-gesture); later navigatie naar PDF. */
+function openLoadingPrintTab(message: string): Window | null {
+  const win = window.open('about:blank', '_blank')
+  if (win) showPrintTabMessage(win, message)
+  return win
+}
+
+function showPrintTabMessage(win: Window, message: string) {
+  if (win.closed) return
+  try {
+    win.document.open()
+    win.document.write(
+      `<!doctype html><html><head><meta charset="utf-8"><title>Print</title></head>` +
+        `<body style="font-family:system-ui,sans-serif;padding:2rem;color:#111">` +
+        `<p>${escapeHtml(message)}</p></body></html>`
+    )
+    win.document.close()
+  } catch {
+    // negeren als document niet meer schrijfbaar is
+  }
+}
+
+async function navigateWindowToPdf(win: Window, blob: Blob) {
+  const url = URL.createObjectURL(blob)
+  if (!win.closed) {
+    win.location.href = url
+  }
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+}
+
+function escapeHtml(s: string) {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
 const SEARCH_DEBOUNCE_MS = 350
 
 const STATUS_OPTIONS = [
@@ -520,35 +558,77 @@ function OrderDashboardPageContent() {
       return
     }
 
-    // Aparte tab per documenttype → juiste printer / PDF
     const idList = Array.from(selected)
     const known = idList
       .map((id) => getCachedOrderById(id) || orders.find((o) => o.id === id))
       .filter(Boolean) as WcOrder[]
     const jobId = stashPrintJob(idList, known)
 
-    const docTypes: string[] = []
-    if (printKaartje) docTypes.push('kaartje')
-    if (printPakbon) docTypes.push('pakbon')
-    if (printFactuur) docTypes.push('factuur')
+    // Alle tabs synchroon openen (binnen de klik), anders blokkeert de browser
+    // popups na async PDF-fetches en blijft alleen het kaartje over.
+    const blocked: string[] = []
 
-    for (const doc of docTypes) {
-      window.open(
-        `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=${encodeURIComponent(doc)}&job=${encodeURIComponent(jobId)}`,
+    const kaartjeWin = printKaartje ? openLoadingPrintTab('Kaartjes-PDF wordt geladen…') : null
+    if (printKaartje && !kaartjeWin) blocked.push('kaartje')
+
+    if (printPakbon) {
+      const win = window.open(
+        `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=pakbon&job=${encodeURIComponent(jobId)}`,
         '_blank'
+      )
+      if (!win) blocked.push('pakbon')
+    }
+
+    if (printFactuur) {
+      const win = window.open(
+        `/order-dashboard/print/bulk?ids=${encodeURIComponent(idList.join(','))}&docs=factuur&job=${encodeURIComponent(jobId)}`,
+        '_blank'
+      )
+      if (!win) blocked.push('factuur')
+    }
+
+    const labelsWin = printLabels ? openLoadingPrintTab('Verzendlabels worden geladen…') : null
+    if (printLabels && !labelsWin) blocked.push('labels')
+
+    if (blocked.length) {
+      alert(
+        `Browser blokkeerde tab(s): ${blocked.join(', ')}. Sta pop-ups toe voor deze site en probeer opnieuw.`
       )
     }
 
-    if (printLabels) {
-      void openBulkLabels(true)
+    if (printKaartje && kaartjeWin) {
+      void fillKaartjesPdf(idList, kaartjeWin)
+    }
+    if (printLabels && labelsWin) {
+      void fillBulkLabels(idList, labelsWin, true)
     }
   }
 
-  async function openBulkLabels(createMissing: boolean) {
-    if (!selected.size) return
+  async function fillKaartjesPdf(idList: number[], win: Window) {
+    try {
+      const res = await fetch('/api/order-dashboard/kaartjes-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIds: idList }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        if (res.status === 500 && /geen kaartje/i.test(String(data.error || ''))) {
+          showPrintTabMessage(win, 'Geen kaartjetekst bij deze selectie.')
+          return
+        }
+        showPrintTabMessage(win, data.error || 'Kaartjes-PDF mislukt')
+        return
+      }
+      await navigateWindowToPdf(win, await res.blob())
+    } catch (e) {
+      showPrintTabMessage(win, e instanceof Error ? e.message : 'Kaartjes-PDF mislukt')
+    }
+  }
+
+  async function fillBulkLabels(idList: number[], win: Window, createMissing: boolean) {
     setLabelsBusy(true)
     try {
-      const idList = Array.from(selected)
       const res = await fetch('/api/order-dashboard/labels', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -560,19 +640,14 @@ function OrderDashboardPageContent() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        // Nog eens proberen met aanmaken als dat nog niet gebeurde
         if (!createMissing) {
-          await openBulkLabels(true)
+          await fillBulkLabels(idList, win, true)
           return
         }
-        alert(data.error || 'Labels laden mislukt')
+        showPrintTabMessage(win, data.error || 'Labels laden mislukt')
         return
       }
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
-      // Orders staan nu op afgerond in WC — lijst verversen
+      await navigateWindowToPdf(win, await res.blob())
       invalidateOrderListCache()
       void fetchList({
         page,
@@ -584,13 +659,19 @@ function OrderDashboardPageContent() {
         force: true,
       })
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Labels laden mislukt')
+      showPrintTabMessage(win, e instanceof Error ? e.message : 'Labels laden mislukt')
     } finally {
       setLabelsBusy(false)
     }
   }
 
   async function openOrderLabel(order: WcOrder) {
+    // Tab meteen openen (user-gesture), daarna PDF erin laden
+    const win = openLoadingPrintTab('Label wordt geladen…')
+    if (!win) {
+      alert('Browser blokkeerde de tab. Sta pop-ups toe voor deze site.')
+      return
+    }
     setLabelsBusy(true)
     try {
       const res = await fetch('/api/order-dashboard/labels', {
@@ -604,13 +685,10 @@ function OrderDashboardPageContent() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        alert(data.error || 'Label laden mislukt')
+        showPrintTabMessage(win, data.error || 'Label laden mislukt')
         return
       }
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+      await navigateWindowToPdf(win, await res.blob())
       // Status is server-side op completed gezet — lijst verversen
       invalidateOrderListCache()
       void fetchList({
@@ -623,7 +701,7 @@ function OrderDashboardPageContent() {
         force: true,
       })
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Label laden mislukt')
+      showPrintTabMessage(win, e instanceof Error ? e.message : 'Label laden mislukt')
     } finally {
       setLabelsBusy(false)
     }

@@ -22,17 +22,27 @@ export default function PrintPakbonPage() {
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          html, body { background: #fff !important; color: #000 !important; }
+          html, body, .min-h-screen {
+            background: #fff !important;
+            color: #000 !important;
+            min-height: 0 !important;
+            height: auto !important;
+          }
           .print-sheet, .print-sheet * { color: #000 !important; visibility: visible !important; }
           @page { size: A4; margin: 12mm; }
-          .print-sheet { page-break-after: always; break-after: page; }
+          .print-sheet {
+            page-break-inside: auto;
+            break-inside: auto;
+          }
+          .print-sheet-break { page-break-after: always; break-after: page; }
+          .print-sheet-last { page-break-after: auto !important; break-after: auto !important; }
         }
       `}</style>
       <PrintToolbar
         title={`Pakbon #${order.number} · A4`}
-        hint="Tip (Safari/macOS): kies “Alle pagina’s”, niet “Selectie”."
+        hint="Tip (Safari/macOS): kies “Alle pagina’s”. Alleen lange bestellingen lopen door op een 2e pagina."
       />
-      <PakbonDocument order={order} pageIndex={1} pageTotal={1} />
+      <PakbonDocument order={order} pageIndex={1} pageTotal={1} isLast />
     </div>
   )
 }

@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation'
 import {
   PrintError,
   PrintLoading,
-  PrintToolbar,
   printHelpers,
   usePrintOrder,
 } from '@/components/order-dashboard/print-helpers'
@@ -20,6 +19,23 @@ export default function PrintKaartjePage() {
 
   const cards = printHelpers.getKaartjeTexts(order)
 
+  async function openPdf() {
+    const res = await fetch('/api/order-dashboard/kaartjes-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderIds: [order!.id] }),
+    })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      alert(data.error || 'PDF mislukt')
+      return
+    }
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank')
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  }
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <style>{`
@@ -33,9 +49,30 @@ export default function PrintKaartjePage() {
             width: 148mm !important;
             height: 105mm !important;
           }
+          .card-sheet:last-child { page-break-after: auto; }
         }
       `}</style>
-      <PrintToolbar title={`Kaartje #${order.number} · A6 dubbelgevouwen (tekst rechts)`} />
+      <div className="no-print sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3">
+        <p className="text-sm font-medium text-gray-700">
+          Kaartje #{order.number} · A6 dubbelgevouwen (tekst rechts)
+        </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => void openPdf()}
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
+          >
+            Open PDF
+          </button>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+          >
+            Printen
+          </button>
+        </div>
+      </div>
 
       {cards.length === 0 ? (
         <div className="mx-auto max-w-md px-6 py-16 text-center">

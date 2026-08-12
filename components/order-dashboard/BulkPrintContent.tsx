@@ -299,9 +299,11 @@ export default function BulkPrintContent() {
     <div className="min-h-screen bg-white text-black">
       <style>{`
         @media print {
-          html, body {
+          html, body, .min-h-screen {
             background: #fff !important;
             color: #000 !important;
+            min-height: 0 !important;
+            height: auto !important;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
@@ -311,16 +313,20 @@ export default function BulkPrintContent() {
             width: 100% !important;
             max-width: none !important;
             margin: 0 !important;
-            padding: 0 !important;
+            padding: 4mm 0 !important;
             background: #fff !important;
             color: #000 !important;
+            page-break-inside: auto;
+            break-inside: auto;
+          }
+          /* Alleen tussen orders een nieuwe pagina — niet na de laatste (geen lege pagina) */
+          .print-sheet-break {
             page-break-after: always;
             break-after: page;
-            page-break-inside: avoid;
           }
-          .print-sheet:last-child {
-            page-break-after: auto;
-            break-after: auto;
+          .print-sheet-last {
+            page-break-after: auto !important;
+            break-after: auto !important;
           }
           .print-sheet, .print-sheet * {
             color: #000 !important;
@@ -333,6 +339,9 @@ export default function BulkPrintContent() {
             width: 148mm !important;
             height: 105mm !important;
           }
+          .card-sheet:last-child {
+            page-break-after: auto;
+          }
           .label-sheet { page-break-after: always; border: none !important; margin: 0 !important; }
           ${pageCss}
         }
@@ -343,7 +352,7 @@ export default function BulkPrintContent() {
         }`}
         hint={
           docs.pakbon || docs.factuur
-            ? 'Tip (Safari/macOS): kies “Alle pagina’s”, niet “Selectie” — anders zie je lege pagina’s. 1 order = 1 pagina.'
+            ? 'Tip (Safari/macOS): kies “Alle pagina’s”. Korte pakbon = 1 pagina; lange bestelling mag doorlopen op pagina 2.'
             : undefined
         }
       />
@@ -355,19 +364,43 @@ export default function BulkPrintContent() {
       )}
 
       {orders.map((order, index) => (
-        <div key={order.id}>
-          {docs.kaartje && orderHasKaartje(order) && <KaartjeDocuments order={order} />}
-          {docs.pakbon && (
-            <PakbonDocument
-              order={order}
-              pageIndex={index + 1}
-              pageTotal={orders.length}
-            />
-          )}
-          {docs.factuur && <FactuurDocument order={order} />}
-          {docs.label && <LabelDocument order={order} />}
-        </div>
+        <PakbonOrOther
+          key={order.id}
+          order={order}
+          index={index}
+          total={orders.length}
+          docs={docs}
+        />
       ))}
     </div>
+  )
+}
+
+function PakbonOrOther({
+  order,
+  index,
+  total,
+  docs,
+}: {
+  order: WcOrder
+  index: number
+  total: number
+  docs: { kaartje: boolean; pakbon: boolean; factuur: boolean; label: boolean }
+}) {
+  const isLast = index === total - 1
+  return (
+    <>
+      {docs.kaartje && orderHasKaartje(order) && <KaartjeDocuments order={order} />}
+      {docs.pakbon && (
+        <PakbonDocument
+          order={order}
+          pageIndex={index + 1}
+          pageTotal={total}
+          isLast={isLast}
+        />
+      )}
+      {docs.factuur && <FactuurDocument order={order} />}
+      {docs.label && <LabelDocument order={order} />}
+    </>
   )
 }

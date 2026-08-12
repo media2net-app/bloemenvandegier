@@ -29,26 +29,31 @@ export function PakbonDocument({
   order,
   pageIndex,
   pageTotal,
+  isLast = false,
 }: {
   order: WcOrder
   pageIndex?: number
   pageTotal?: number
+  /** Laatste in de batch: geen page-break erna (voorkomt lege pagina) */
+  isLast?: boolean
 }) {
   const delivery = getDeliveryInfo(order)
   const cards = getKaartjeTexts(order)
   const feeLines = (order.fee_lines || []).filter((f) => !isGatewayFee(f.name))
   const pageLabel =
     pageIndex != null && pageTotal != null
-      ? ` · pagina ${pageIndex}/${pageTotal}`
+      ? ` · ${pageIndex}/${pageTotal}`
       : ''
 
   return (
     <article
-      className="print-sheet mx-auto max-w-3xl bg-white px-6 py-8 text-black"
-      style={{ color: '#111', breakAfter: 'page', pageBreakAfter: 'always' }}
+      className={`print-sheet mx-auto max-w-3xl bg-white px-5 py-5 text-black ${
+        isLast ? 'print-sheet-last' : 'print-sheet-break'
+      }`}
+      style={{ color: '#111' }}
     >
-      <header className="mb-6 border-b border-black pb-3">
-        <h1 className="text-2xl font-bold text-black">Bloemen van De Gier</h1>
+      <header className="mb-4 border-b border-black pb-2">
+        <h1 className="text-xl font-bold text-black">Bloemen van De Gier</h1>
         <p className="text-sm text-black">
           Pakbon — bestelling #{order.number}
           {pageLabel}
@@ -57,7 +62,7 @@ export function PakbonDocument({
       </header>
 
       {/* Geen CSS-grid: Safari print laat grids soms leeg */}
-      <table className="mb-6 w-full border-collapse text-sm text-black">
+      <table className="mb-4 w-full border-collapse text-sm text-black">
         <tbody>
           <tr>
             <td className="w-1/2 align-top pr-4">
@@ -84,16 +89,16 @@ export function PakbonDocument({
       </table>
 
       {order.customer_note?.trim() && (
-        <div className="mb-4 border-2 border-black p-3 text-sm text-black">
+        <div className="mb-3 border-2 border-black p-2.5 text-sm text-black">
           <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">Opmerking klant</h2>
           <p className="whitespace-pre-wrap">{order.customer_note}</p>
         </div>
       )}
 
       {cards.length > 0 && (
-        <div className="mb-4 border-2 border-black p-3 text-sm text-black">
+        <div className="mb-3 border-2 border-black p-2.5 text-sm text-black">
           <h2 className="mb-2 text-xs font-bold uppercase tracking-wide">Kaartjetekst</h2>
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {cards.map((card, i) => (
               <li key={`${order.id}-card-${i}`}>
                 <p className="text-xs font-medium">{card.product}</p>
@@ -107,7 +112,7 @@ export function PakbonDocument({
       )}
 
       {feeLines.length > 0 && (
-        <div className="mb-4 border border-black p-3 text-sm text-black">
+        <div className="mb-3 border border-black p-2.5 text-sm text-black">
           <h2 className="mb-1 text-xs font-bold uppercase tracking-wide">
             Globale toevoegingen
           </h2>
@@ -140,10 +145,10 @@ export function PakbonDocument({
             const other = extras.filter((e) => !isHighlightPakbonExtra(e.label))
             return (
               <tr key={item.id} className="border-b border-gray-400 align-top">
-                <td className="py-4 pr-2">
+                <td className="py-2.5 pr-2">
                   <strong className="text-base">{item.name}</strong>
                   {highlight.length > 0 && (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-2 space-y-2">
                       {highlight.map((extra) => (
                         <div
                           key={`${item.id}-${extra.label}`}
@@ -160,7 +165,7 @@ export function PakbonDocument({
                     </div>
                   )}
                   {other.length > 0 && (
-                    <ul className="mt-2 space-y-0.5 text-xs">
+                    <ul className="mt-1.5 space-y-0.5 text-xs">
                       {other.map((extra) => (
                         <li key={`${item.id}-${extra.label}`}>
                           <span className="font-semibold">{extra.label}:</span> {extra.value}
@@ -169,7 +174,9 @@ export function PakbonDocument({
                     </ul>
                   )}
                 </td>
-                <td className="px-2 py-4 text-right text-base font-semibold">{item.quantity}</td>
+                <td className="px-2 py-2.5 text-right text-base font-semibold">
+                  {item.quantity}
+                </td>
               </tr>
             )
           })}
