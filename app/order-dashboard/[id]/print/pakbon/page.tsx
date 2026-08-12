@@ -33,6 +33,11 @@ export default function PrintPakbonPage() {
           .print-sheet {
             page-break-inside: auto;
             break-inside: auto;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
           }
           .print-sheet-break { page-break-after: always; break-after: page; }
           .print-sheet-last { page-break-after: auto !important; break-after: auto !important; }
