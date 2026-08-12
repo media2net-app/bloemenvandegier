@@ -150,7 +150,6 @@ export default function OrderDetailPage() {
         <p className="mt-1">
           Doe dat in WooCommerce (knop hierboven). Pas shipping-adres, orderregel-meta
           (kaartje/toevoegingen) of Iconic bezorgdatum aan, daarna hier vernieuwen/printen.
-          Dit portaal is in testmodus read-only.
         </p>
       </Card>
 
